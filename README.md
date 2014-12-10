@@ -9,8 +9,8 @@ Features
 ========
 - Automatically creates an initial full mapping based on term similarity
 - Uses concept names and synonyms to find potential matches
-- Allows filtering the search based on target vocabulary, domain, concept class, as well as user-defined subsets of concepts
-- Interactive review and correct of the initial mapping
+- Allows filtering the search results based on target vocabulary, domain, concept class, as well as user-defined subsets of concepts
+- Interactive review and correction of the initial mapping
 - Export to source_to_concept_map format
 
 Screenshot
@@ -34,7 +34,7 @@ Getting Started
 1. Under the [Releases](https://github.com/OHDSI/Usagi/releases) tab, download Usagi*.zip
 2. Unzip the download
 3. Click on Usagi1.5GB.cmd (Windows) or Usagi1.5GB.sh (Linux, Mac) to start Usagi
-4. Usagi will prompt you to specifiy the location of the Voabulary CSV files to create the index (needs to be done only once)
+4. Usagi will prompt you to specifiy the location of the Vocabulary CSV files to create the index (needs to be done only once)
 
 Getting Involved
 =============
