@@ -38,7 +38,7 @@ Getting Started
 
 Getting Involved
 =============
-* User guide and Help: <a href="http://www.ohdsi.org/web/wiki/doku.php?id=documentation:software:Usagi">Usagi Wiki</a>
+* User guide and Help: <a href="http://www.ohdsi.org/web/wiki/doku.php?id=documentation:usagi">Usagi Wiki</a>
 * Developer questions/comments/feedback: <a href="http://forums.ohdsi.org/c/developers">OHDSI Forum</a>
 * We use the <a href="../../issues">GitHub issue tracker</a> for all bugs/issues/enhancements
 
