@@ -71,6 +71,7 @@ public class RebuildIndexDialog extends JDialog {
 			return;
 		}
 		setVisible(false);
+		Global.usagiSearchEngine.close();
 		BuildIndex buildIndex = new BuildIndex();
 		buildIndex.buildIndex(vocabFolder, loincCheckBox.isSelected() ? loincFile : null);
 	}
