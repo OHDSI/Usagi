@@ -51,3 +51,7 @@ Development
 Usagi is being developed in Eclipse. Contributions are welcome.
 ###Development status
 Beta testing
+
+Acknowledgements
+===========
+Martijn Schuemie is the author of this application.
