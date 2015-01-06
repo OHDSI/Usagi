@@ -35,7 +35,7 @@ public class ReadCSVFile implements Iterable<List<String>> {
 	public ReadCSVFile(String filename) {
 		try {
 			FileInputStream textFileStream = new FileInputStream(filename);
-			bufferedReader = new BufferedReader(new InputStreamReader(textFileStream, "UTF-8"));
+			bufferedReader = new BufferedReader(new InputStreamReader(textFileStream, "ISO-8859-1"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
@@ -45,7 +45,7 @@ public class ReadCSVFile implements Iterable<List<String>> {
 
 	public ReadCSVFile(InputStream inputstream) {
 		try {
-			bufferedReader = new BufferedReader(new InputStreamReader(inputstream, "UTF-8"));
+			bufferedReader = new BufferedReader(new InputStreamReader(inputstream, "ISO-8859-1"));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}

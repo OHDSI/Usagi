@@ -30,7 +30,7 @@ public class WriteCSVFile {
 		FileOutputStream stream;
 		try {
 			stream = new FileOutputStream(filename, append);
-			bufferedWrite = new BufferedWriter(new OutputStreamWriter(stream, "UTF-8"), 10000);
+			bufferedWrite = new BufferedWriter(new OutputStreamWriter(stream, "ISO-8859-1"), 10000);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {

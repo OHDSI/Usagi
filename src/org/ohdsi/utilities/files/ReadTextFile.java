@@ -34,9 +34,9 @@ public class ReadTextFile implements Iterable<String>{
   
   public ReadTextFile(InputStream inputStream) {
   	 try {
-			bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+			bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "ISO-8859-1"));
 		} catch (UnsupportedEncodingException e) {
-      System.err.println("Computer does not support UTF-8 encoding");
+      System.err.println("Computer does not support ISO-8859-1 encoding");
 			e.printStackTrace();
 		}
   	
@@ -45,11 +45,11 @@ public class ReadTextFile implements Iterable<String>{
     this.filename = filename;
     try {
       FileInputStream inputStream = new FileInputStream(filename);
-      bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+      bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "ISO-8859-1"));
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     } catch (UnsupportedEncodingException e) {
-      System.err.println("Computer does not support UTF-8 encoding");
+      System.err.println("Computer does not support ISO-8859-1 encoding");
       e.printStackTrace();
     }
   }
