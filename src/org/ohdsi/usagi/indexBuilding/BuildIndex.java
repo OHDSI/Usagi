@@ -18,6 +18,7 @@ package org.ohdsi.usagi.indexBuilding;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,16 +41,12 @@ import org.ohdsi.utilities.files.Row;
  * Builds the initial Lucene indes used by Usagi
  */
 public class BuildIndex {
-	// public static String folder = "s:/data/Usagi";
-	// public static String termfile = folder + "/Terms.csv";
-	// public static String CONCEPT_TYPE_STRING = "C";
-	public static String[]	vocabularyIds	= new String[] { "APC", "CPT4", "DRG", "HCPCS", "HES Specialty", "ICD9Proc", "LOINC", "LOINC Hierarchy", "MDC",
-			"Multilex", "NUCC", "OPCS4", "Place of Service", "Race", "Revenue Code", "RxNorm", "SNOMED", "Specialty", "UCUM" };
+
+	public static String[]	vocabularyIds	= new String[] { "ATC", "APC", "CPT4", "DRG", "HCPCS", "HES Specialty", "ICD9Proc", "LOINC", "LOINC Hierarchy",
+			"MDC", "Multilex", "NUCC", "OPCS4", "Place of Service", "Race", "Revenue Code", "RxNorm", "SNOMED", "Specialty", "UCUM" };
 
 	public static void main(String[] args) {
-		// BuildIndex buildIndex = new BuildIndex();
-		// buildIndex.process();
-		Global.folder = "c:/temp";
+		Global.folder = "S:/Data/Usagi/";
 		BuildIndex buildIndex = new BuildIndex();
 		buildIndex.buildIndex("S:/Data/OMOP Standard Vocabulary V5/Vocabulary5.0-20141013", "S:/Data/LOINC/loinc.csv");
 	}
@@ -138,7 +135,14 @@ public class BuildIndex {
 				Row conceptRow = multiRowSet.get("concept").get(0);
 				if (conceptRow.getCells().size() > 2) // Extra check to catch badly formatted rows (which are in a vocab we don't care about)
 					if (conceptRow.get("STANDARD_CONCEPT").equals("S") && allowedVocabularies.contains(conceptRow.get("VOCABULARY_ID"))) {
-						for (Row synonymRow : multiRowSet.get("concept_synonym")) {
+						List<Row> synonymRows = multiRowSet.get("concept_synonym");
+
+						// Adding concept name as synonym:
+						Row tempRow = new Row();
+						tempRow.add("CONCEPT_SYNONYM_NAME", conceptRow.get("CONCEPT_NAME"));
+						synonymRows.add(tempRow);
+
+						for (Row synonymRow : synonymRows) {
 							TargetConcept concept = new TargetConcept();
 							concept.term = synonymRow.get("CONCEPT_SYNONYM_NAME");
 							concept.conceptClass = conceptRow.get("CONCEPT_CLASS_ID");
