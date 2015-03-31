@@ -27,7 +27,7 @@ Requires Java 1.7 or higher. Java can be downloaded from <a href="http://www.jav
 
 Dependencies
 ============
- * Vocabulary version 5 (CSV files)
+ * Vocabulary version 5 (CSV files). These can be obtained from [Athena](http://www.ohdsi.org/web/athena).
 
 Getting Started
 ===============
