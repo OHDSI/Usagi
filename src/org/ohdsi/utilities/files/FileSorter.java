@@ -35,6 +35,7 @@ public class FileSorter {
 	public static double	minFreeMemFraction			= 0.25;
 	public static boolean	checkIfAlreadySorted		= false;
 	public static int		maxCheckRows				= 10000000;
+	public static char		delimiter					= ',';
 
 	public static void sort(String filename, String... columnNames) {
 		boolean[] sortNumeric = new boolean[columnNames.length];
@@ -56,7 +57,7 @@ public class FileSorter {
 				System.out.println("Memory available for sorting: " + availableMem + " bytes. Min free = " + minFreeMem);
 		}
 
-		Iterator<List<String>> iterator = new ReadCSVFile(filename).iterator();
+		Iterator<List<String>> iterator = new ReadCSVFile(filename, delimiter).iterator();
 
 		List<String> header = iterator.next();
 
@@ -66,7 +67,7 @@ public class FileSorter {
 			if (isSorted(iterator, comparator))
 				return;
 			else {
-				iterator = new ReadCSVFile(filename).iterator();
+				iterator = new ReadCSVFile(filename, delimiter).iterator();
 				iterator.next(); // skip header
 			}
 		}
@@ -150,7 +151,7 @@ public class FileSorter {
 	}
 
 	private static void writeToDisk(List<String> header, List<List<String>> rows, String filename) {
-		WriteCSVFile out = new WriteCSVFile(filename);
+		WriteCSVFile out = new WriteCSVFile(filename, delimiter);
 		if (header != null)
 			out.write(header);
 		for (List<String> row : rows)
@@ -242,7 +243,7 @@ public class FileSorter {
 		List<String> header = null;
 		boolean done = true;
 		for (int i = start; i < end; i++) {
-			ReadCSVFile tempFile = new ReadCSVFile(generateFilename(sourceBase, i));
+			ReadCSVFile tempFile = new ReadCSVFile(generateFilename(sourceBase, i), delimiter);
 			Iterator<List<String>> iterator = tempFile.getIterator();
 			if (iterator.hasNext()) {
 				if (tempFiles.size() == 0) // its the first one
@@ -259,7 +260,7 @@ public class FileSorter {
 			} else
 				filerows.add(null);
 		}
-		WriteCSVFile out = new WriteCSVFile(target);
+		WriteCSVFile out = new WriteCSVFile(target, delimiter);
 		out.write(header);
 		while (!done) {
 			// Find best file to pick from:

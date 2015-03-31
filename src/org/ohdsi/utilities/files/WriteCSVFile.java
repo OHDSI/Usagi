@@ -25,7 +25,9 @@ import java.util.Iterator;
 import java.util.List;
 
 public class WriteCSVFile {
-	
+
+	private char	delimiter	= ',';
+
 	public WriteCSVFile(String filename, boolean append) {
 		FileOutputStream stream;
 		try {
@@ -36,13 +38,18 @@ public class WriteCSVFile {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
+	public WriteCSVFile(String filename, char delimiter) {
+		this(filename);
+		this.delimiter = delimiter;
+	}
+
 	public WriteCSVFile(String filename) {
 		this(filename, false);
 	}
-	
+
 	public void write(List<String> string) {
 		try {
 			bufferedWrite.write(columns2line(string));
@@ -51,8 +58,8 @@ public class WriteCSVFile {
 			e.printStackTrace();
 		}
 	}
-	
-	public static String columns2line(List<String> columns) {
+
+	public String columns2line(List<String> columns) {
 		StringBuilder sb = new StringBuilder();
 		Iterator<String> iterator = columns.iterator();
 		while (iterator.hasNext()) {
@@ -61,17 +68,17 @@ public class WriteCSVFile {
 			column = column.replaceAll("\\\\", "\\\\\\\\");
 			if (hasQuotes)
 				column = column.replaceAll("\"", "\\\\\"");
-			column = column.replaceAll("\r", "");			
+			column = column.replaceAll("\r", "");
 			column = column.replaceAll("\n", "\\\\n");
-			if (hasQuotes || column.contains(","))
+			if (hasQuotes || column.contains(Character.toString(delimiter)))
 				column = "\"" + column + "\"";
 			sb.append(column);
 			if (iterator.hasNext())
-				sb.append(",");
+				sb.append(delimiter);
 		}
 		return sb.toString();
 	}
-	
+
 	public void flush() {
 		try {
 			bufferedWrite.flush();
@@ -79,7 +86,7 @@ public class WriteCSVFile {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void close() {
 		try {
 			bufferedWrite.close();
@@ -87,6 +94,6 @@ public class WriteCSVFile {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private BufferedWriter	bufferedWrite;
 }

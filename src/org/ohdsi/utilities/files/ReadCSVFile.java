@@ -32,6 +32,12 @@ public class ReadCSVFile implements Iterable<List<String>> {
 	public boolean				EOF			= false;
 	private char				delimiter	= ',';
 
+	
+	public ReadCSVFile(String filename, char delimiter) {
+		this(filename);
+		this.delimiter = delimiter;
+	}
+	
 	public ReadCSVFile(String filename) {
 		try {
 			FileInputStream textFileStream = new FileInputStream(filename);
@@ -43,6 +49,11 @@ public class ReadCSVFile implements Iterable<List<String>> {
 		}
 	}
 
+	public ReadCSVFile(InputStream inputstream, char delimiter) {
+		this(inputstream);
+		this.delimiter = delimiter;
+	}
+	
 	public ReadCSVFile(InputStream inputstream) {
 		try {
 			bufferedReader = new BufferedReader(new InputStreamReader(inputstream, "ISO-8859-1"));

@@ -48,7 +48,7 @@ public class BuildIndex {
 	public static void main(String[] args) {
 		Global.folder = "S:/Data/Usagi/";
 		BuildIndex buildIndex = new BuildIndex();
-		buildIndex.buildIndex("S:/Data/OMOP Standard Vocabulary V5/Vocabulary5.0-20141013", "S:/Data/LOINC/loinc.csv");
+		buildIndex.buildIndex("S:/Data/OMOP Standard Vocabulary V5/Vocabulary5.0-20150321", "S:/Data/LOINC/loinc.csv");
 	}
 
 	public void buildIndex(String vocabFolder, String loincFile) {
@@ -115,6 +115,7 @@ public class BuildIndex {
 				loincToInfo = loadLoincInfo(loincFile);
 			}
 			report("Sorting vocabulary files");
+			FileSorter.delimiter = '\t';
 			FileSorter.sort(vocabFolder + "/CONCEPT.csv", new String[] { "CONCEPT_ID" }, new boolean[] { true });
 			FileSorter.sort(vocabFolder + "/CONCEPT_SYNONYM.csv", new String[] { "CONCEPT_ID" }, new boolean[] { true });
 
@@ -122,8 +123,8 @@ public class BuildIndex {
 			UsagiSearchEngine usagiSearchEngine = new UsagiSearchEngine(Global.folder);
 			usagiSearchEngine.createNewMainIndex();
 
-			Iterator<Row> conceptIterator = new ReadCSVFileWithHeader(vocabFolder + "/CONCEPT.csv").iterator();
-			Iterator<Row> conceptSynIterator = new ReadCSVFileWithHeader(vocabFolder + "/CONCEPT_SYNONYM.csv").iterator();
+			Iterator<Row> conceptIterator = new ReadCSVFileWithHeader(vocabFolder + "/CONCEPT.csv", '\t').iterator();
+			Iterator<Row> conceptSynIterator = new ReadCSVFileWithHeader(vocabFolder + "/CONCEPT_SYNONYM.csv", '\t').iterator();
 			@SuppressWarnings("unchecked")
 			MultiRowIterator iterator = new MultiRowIterator("CONCEPT_ID", true, new String[] { "concept", "concept_synonym" }, new Iterator[] {
 					conceptIterator, conceptSynIterator });
@@ -132,6 +133,8 @@ public class BuildIndex {
 				allowedVocabularies.add(allowedVocabulary);
 			while (iterator.hasNext()) {
 				MultiRowSet multiRowSet = iterator.next();
+				if (multiRowSet.get("concept").size() == 0)
+					System.out.println("No concept found for concept ID " + multiRowSet.linkingId);
 				Row conceptRow = multiRowSet.get("concept").get(0);
 				if (conceptRow.getCells().size() > 2) // Extra check to catch badly formatted rows (which are in a vocab we don't care about)
 					if (conceptRow.get("STANDARD_CONCEPT").equals("S") && allowedVocabularies.contains(conceptRow.get("VOCABULARY_ID"))) {
