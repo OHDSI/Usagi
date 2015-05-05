@@ -52,7 +52,7 @@
     <jar jarfile="${dist}/Usagi.jar" basedir="${build}">
       <manifest>
         <attribute name="Built-By" value="${user.name}"/>
-        <attribute name="Main-Class" value="org.ohdsi.usagi.ui.UsagiMain"/>
+        <attribute name="Main-Class" value="org.ohdsi.usagi.Launcher"/>
       </manifest>
       <fileset dir="${src}">
       	<include name="org/ohdsi/usagi/**/*.png"/>
