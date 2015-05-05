@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -74,12 +75,18 @@ public class ImportDialog extends JDialog {
 		setTitle("Import codes from " + new File(filename).getName());
 		setLayout(new BorderLayout());
 
-		loadData(filename);
+		try {
+			loadData(filename);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, e.getMessage(), "Error loading file", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 		add(createTablePanel(), BorderLayout.CENTER);
 		add(createOptionsPanel(), BorderLayout.SOUTH);
 		setModal(true);
 		setSize(1200, 600);
 		setLocationRelativeTo(Global.frame);
+		setVisible(true);
 	}
 
 	private void loadData(String filename) {
@@ -91,6 +98,10 @@ public class ImportDialog extends JDialog {
 		if (!iterator.hasNext())
 			throw new RuntimeException("File contains no data");
 		columnNames = iterator.next();
+		Set<String> uniqueNames = new HashSet<String>();
+		for (String columnName : columnNames)
+			if (!uniqueNames.add(columnName))
+				throw new RuntimeException("Found duplicate column name '" + columnName + "', duplicates are not allowed.");
 		comboBoxOptions = new String[columnNames.size() + 1];
 		comboBoxOptions[0] = "";
 		for (int i = 0; i < columnNames.size(); i++)
