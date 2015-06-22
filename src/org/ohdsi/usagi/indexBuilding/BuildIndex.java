@@ -15,6 +15,8 @@
  ******************************************************************************/
 package org.ohdsi.usagi.indexBuilding;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,6 +28,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.ohdsi.usagi.TargetConcept;
@@ -33,6 +36,7 @@ import org.ohdsi.usagi.UsagiSearchEngine;
 import org.ohdsi.usagi.ui.Global;
 import org.ohdsi.utilities.files.FileSorter;
 import org.ohdsi.utilities.files.MultiRowIterator;
+import org.ohdsi.utilities.files.WriteTextFile;
 import org.ohdsi.utilities.files.MultiRowIterator.MultiRowSet;
 import org.ohdsi.utilities.files.ReadCSVFileWithHeader;
 import org.ohdsi.utilities.files.Row;
@@ -41,9 +45,6 @@ import org.ohdsi.utilities.files.Row;
  * Builds the initial Lucene indes used by Usagi
  */
 public class BuildIndex {
-
-	public static String[]	vocabularyIds	= new String[] { "ATC", "APC", "CPT4", "DRG", "HCPCS", "HES Specialty", "ICD9Proc", "LOINC", "LOINC Hierarchy",
-			"MDC", "Multilex", "NUCC", "OPCS4", "Place of Service", "Race", "Revenue Code", "RxNorm", "SNOMED", "Specialty", "UCUM" };
 
 	public static void main(String[] args) {
 		Global.folder = "S:/Data/Usagi/";
@@ -83,6 +84,8 @@ public class BuildIndex {
 			dialog.setVisible(true);
 		try {
 			thread.join();
+			JOptionPane.showMessageDialog(Global.frame, "Please restart Usagi to use the new index");
+			System.exit(0);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -128,16 +131,19 @@ public class BuildIndex {
 			@SuppressWarnings("unchecked")
 			MultiRowIterator iterator = new MultiRowIterator("CONCEPT_ID", true, new String[] { "concept", "concept_synonym" }, new Iterator[] {
 					conceptIterator, conceptSynIterator });
-			Set<String> allowedVocabularies = new HashSet<String>();
-			for (String allowedVocabulary : vocabularyIds)
-				allowedVocabularies.add(allowedVocabulary);
+			Set<String> vocabularies = new HashSet<String>();
+			Set<String> conceptClassIds = new HashSet<String>();
+			Set<String> domainIds = new HashSet<String>();
 			while (iterator.hasNext()) {
 				MultiRowSet multiRowSet = iterator.next();
 				if (multiRowSet.get("concept").size() == 0)
 					System.out.println("No concept found for concept ID " + multiRowSet.linkingId);
 				Row conceptRow = multiRowSet.get("concept").get(0);
 				if (conceptRow.getCells().size() > 2) // Extra check to catch badly formatted rows (which are in a vocab we don't care about)
-					if (conceptRow.get("STANDARD_CONCEPT").equals("S") && allowedVocabularies.contains(conceptRow.get("VOCABULARY_ID"))) {
+					if (conceptRow.get("STANDARD_CONCEPT").equals("S")) {
+						vocabularies.add(conceptRow.get("VOCABULARY_ID"));
+						conceptClassIds.add(conceptRow.get("CONCEPT_CLASS_ID"));
+						domainIds.add(conceptRow.get("DOMAIN_ID"));
 						List<Row> synonymRows = multiRowSet.get("concept_synonym");
 
 						// Adding concept name as synonym:
@@ -175,8 +181,20 @@ public class BuildIndex {
 					}
 			}
 			usagiSearchEngine.close();
-			if (dialog != null)
+			saveSorted(vocabularies, Global.folder + "/VocabularyIds.txt");
+			saveSorted(conceptClassIds, Global.folder + "/ConceptClassIds.txt");
+			saveSorted(domainIds, Global.folder + "/DomainIds.txt");
+			if (dialog != null) 
 				dialog.setVisible(false);
+		}
+
+		private void saveSorted(Set<String> set, String fileName) {
+			List<String> list = new ArrayList<String>(set);
+			Collections.sort(list);
+			WriteTextFile out = new WriteTextFile(fileName);
+			for (String item : list)
+				out.writeln(item);
+			out.close();
 		}
 
 		private Map<String, String> loadLoincInfo(String loincFile) {
@@ -216,20 +234,4 @@ public class BuildIndex {
 			return loincToInfo;
 		}
 	}
-
-	// private void process() {
-	// StringUtilities.outputWithTime("Indexing terms");
-	// UsagiSearchEngine usagiSearchEngine = new UsagiSearchEngine(folder);
-	// usagiSearchEngine.createNewMainIndex();
-	// CountingSet<String> vocCounts = new CountingSet<String>();
-	// for (Row row : new ReadCSVFileWithHeader(termfile)) {
-	// TargetConcept concept = new TargetConcept(row);
-	// usagiSearchEngine.addConceptToIndex(concept);
-	// vocCounts.add(concept.vocabulary);
-	// }
-	// usagiSearchEngine.close();
-	// StringUtilities.outputWithTime("Indexed terms for vocabularies:");
-	// vocCounts.printCounts();
-	// }
-
 }

@@ -613,7 +613,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 
 		}
 	}
-
+	
 	@Override
 	public void filterChanged() {
 		doSearch();

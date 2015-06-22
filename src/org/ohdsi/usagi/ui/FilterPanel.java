@@ -19,13 +19,17 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+
+import org.ohdsi.utilities.files.ReadTextFile;
 
 public class FilterPanel extends JPanel {
 
@@ -44,7 +48,6 @@ public class FilterPanel extends JPanel {
 		setBorder(BorderFactory.createTitledBorder("Filters"));
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-		// c.fill = GridBagConstraints.BOTH;
 		c.anchor = GridBagConstraints.NORTHWEST;
 
 		c.gridx = 0;
@@ -98,12 +101,7 @@ public class FilterPanel extends JPanel {
 		c.gridy = 1;
 		c.weightx = 1;
 		c.gridwidth = 1;
-		filterConceptClassComboBox = new JComboBox<String>(new String[] { "Admin Concept", "APC", "Attribute", "Body Structure", "Brand Name", "Branded Drug",
-				"Branded Drug Comp", "Branded Drug Form", "Branded Pack", "Canonical Unit", "Clinical Drug", "Clinical Drug Comp", "Clinical Drug Form",
-				"Clinical Finding", "Clinical Pack", "Context-dependent", "CPT4", "Dose Form", "DRG", "Event", "HCPCS", "HES Specialty", "Ingredient",
-				"Location", "LOINC", "LOINC Hierarchy", "MDC", "Model Comp", "Morph Abnormality", "Namespace Concept", "NUCC", "Observable Entity", "Organism",
-				"Pharma/Biol Product", "Physical Force", "Physical Object", "Place of Service", "Procedure", "Qualifier Value", "Race", "Record Artifact",
-				"Revenue Code", "Social Context", "Special Concept", "Specialty", "Specimen", "Staging / Scales", "Substance", "Undefined", "Unit", });
+		filterConceptClassComboBox = new JComboBox<String>(loadVectorFromFile(Global.folder + "/ConceptClassIds.txt"));
 		filterConceptClassComboBox.addActionListener(new ActionListener() {
 
 			@Override
@@ -133,8 +131,7 @@ public class FilterPanel extends JPanel {
 		c.gridy = 1;
 		c.weightx = 1;
 		c.gridwidth = 1;
-		filterVocabularyComboBox = new JComboBox<String>(new String[] { "APC", "CPT4", "DRG", "HCPCS", "HES Specialty", "ICD9Proc", "LOINC", "LOINC Hierarchy",
-				"MDC", "Multilex", "NUCC", "OPCS4", "Place of Service", "Race", "Revenue Code", "RxNorm", "SNOMED", "Specialty", "UCUM" });
+		filterVocabularyComboBox = new JComboBox<String>(loadVectorFromFile(Global.folder + "/VocabularyIds.txt"));
 		filterVocabularyComboBox.addActionListener(new ActionListener() {
 
 			@Override
@@ -164,9 +161,7 @@ public class FilterPanel extends JPanel {
 		c.gridy = 2;
 		c.weightx = 1;
 		c.gridwidth = 1;
-		filterDomainComboBox = new JComboBox<String>(new String[] { "Condition", "Device", "Drug", "Meas Value", "Meas Value Operator", "Measurement",
-				"Observation", "Place of Service", "Procedure", "Provider Specialty", "Race", "Relationship", "Revenue Code", "Route", "Spec Anatomic Site",
-				"Specimen", "Unit" });
+		filterDomainComboBox = new JComboBox<String>(loadVectorFromFile(Global.folder + "/DomainIds.txt"));
 		filterDomainComboBox.addActionListener(new ActionListener() {
 
 			@Override
@@ -177,6 +172,16 @@ public class FilterPanel extends JPanel {
 		});
 		add(filterDomainComboBox, c);
 
+	}
+
+	private Vector<String> loadVectorFromFile(String fileName) {
+		if (new File(fileName).exists()) {
+			Vector<String> vector = new Vector<String>();
+			for (String line : new ReadTextFile(fileName))
+				vector.add(line);
+			return vector;
+		} else
+			return new Vector<String>();
 	}
 
 	private void notifyListeners() {
@@ -219,5 +224,4 @@ public class FilterPanel extends JPanel {
 	public String getDomain() {
 		return filterDomainComboBox.getSelectedItem().toString();
 	}
-
 }

@@ -61,8 +61,9 @@ public class ImportData {
 		if (settings.sourceFrequencyColumn != null)
 			sourceCode.sourceFrequency = row.getInt(settings.sourceFrequencyColumn);
 		if (settings.autoConceptIdsColumn != null)
-			for (String conceptId : row.get(settings.autoConceptIdsColumn).split(";"))
-				sourceCode.sourceAutoAssignedConceptIds.add(Integer.parseInt(conceptId));
+			if (!row.get(settings.autoConceptIdsColumn).equals(""))
+				for (String conceptId : row.get(settings.autoConceptIdsColumn).split(";"))
+					sourceCode.sourceAutoAssignedConceptIds.add(Integer.parseInt(conceptId));
 		for (String additionalInfoColumn : settings.additionalInfoColumns)
 			sourceCode.sourceAdditionalInfo.add(new Pair<String, String>(additionalInfoColumn, row.get(additionalInfoColumn)));
 		return sourceCode;

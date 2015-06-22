@@ -115,7 +115,10 @@ public class TargetConcept {
 		row.add("validEndDate", validEndDate);
 		row.add("invalidReason", invalidReason);
 		row.add("domains", StringUtilities.join(domains, "/"));
-		row.add("additionalInformation", additionalInformation);
+		if (additionalInformation == null)
+			row.add("additionalInformation", "");
+		else
+			row.add("additionalInformation", additionalInformation);
 		return row;
 	}
 
