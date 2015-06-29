@@ -32,6 +32,7 @@ public class UsagiStatusBar extends JPanel implements DataChangeListener {
 	private static final long	serialVersionUID	= 4406343348570974587L;
 	private JLabel				countLabel;
 	private JLabel				percentLabel;
+	private JLabel				searchLabel;
 	private DecimalFormat		percentFormatter	= new DecimalFormat("##0.0");
 
 	public UsagiStatusBar() {
@@ -53,7 +54,14 @@ public class UsagiStatusBar extends JPanel implements DataChangeListener {
 		description.setForeground(Color.gray);
 		add(description);
 		add(Box.createHorizontalGlue());
+		searchLabel = new JLabel("Searching...");
+		searchLabel.setVisible(false);
+		add(searchLabel);
 		Global.mapping.addListener(this);
+	}
+
+	public void setSearhing(boolean value) {
+		searchLabel.setVisible(value);
 	}
 
 	private void update() {
@@ -72,7 +80,7 @@ public class UsagiStatusBar extends JPanel implements DataChangeListener {
 		String percent = percentFormatter.format(100 * approvedFreq / (double) totalFreq) + "%";
 		percentLabel.setText(percent);
 		percentLabel.setToolTipText(percent + " of all entries in the source data now has an approved mapping");
-		
+
 	}
 
 	@Override

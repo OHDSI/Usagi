@@ -40,6 +40,7 @@ public class Global {
 	public static MappingDetailPanel				mappingDetailPanel;
 	public static MappingTablePanel					mappingTablePanel;
 	public static ConceptInformationDialog			conceptInformationDialog;
+	public static UsagiStatusBar					statusBar;
 
 	public static OpenAction						openAction;
 	public static ImportAction						importAction;

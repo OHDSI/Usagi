@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2014 Observational Health Data Sciences and Informatics
+ * Copyright 2015 Observational Health Data Sciences and Informatics
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -70,6 +72,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private JTextField				manualQueryField;
 	private CodeMapping				codeMapping;
 	private FilterPanel				filterPanel;
+	private Timer					timer;
 
 	public MappingDetailPanel() {
 		super();
@@ -185,7 +188,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		searchTableModel = new TargetConceptTableModel(true);
 		searchTable = new UsagiTable(searchTableModel);
-		searchTable.setPreferredScrollableViewportSize(new Dimension(500, 100));
+		searchTable.setPreferredScrollableViewportSize(new Dimension(100, 100));
 		searchTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		searchTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {
@@ -373,31 +376,45 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		Global.mapping.fireDataChanged(DataChangeListener.SIMPLE_UPDATE_EVENT);
 	}
 
-	public void doSearch() {
-		Set<Integer> filterConceptIds = null;
-		if (filterPanel.getFilterByAuto())
-			filterConceptIds = codeMapping.sourceCode.sourceAutoAssignedConceptIds;
+	private class SearchTask extends TimerTask {
 
-		boolean filterInvalid = filterPanel.getFilterInvalid();
-		String filterConceptClass = null;
-		if (filterPanel.getFilterByConceptClass())
-			filterConceptClass = filterPanel.getConceptClass();
-		String filterVocabulary = null;
-		if (filterPanel.getFilterByVocabulary())
-			filterVocabulary = filterPanel.getVocabulary();
-		String filterDomain = null;
-		if (filterPanel.getFilterByDomain())
-			filterDomain = filterPanel.getDomain();
-		String query = manualQueryField.getText();
-		if (autoQueryButton.isSelected())
-			query = codeMapping.sourceCode.sourceName;
+		@Override
+		public void run() {
+			Set<Integer> filterConceptIds = null;
+			if (filterPanel.getFilterByAuto())
+				filterConceptIds = codeMapping.sourceCode.sourceAutoAssignedConceptIds;
 
-		if (Global.usagiSearchEngine.isOpenForSearching()) {
-			List<ScoredConcept> searchResults = Global.usagiSearchEngine.search(query, autoQueryButton.isSelected(), filterConceptIds, filterDomain,
-					filterConceptClass, filterVocabulary, filterInvalid);
-			searchTableModel.setScoredConcepts(searchResults);
-			searchTable.scrollRectToVisible(new Rectangle(searchTable.getCellRect(0, 0, true)));
+			boolean filterInvalid = filterPanel.getFilterInvalid();
+			String filterConceptClass = null;
+			if (filterPanel.getFilterByConceptClass())
+				filterConceptClass = filterPanel.getConceptClass();
+			String filterVocabulary = null;
+			if (filterPanel.getFilterByVocabulary())
+				filterVocabulary = filterPanel.getVocabulary();
+			String filterDomain = null;
+			if (filterPanel.getFilterByDomain())
+				filterDomain = filterPanel.getDomain();
+			String query = manualQueryField.getText();
+			if (autoQueryButton.isSelected())
+				query = codeMapping.sourceCode.sourceName;
+
+			if (Global.usagiSearchEngine.isOpenForSearching()) {
+				List<ScoredConcept> searchResults = Global.usagiSearchEngine.search(query, true, filterConceptIds, filterDomain, filterConceptClass,
+						filterVocabulary, filterInvalid);
+
+				searchTableModel.setScoredConcepts(searchResults);
+				searchTable.scrollRectToVisible(new Rectangle(searchTable.getCellRect(0, 0, true)));
+			}
+			Global.statusBar.setSearhing(false);
 		}
+	}
+
+	public void doSearch() {
+		Global.statusBar.setSearhing(true);
+		if (timer != null)
+			timer.cancel();
+		timer = new Timer();
+		timer.schedule(new SearchTask(), 500);
 	}
 
 	class SourceCodeTableModel extends AbstractTableModel {
@@ -613,7 +630,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 
 		}
 	}
-	
+
 	@Override
 	public void filterChanged() {
 		doSearch();

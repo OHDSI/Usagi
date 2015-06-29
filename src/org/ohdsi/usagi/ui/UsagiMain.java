@@ -49,7 +49,6 @@ import org.ohdsi.usagi.ui.actions.SaveAsAction;
 public class UsagiMain implements ActionListener {
 
 	private JFrame			frame;
-	private UsagiStatusBar	statusBar;
 
 	public static void main(String[] args) {
 		new UsagiMain(args);
@@ -107,8 +106,8 @@ public class UsagiMain implements ActionListener {
 		Global.mappingTablePanel.addCodeSelectedListener(Global.mappingDetailPanel);
 		frame.add(main, BorderLayout.CENTER);
 
-		statusBar = new UsagiStatusBar();
-		frame.add(statusBar, BorderLayout.SOUTH);
+		Global.statusBar = new UsagiStatusBar();
+		frame.add(Global.statusBar, BorderLayout.SOUTH);
 
 		loadIcons(frame);
 		frame.pack();

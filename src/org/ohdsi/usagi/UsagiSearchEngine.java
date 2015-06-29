@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2014 Observational Health Data Sciences and Informatics
+ * Copyright 2015 Observational Health Data Sciences and Informatics
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -130,8 +130,8 @@ public class UsagiSearchEngine {
 			throw new RuntimeException(e);
 		}
 	}
-	
-	public boolean mainIndexExists(){
+
+	public boolean mainIndexExists() {
 		return new File(folder + "/" + MAIN_INDEX_FOLDER).exists();
 	}
 
@@ -339,14 +339,6 @@ public class UsagiSearchEngine {
 			} else {
 				try {
 					query = keywordsQueryParser.parse(searchTerm);
-					// if (query instanceof BooleanQuery) {
-					// List<BooleanClause> clauses = ((BooleanQuery) query).clauses();
-					// BooleanClause lastClause = clauses.get(clauses.size() - 1);
-					// lastClause.setQuery(new PrefixQuery(((TermQuery) lastClause.getQuery()).getTerm()));
-					// } else if (query instanceof TermQuery) {// It's a single term
-					// query = new PrefixQuery(((TermQuery) query).getTerm());
-					// }
-
 				} catch (ParseException e) {
 					return results;
 				}
