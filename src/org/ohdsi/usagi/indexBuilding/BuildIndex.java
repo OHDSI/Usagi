@@ -46,10 +46,12 @@ import org.ohdsi.utilities.files.Row;
  */
 public class BuildIndex {
 
+	public static int	MAX_WARN_COUNT	= 10;
+
 	public static void main(String[] args) {
-		Global.folder = "S:/Data/Usagi/";
+		Global.folder = "C:/home/Software/Usagi/";
 		BuildIndex buildIndex = new BuildIndex();
-		buildIndex.buildIndex("S:/Data/OMOP Standard Vocabulary V5/Vocabulary5.0-20150321", "S:/Data/LOINC/loinc.csv");
+		buildIndex.buildIndex("S:/Data/OMOP Standard Vocabulary V5/MyDownloadFromAthena", "S:/Data/LOINC/loinc.csv");
 	}
 
 	public void buildIndex(String vocabFolder, String loincFile) {
@@ -117,10 +119,10 @@ public class BuildIndex {
 				report("Loading LOINC additional information");
 				loincToInfo = loadLoincInfo(loincFile);
 			}
-			report("Sorting vocabulary files");
-			FileSorter.delimiter = '\t';
-			FileSorter.sort(vocabFolder + "/CONCEPT.csv", new String[] { "CONCEPT_ID" }, new boolean[] { true });
-			FileSorter.sort(vocabFolder + "/CONCEPT_SYNONYM.csv", new String[] { "CONCEPT_ID" }, new boolean[] { true });
+			// report("Sorting vocabulary files");
+			// FileSorter.delimiter = '\t';
+			// FileSorter.sort(vocabFolder + "/CONCEPT.csv", new String[] { "CONCEPT_ID" }, new boolean[] { true });
+			// FileSorter.sort(vocabFolder + "/CONCEPT_SYNONYM.csv", new String[] { "CONCEPT_ID" }, new boolean[] { true });
 
 			report("Adding concepts to index");
 			UsagiSearchEngine usagiSearchEngine = new UsagiSearchEngine(Global.folder);
@@ -134,57 +136,64 @@ public class BuildIndex {
 			Set<String> vocabularies = new HashSet<String>();
 			Set<String> conceptClassIds = new HashSet<String>();
 			Set<String> domainIds = new HashSet<String>();
+			int warnCount = 0;
 			while (iterator.hasNext()) {
 				MultiRowSet multiRowSet = iterator.next();
-				if (multiRowSet.get("concept").size() == 0)
-					System.out.println("No concept found for concept ID " + multiRowSet.linkingId);
-				Row conceptRow = multiRowSet.get("concept").get(0);
-				if (conceptRow.getCells().size() > 2) // Extra check to catch badly formatted rows (which are in a vocab we don't care about)
-					if (conceptRow.get("STANDARD_CONCEPT").equals("S")) {
-						vocabularies.add(conceptRow.get("VOCABULARY_ID"));
-						conceptClassIds.add(conceptRow.get("CONCEPT_CLASS_ID"));
-						domainIds.add(conceptRow.get("DOMAIN_ID"));
-						List<Row> synonymRows = multiRowSet.get("concept_synonym");
-
-						// Adding concept name as synonym:
-						Row tempRow = new Row();
-						tempRow.add("CONCEPT_SYNONYM_NAME", conceptRow.get("CONCEPT_NAME"));
-						synonymRows.add(tempRow);
-
-						for (Row synonymRow : synonymRows) {
-							TargetConcept concept = new TargetConcept();
-							concept.term = synonymRow.get("CONCEPT_SYNONYM_NAME");
-							concept.conceptClass = conceptRow.get("CONCEPT_CLASS_ID");
-							concept.conceptCode = conceptRow.get("CONCEPT_CODE");
-							concept.conceptId = conceptRow.getInt("CONCEPT_ID");
-							concept.conceptName = conceptRow.get("CONCEPT_NAME");
-							for (String domain : conceptRow.get("DOMAIN_ID").split("/")) {
-								if (domain.equals("Obs"))
-									domain = "Observation";
-								if (domain.equals("Meas"))
-									domain = "Measurement";
-								concept.domains.add(domain);
-							}
-							concept.invalidReason = conceptRow.get("INVALID_REASON");
-							concept.validEndDate = conceptRow.get("VALID_END_DATE");
-							concept.validStartDate = conceptRow.get("VALID_START_DATE");
-							concept.vocabulary = conceptRow.get("VOCABULARY_ID");
-							if (loincToInfo != null && concept.vocabulary.equals("LOINC")) {
-								String info = loincToInfo.get(concept.conceptCode);
-								if (info != null)
-									concept.additionalInformation = info;
-							}
-							if (concept.additionalInformation == null)
-								concept.additionalInformation = "";
-							usagiSearchEngine.addConceptToIndex(concept);
-						}
+				if (multiRowSet.get("concept").size() == 0) {
+					if (warnCount < MAX_WARN_COUNT) {
+						warnCount++;
+						System.out.println("No concept found for concept ID " + multiRowSet.linkingId);
 					}
+				} else {
+
+					Row conceptRow = multiRowSet.get("concept").get(0);
+					if (conceptRow.getCells().size() > 2) // Extra check to catch badly formatted rows (which are in a vocab we don't care about)
+						if (conceptRow.get("STANDARD_CONCEPT").equals("S")) {
+							vocabularies.add(conceptRow.get("VOCABULARY_ID"));
+							conceptClassIds.add(conceptRow.get("CONCEPT_CLASS_ID"));
+							domainIds.add(conceptRow.get("DOMAIN_ID"));
+							List<Row> synonymRows = multiRowSet.get("concept_synonym");
+
+							// Adding concept name as synonym:
+							Row tempRow = new Row();
+							tempRow.add("CONCEPT_SYNONYM_NAME", conceptRow.get("CONCEPT_NAME"));
+							synonymRows.add(tempRow);
+
+							for (Row synonymRow : synonymRows) {
+								TargetConcept concept = new TargetConcept();
+								concept.term = synonymRow.get("CONCEPT_SYNONYM_NAME");
+								concept.conceptClass = conceptRow.get("CONCEPT_CLASS_ID");
+								concept.conceptCode = conceptRow.get("CONCEPT_CODE");
+								concept.conceptId = conceptRow.getInt("CONCEPT_ID");
+								concept.conceptName = conceptRow.get("CONCEPT_NAME");
+								for (String domain : conceptRow.get("DOMAIN_ID").split("/")) {
+									if (domain.equals("Obs"))
+										domain = "Observation";
+									if (domain.equals("Meas"))
+										domain = "Measurement";
+									concept.domains.add(domain);
+								}
+								concept.invalidReason = conceptRow.get("INVALID_REASON");
+								concept.validEndDate = conceptRow.get("VALID_END_DATE");
+								concept.validStartDate = conceptRow.get("VALID_START_DATE");
+								concept.vocabulary = conceptRow.get("VOCABULARY_ID");
+								if (loincToInfo != null && concept.vocabulary.equals("LOINC")) {
+									String info = loincToInfo.get(concept.conceptCode);
+									if (info != null)
+										concept.additionalInformation = info;
+								}
+								if (concept.additionalInformation == null)
+									concept.additionalInformation = "";
+								usagiSearchEngine.addConceptToIndex(concept);
+							}
+						}
+				}
 			}
 			usagiSearchEngine.close();
 			saveSorted(vocabularies, Global.folder + "/VocabularyIds.txt");
 			saveSorted(conceptClassIds, Global.folder + "/ConceptClassIds.txt");
 			saveSorted(domainIds, Global.folder + "/DomainIds.txt");
-			if (dialog != null) 
+			if (dialog != null)
 				dialog.setVisible(false);
 		}
 
