@@ -33,7 +33,7 @@ Getting Started
 ===============
 1. Under the [Releases](https://github.com/OHDSI/Usagi/releases) tab, download Usagi*.zip
 2. Unzip the download
-3. Click on Usagi1.5GB.cmd (Windows) or Usagi1.5GB.sh (Linux, Mac) to start Usagi
+3. Click on Usagi_vx.x.x.jar to start Usagi
 4. Usagi will prompt you to specifiy the location of the Vocabulary CSV files to create the index (needs to be done only once)
 
 Getting Involved
