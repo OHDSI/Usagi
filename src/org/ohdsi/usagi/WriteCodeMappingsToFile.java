@@ -28,7 +28,7 @@ public class WriteCodeMappingsToFile {
 	private WriteCSVFileWithHeader	out;
 
 	public WriteCodeMappingsToFile(String filename) {
-		out = new WriteCSVFileWithHeader(filename);
+		out = new WriteCSVFileWithHeader(filename, "UTF-8");
 	}
 
 	public void write(CodeMapping codeMapping) {

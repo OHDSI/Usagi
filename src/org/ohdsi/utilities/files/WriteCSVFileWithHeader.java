@@ -37,6 +37,16 @@ public class WriteCSVFileWithHeader {
 		headerWritten = true;
 	}
 	
+	public WriteCSVFileWithHeader(String filename, String charSet) {
+		out = new WriteCSVFile(filename, charSet);
+		headerWritten = false;
+	}
+	
+	public WriteCSVFileWithHeader(String filename, String charSet, boolean append) {
+		out = new WriteCSVFile(filename, charSet, append);
+		headerWritten = false;
+	}
+	
 	public void write(Row row) {
 		if (threadSafe)
 			lock.lock();

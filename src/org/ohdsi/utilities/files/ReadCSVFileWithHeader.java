@@ -26,10 +26,22 @@ import java.util.Map;
 public class ReadCSVFileWithHeader implements Iterable<Row> {
 	private InputStream	inputstream;
 	private char		delimiter	= ',';
+	private String charSet = "ISO-8859-1";
 
 	public ReadCSVFileWithHeader(String filename, char delimiter) {
 		this(filename);
 		this.delimiter = delimiter;
+	}
+	
+	public ReadCSVFileWithHeader(String filename, String charSet) {
+		this(filename);
+		this.charSet = charSet;
+	}
+	
+	public ReadCSVFileWithHeader(String filename, char delimiter, String charSet) {
+		this(filename);
+		this.delimiter = delimiter;
+		this.charSet = charSet;
 	}
 
 	public ReadCSVFileWithHeader(String filename) {
@@ -41,6 +53,11 @@ public class ReadCSVFileWithHeader implements Iterable<Row> {
 	}
 
 	public ReadCSVFileWithHeader(InputStream inputstream) {
+		this.inputstream = inputstream;
+	}
+	
+	public ReadCSVFileWithHeader(InputStream inputstream, String charSet) {
+		this.charSet = charSet;
 		this.inputstream = inputstream;
 	}
 
@@ -55,7 +72,7 @@ public class ReadCSVFileWithHeader implements Iterable<Row> {
 		private Map<String, Integer>	fieldName2ColumnIndex;
 
 		public RowIterator() {
-			iterator = new ReadCSVFile(inputstream, delimiter).iterator();
+			iterator = new ReadCSVFile(inputstream, delimiter, charSet).iterator();
 			fieldName2ColumnIndex = new HashMap<String, Integer>();
 			for (String header : iterator.next())
 				fieldName2ColumnIndex.put(header, fieldName2ColumnIndex.size());

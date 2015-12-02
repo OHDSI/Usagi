@@ -40,7 +40,7 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 		private Row				row;
 
 		public RowIterator() {
-			iterator = new ReadCSVFileWithHeader(filename).iterator();
+			iterator = new ReadCSVFileWithHeader(filename, "UTF-8").iterator();
 			if (iterator.hasNext()) {
 				row = iterator.next();
 				readNext();

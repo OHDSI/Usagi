@@ -51,7 +51,7 @@ public class BuildIndex {
 	public static void main(String[] args) {
 		Global.folder = "C:/home/Software/Usagi/";
 		BuildIndex buildIndex = new BuildIndex();
-		buildIndex.buildIndex("S:/Data/OMOP Standard Vocabulary V5/MyDownloadFromAthena", "S:/Data/LOINC/loinc.csv");
+		buildIndex.buildIndex("S:/Data/OMOP Standard Vocabulary V5/Vocabulary_5.0_20150717_v4", "S:/Data/LOINC/loinc.csv");
 	}
 
 	public void buildIndex(String vocabFolder, String loincFile) {
@@ -119,10 +119,10 @@ public class BuildIndex {
 				report("Loading LOINC additional information");
 				loincToInfo = loadLoincInfo(loincFile);
 			}
-			// report("Sorting vocabulary files");
-			// FileSorter.delimiter = '\t';
-			// FileSorter.sort(vocabFolder + "/CONCEPT.csv", new String[] { "CONCEPT_ID" }, new boolean[] { true });
-			// FileSorter.sort(vocabFolder + "/CONCEPT_SYNONYM.csv", new String[] { "CONCEPT_ID" }, new boolean[] { true });
+			report("Sorting vocabulary files");
+			FileSorter.delimiter = '\t';
+			FileSorter.sort(vocabFolder + "/CONCEPT.csv", new String[] { "CONCEPT_ID" }, new boolean[] { true });
+			FileSorter.sort(vocabFolder + "/CONCEPT_SYNONYM.csv", new String[] { "CONCEPT_ID" }, new boolean[] { true });
 
 			report("Adding concepts to index");
 			UsagiSearchEngine usagiSearchEngine = new UsagiSearchEngine(Global.folder);

@@ -27,18 +27,39 @@ import java.util.List;
 public class WriteCSVFile {
 
 	private char	delimiter	= ',';
+	private String	charSet		= "ISO-8859-1";
 
 	public WriteCSVFile(String filename, boolean append) {
 		FileOutputStream stream;
 		try {
 			stream = new FileOutputStream(filename, append);
-			bufferedWrite = new BufferedWriter(new OutputStreamWriter(stream, "ISO-8859-1"), 10000);
+			bufferedWrite = new BufferedWriter(new OutputStreamWriter(stream, charSet), 10000);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-
+	}
+	
+	public WriteCSVFile(String filename, String charSet, boolean append) {
+		this.charSet = charSet;
+		FileOutputStream stream;
+		try {
+			stream = new FileOutputStream(filename, append);
+			bufferedWrite = new BufferedWriter(new OutputStreamWriter(stream, charSet), 10000);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public WriteCSVFile(String filename, String charSet) {
+		this(filename, charSet, false);
+	}
+	
+	public WriteCSVFile(String filename) {
+		this(filename, false);
 	}
 
 	public WriteCSVFile(String filename, char delimiter) {
@@ -46,8 +67,9 @@ public class WriteCSVFile {
 		this.delimiter = delimiter;
 	}
 
-	public WriteCSVFile(String filename) {
-		this(filename, false);
+	public WriteCSVFile(String filename, char delimiter, String charSet) {
+		this(filename, charSet);
+		this.delimiter = delimiter;
 	}
 
 	public void write(List<String> string) {

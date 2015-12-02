@@ -31,17 +31,34 @@ public class ReadCSVFile implements Iterable<List<String>> {
 	protected BufferedReader	bufferedReader;
 	public boolean				EOF			= false;
 	private char				delimiter	= ',';
+	private String				charSet		= "ISO-8859-1";
 
-	
 	public ReadCSVFile(String filename, char delimiter) {
 		this(filename);
 		this.delimiter = delimiter;
 	}
 	
+	public ReadCSVFile(String filename, String	charSet) {
+		this.charSet = charSet;
+		try {
+			FileInputStream textFileStream = new FileInputStream(filename);
+			bufferedReader = new BufferedReader(new InputStreamReader(textFileStream, charSet));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}		
+	}
+	
+	public ReadCSVFile(String filename, char delimiter, String	charSet) {
+		this(filename, charSet);
+		this.delimiter = delimiter;
+	}
+
 	public ReadCSVFile(String filename) {
 		try {
 			FileInputStream textFileStream = new FileInputStream(filename);
-			bufferedReader = new BufferedReader(new InputStreamReader(textFileStream, "ISO-8859-1"));
+			bufferedReader = new BufferedReader(new InputStreamReader(textFileStream, charSet));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
@@ -53,15 +70,28 @@ public class ReadCSVFile implements Iterable<List<String>> {
 		this(inputstream);
 		this.delimiter = delimiter;
 	}
-	
+
 	public ReadCSVFile(InputStream inputstream) {
 		try {
-			bufferedReader = new BufferedReader(new InputStreamReader(inputstream, "ISO-8859-1"));
+			bufferedReader = new BufferedReader(new InputStreamReader(inputstream, charSet));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public ReadCSVFile(InputStream inputstream, String charSet) {
+		this.charSet = charSet;
+		try {
+			bufferedReader = new BufferedReader(new InputStreamReader(inputstream, charSet));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
 	}
 
+	public ReadCSVFile(InputStream inputstream, char delimiter, String charSet) {
+		this(inputstream, charSet);
+		this.delimiter = delimiter;
+	}
 	public Iterator<List<String>> getIterator() {
 		return iterator();
 	}
