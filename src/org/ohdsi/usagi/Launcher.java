@@ -3,7 +3,7 @@ package org.ohdsi.usagi;
 import org.ohdsi.usagi.ui.UsagiMain;
 
 public class Launcher {
-	private final static int	MIN_HEAP	= 1500;
+	private final static int	MIN_HEAP	= 1000;
 
 	public static void main(String[] args) throws Exception {
 
