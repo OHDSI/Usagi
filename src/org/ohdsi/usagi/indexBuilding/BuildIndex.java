@@ -34,6 +34,7 @@ import javax.swing.JPanel;
 import org.ohdsi.usagi.TargetConcept;
 import org.ohdsi.usagi.UsagiSearchEngine;
 import org.ohdsi.usagi.ui.Global;
+import org.ohdsi.utilities.StringUtilities;
 import org.ohdsi.utilities.files.FileSorter;
 import org.ohdsi.utilities.files.MultiRowIterator;
 import org.ohdsi.utilities.files.WriteTextFile;
@@ -114,6 +115,7 @@ public class BuildIndex {
 
 		public void run() {
 			// Load LOINC information into memory if user wants to include it in the index:
+			try {
 			Map<String, String> loincToInfo = null;
 			if (loincFile != null) {
 				report("Loading LOINC additional information");
@@ -195,6 +197,13 @@ public class BuildIndex {
 			saveSorted(domainIds, Global.folder + "/DomainIds.txt");
 			if (dialog != null)
 				dialog.setVisible(false);
+			} catch (Exception e){
+				if (Global.frame != null)
+				  JOptionPane.showMessageDialog(Global.frame, StringUtilities.wordWrap(e.getLocalizedMessage(), 80), "Error", JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+				if (dialog != null)
+					dialog.setVisible(false);
+			}
 		}
 
 		private void saveSorted(Set<String> set, String fileName) {
