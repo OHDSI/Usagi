@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2015 Observational Health Data Sciences and Informatics
+ * Copyright 2016 Observational Health Data Sciences and Informatics
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.ohdsi.usagi.ErrorReport;
 import org.ohdsi.usagi.TargetConcept;
 import org.ohdsi.usagi.UsagiSearchEngine;
 import org.ohdsi.usagi.ui.Global;
@@ -116,94 +117,102 @@ public class BuildIndex {
 		public void run() {
 			// Load LOINC information into memory if user wants to include it in the index:
 			try {
-			Map<String, String> loincToInfo = null;
-			if (loincFile != null) {
-				report("Loading LOINC additional information");
-				loincToInfo = loadLoincInfo(loincFile);
-			}
-			report("Sorting vocabulary files");
-			FileSorter.delimiter = '\t';
-			FileSorter.sort(vocabFolder + "/CONCEPT.csv", new String[] { "CONCEPT_ID" }, new boolean[] { true });
-			FileSorter.sort(vocabFolder + "/CONCEPT_SYNONYM.csv", new String[] { "CONCEPT_ID" }, new boolean[] { true });
-
-			report("Adding concepts to index");
-			UsagiSearchEngine usagiSearchEngine = new UsagiSearchEngine(Global.folder);
-			usagiSearchEngine.createNewMainIndex();
-
-			Iterator<Row> conceptIterator = new ReadCSVFileWithHeader(vocabFolder + "/CONCEPT.csv", '\t').iterator();
-			Iterator<Row> conceptSynIterator = new ReadCSVFileWithHeader(vocabFolder + "/CONCEPT_SYNONYM.csv", '\t').iterator();
-			@SuppressWarnings("unchecked")
-			MultiRowIterator iterator = new MultiRowIterator("CONCEPT_ID", true, new String[] { "concept", "concept_synonym" }, new Iterator[] {
-					conceptIterator, conceptSynIterator });
-			Set<String> vocabularies = new HashSet<String>();
-			Set<String> conceptClassIds = new HashSet<String>();
-			Set<String> domainIds = new HashSet<String>();
-			int warnCount = 0;
-			while (iterator.hasNext()) {
-				MultiRowSet multiRowSet = iterator.next();
-				if (multiRowSet.get("concept").size() == 0) {
-					if (warnCount < MAX_WARN_COUNT) {
-						warnCount++;
-						System.out.println("No concept found for concept ID " + multiRowSet.linkingId);
-					}
-				} else {
-
-					Row conceptRow = multiRowSet.get("concept").get(0);
-					if (conceptRow.getCells().size() > 2) // Extra check to catch badly formatted rows (which are in a vocab we don't care about)
-						if (conceptRow.get("STANDARD_CONCEPT").equals("S")) {
-							vocabularies.add(conceptRow.get("VOCABULARY_ID"));
-							conceptClassIds.add(conceptRow.get("CONCEPT_CLASS_ID"));
-							domainIds.add(conceptRow.get("DOMAIN_ID"));
-							List<Row> synonymRows = multiRowSet.get("concept_synonym");
-
-							// Adding concept name as synonym:
-							Row tempRow = new Row();
-							tempRow.add("CONCEPT_SYNONYM_NAME", conceptRow.get("CONCEPT_NAME"));
-							synonymRows.add(tempRow);
-
-							for (Row synonymRow : synonymRows) {
-								TargetConcept concept = new TargetConcept();
-								concept.term = synonymRow.get("CONCEPT_SYNONYM_NAME");
-								concept.conceptClass = conceptRow.get("CONCEPT_CLASS_ID");
-								concept.conceptCode = conceptRow.get("CONCEPT_CODE");
-								concept.conceptId = conceptRow.getInt("CONCEPT_ID");
-								concept.conceptName = conceptRow.get("CONCEPT_NAME");
-								for (String domain : conceptRow.get("DOMAIN_ID").split("/")) {
-									if (domain.equals("Obs"))
-										domain = "Observation";
-									if (domain.equals("Meas"))
-										domain = "Measurement";
-									concept.domains.add(domain);
-								}
-								concept.invalidReason = conceptRow.get("INVALID_REASON");
-								concept.validEndDate = conceptRow.get("VALID_END_DATE");
-								concept.validStartDate = conceptRow.get("VALID_START_DATE");
-								concept.vocabulary = conceptRow.get("VOCABULARY_ID");
-								if (loincToInfo != null && concept.vocabulary.equals("LOINC")) {
-									String info = loincToInfo.get(concept.conceptCode);
-									if (info != null)
-										concept.additionalInformation = info;
-								}
-								if (concept.additionalInformation == null)
-									concept.additionalInformation = "";
-								usagiSearchEngine.addConceptToIndex(concept);
-							}
-						}
+				Map<String, String> loincToInfo = null;
+				if (loincFile != null) {
+					report("Loading LOINC additional information");
+					loincToInfo = loadLoincInfo(loincFile);
 				}
-			}
-			usagiSearchEngine.close();
-			saveSorted(vocabularies, Global.folder + "/VocabularyIds.txt");
-			saveSorted(conceptClassIds, Global.folder + "/ConceptClassIds.txt");
-			saveSorted(domainIds, Global.folder + "/DomainIds.txt");
-			if (dialog != null)
-				dialog.setVisible(false);
-			} catch (Exception e){
-				if (Global.frame != null)
-				  JOptionPane.showMessageDialog(Global.frame, StringUtilities.wordWrap(e.getLocalizedMessage(), 80), "Error", JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
+				report("Sorting vocabulary files");
+				FileSorter.delimiter = '\t';
+				FileSorter.sort(vocabFolder + "/CONCEPT.csv", new String[] { "CONCEPT_ID" }, new boolean[] { true });
+				FileSorter.sort(vocabFolder + "/CONCEPT_SYNONYM.csv", new String[] { "CONCEPT_ID" }, new boolean[] { true });
+
+				report("Adding concepts to index");
+				UsagiSearchEngine usagiSearchEngine = new UsagiSearchEngine(Global.folder);
+				usagiSearchEngine.createNewMainIndex();
+
+				Iterator<Row> conceptIterator = new ReadCSVFileWithHeader(vocabFolder + "/CONCEPT.csv", '\t').iterator();
+				Iterator<Row> conceptSynIterator = new ReadCSVFileWithHeader(vocabFolder + "/CONCEPT_SYNONYM.csv", '\t').iterator();
+				@SuppressWarnings("unchecked")
+				MultiRowIterator iterator = new MultiRowIterator("CONCEPT_ID", true, new String[] { "concept", "concept_synonym" }, new Iterator[] {
+						conceptIterator, conceptSynIterator });
+				Set<String> vocabularies = new HashSet<String>();
+				Set<String> conceptClassIds = new HashSet<String>();
+				Set<String> domainIds = new HashSet<String>();
+				int warnCount = 0;
+				while (iterator.hasNext()) {
+					MultiRowSet multiRowSet = iterator.next();
+					if (multiRowSet.get("concept").size() == 0) {
+						if (warnCount < MAX_WARN_COUNT) {
+							warnCount++;
+							System.out.println("No concept found for concept ID " + multiRowSet.linkingId);
+						}
+					} else {
+
+						Row conceptRow = multiRowSet.get("concept").get(0);
+						if (conceptRow.getCells().size() > 2) // Extra check to catch badly formatted rows (which are in a vocab we don't care about)
+							if (conceptRow.get("STANDARD_CONCEPT").equals("S")) {
+								vocabularies.add(conceptRow.get("VOCABULARY_ID"));
+								conceptClassIds.add(conceptRow.get("CONCEPT_CLASS_ID"));
+								domainIds.add(conceptRow.get("DOMAIN_ID"));
+								List<Row> synonymRows = multiRowSet.get("concept_synonym");
+
+								// Adding concept name as synonym:
+								Row tempRow = new Row();
+								tempRow.add("CONCEPT_SYNONYM_NAME", conceptRow.get("CONCEPT_NAME"));
+								synonymRows.add(tempRow);
+
+								for (Row synonymRow : synonymRows) {
+									TargetConcept concept = new TargetConcept();
+									concept.term = synonymRow.get("CONCEPT_SYNONYM_NAME");
+									concept.conceptClass = conceptRow.get("CONCEPT_CLASS_ID");
+									concept.conceptCode = conceptRow.get("CONCEPT_CODE");
+									concept.conceptId = conceptRow.getInt("CONCEPT_ID");
+									concept.conceptName = conceptRow.get("CONCEPT_NAME");
+									for (String domain : conceptRow.get("DOMAIN_ID").split("/")) {
+										if (domain.equals("Obs"))
+											domain = "Observation";
+										if (domain.equals("Meas"))
+											domain = "Measurement";
+										concept.domains.add(domain);
+									}
+									concept.invalidReason = conceptRow.get("INVALID_REASON");
+									concept.validEndDate = conceptRow.get("VALID_END_DATE");
+									concept.validStartDate = conceptRow.get("VALID_START_DATE");
+									concept.vocabulary = conceptRow.get("VOCABULARY_ID");
+									if (loincToInfo != null && concept.vocabulary.equals("LOINC")) {
+										String info = loincToInfo.get(concept.conceptCode);
+										if (info != null)
+											concept.additionalInformation = info;
+									}
+									if (concept.additionalInformation == null)
+										concept.additionalInformation = "";
+									usagiSearchEngine.addConceptToIndex(concept);
+								}
+							}
+					}
+				}
+				usagiSearchEngine.close();
+				saveSorted(vocabularies, Global.folder + "/VocabularyIds.txt");
+				saveSorted(conceptClassIds, Global.folder + "/ConceptClassIds.txt");
+				saveSorted(domainIds, Global.folder + "/DomainIds.txt");
+				if (dialog != null)
+					dialog.setVisible(false);
+			} catch (Exception e) {
+				handleError(e);
 				if (dialog != null)
 					dialog.setVisible(false);
 			}
+		}
+		
+		private void handleError(Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			String errorReportFilename = ErrorReport.generate(Global.folder, e);
+			String message = "Error: " + e.getLocalizedMessage();
+			message += "\nAn error report has been generated:\n" + errorReportFilename;
+			System.out.println(message);
+			if (Global.frame != null)
+				JOptionPane.showMessageDialog(Global.frame, StringUtilities.wordWrap(message, 80), "Error", JOptionPane.ERROR_MESSAGE);
 		}
 
 		private void saveSorted(Set<String> set, String fileName) {
