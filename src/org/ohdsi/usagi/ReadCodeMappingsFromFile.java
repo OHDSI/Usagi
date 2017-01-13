@@ -57,7 +57,7 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 //					System.out.println("asdf");
 				buffer.matchScore = row.getDouble("matchScore");
 				buffer.mappingStatus = MappingStatus.valueOf(row.get("mappingStatus"));
-				while (row != null && new SourceCode(row).sourceCode.equals(buffer.sourceCode.sourceCode)) {
+				while (row != null && new SourceCode(row).sourceCode.equals(buffer.sourceCode.sourceCode) && new SourceCode(row).sourceName.equals(buffer.sourceCode.sourceName)) {
 					buffer.targetConcepts.add(new TargetConcept(row));
 					if (iterator.hasNext())
 						row = iterator.next();
