@@ -32,10 +32,12 @@ import javax.swing.JPanel;
 
 import org.ohdsi.usagi.UsagiSearchEngine;
 import org.ohdsi.usagi.ui.actions.AboutAction;
+import org.ohdsi.usagi.ui.actions.ApplyPreviousMappingAction;
 import org.ohdsi.usagi.ui.actions.ApproveAction;
 import org.ohdsi.usagi.ui.actions.ApproveAllAction;
 import org.ohdsi.usagi.ui.actions.ClearAllAction;
 import org.ohdsi.usagi.ui.actions.ConceptInformationAction;
+import org.ohdsi.usagi.ui.actions.ExitAction;
 import org.ohdsi.usagi.ui.actions.ExportSourceToConceptMapAction;
 import org.ohdsi.usagi.ui.actions.ImportAction;
 import org.ohdsi.usagi.ui.actions.OpenAction;
@@ -68,6 +70,7 @@ public class UsagiMain implements ActionListener {
 		Global.conceptInformationDialog = new ConceptInformationDialog();
 		Global.frame = frame;
 		Global.openAction = new OpenAction();
+		Global.applyPreviousMappingAction = new ApplyPreviousMappingAction();
 		Global.importAction = new ImportAction();
 		Global.exportAction = new ExportSourceToConceptMapAction();
 		Global.saveAction = new SaveAction();
@@ -77,7 +80,9 @@ public class UsagiMain implements ActionListener {
 		Global.aboutAction = new AboutAction();
 		Global.approveAllAction = new ApproveAllAction();
 		Global.rebuildIndexAction = new RebuildIndexAction();
+		Global.exitAction = new ExitAction();
 
+		Global.applyPreviousMappingAction.setEnabled(false);
 		Global.saveAction.setEnabled(false);
 		Global.saveAsAction.setEnabled(false);
 		Global.exportAction.setEnabled(false);

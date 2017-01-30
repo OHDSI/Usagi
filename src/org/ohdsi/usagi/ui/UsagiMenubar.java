@@ -30,9 +30,11 @@ public class UsagiMenubar extends JMenuBar {
 
 		fileMenu.add(Global.openAction);
 		fileMenu.add(Global.importAction);
+		fileMenu.add(Global.applyPreviousMappingAction);
 		fileMenu.add(Global.exportAction);
 		fileMenu.add(Global.saveAction);
 		fileMenu.add(Global.saveAsAction);
+		fileMenu.add(Global.exitAction);
 
 		JMenu editMenu = new JMenu("Edit");
 		editMenu.setMnemonic(new Integer(KeyEvent.VK_E));

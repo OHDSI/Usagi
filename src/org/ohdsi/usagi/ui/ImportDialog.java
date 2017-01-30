@@ -412,6 +412,7 @@ public class ImportDialog extends JDialog {
 					progressBar.setValue(Math.round(100 * Global.mapping.size() / sourceCodes.size()));
 				}
 				dialog.setVisible(false);
+				Global.applyPreviousMappingAction.setEnabled(true);
 				Global.saveAction.setEnabled(true);
 				Global.saveAsAction.setEnabled(true);
 				Global.exportAction.setEnabled(true);

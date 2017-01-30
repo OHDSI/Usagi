@@ -19,10 +19,12 @@ import javax.swing.JFrame;
 
 import org.ohdsi.usagi.UsagiSearchEngine;
 import org.ohdsi.usagi.ui.actions.AboutAction;
+import org.ohdsi.usagi.ui.actions.ApplyPreviousMappingAction;
 import org.ohdsi.usagi.ui.actions.ApproveAction;
 import org.ohdsi.usagi.ui.actions.ApproveAllAction;
 import org.ohdsi.usagi.ui.actions.ClearAllAction;
 import org.ohdsi.usagi.ui.actions.ConceptInformationAction;
+import org.ohdsi.usagi.ui.actions.ExitAction;
 import org.ohdsi.usagi.ui.actions.ExportSourceToConceptMapAction;
 import org.ohdsi.usagi.ui.actions.ImportAction;
 import org.ohdsi.usagi.ui.actions.OpenAction;
@@ -43,6 +45,7 @@ public class Global {
 	public static UsagiStatusBar					statusBar;
 
 	public static OpenAction						openAction;
+	public static ApplyPreviousMappingAction		applyPreviousMappingAction;
 	public static ImportAction						importAction;
 	public static SaveAction						saveAction;
 	public static SaveAsAction						saveAsAction;
@@ -53,4 +56,5 @@ public class Global {
 	public static AboutAction						aboutAction;
 	public static ExportSourceToConceptMapAction	exportAction;
 	public static RebuildIndexAction				rebuildIndexAction;
+	public static ExitAction						exitAction;
 }
