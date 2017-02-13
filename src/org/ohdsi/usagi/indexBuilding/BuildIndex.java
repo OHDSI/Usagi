@@ -151,7 +151,7 @@ public class BuildIndex {
 
 						Row conceptRow = multiRowSet.get("concept").get(0);
 						if (conceptRow.getCells().size() > 2) // Extra check to catch badly formatted rows (which are in a vocab we don't care about)
-							if (conceptRow.get("STANDARD_CONCEPT").equals("S")) {
+							if (conceptRow.get("STANDARD_CONCEPT").equals("S") || conceptRow.get("STANDARD_CONCEPT").equals("C")) {
 								vocabularies.add(conceptRow.get("VOCABULARY_ID"));
 								conceptClassIds.add(conceptRow.get("CONCEPT_CLASS_ID"));
 								domainIds.add(conceptRow.get("DOMAIN_ID"));
@@ -179,6 +179,7 @@ public class BuildIndex {
 									concept.invalidReason = conceptRow.get("INVALID_REASON");
 									concept.validEndDate = conceptRow.get("VALID_END_DATE");
 									concept.validStartDate = conceptRow.get("VALID_START_DATE");
+									concept.standardConcept = conceptRow.get("STANDARD_CONCEPT");
 									concept.vocabulary = conceptRow.get("VOCABULARY_ID");
 									if (loincToInfo != null && concept.vocabulary.equals("LOINC")) {
 										String info = loincToInfo.get(concept.conceptCode);

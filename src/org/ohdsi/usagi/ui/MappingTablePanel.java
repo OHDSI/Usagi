@@ -94,7 +94,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 
 		private String[]			defaultColumnNames	= { "Status", "Source code", "Source term", "Frequency", "Match score", "Synonym", "Concept ID",
 																"Concept name", "Domain", "Concept class", "Vocabulary", "Concept code", "Valid start date",
-																"Valid end date", "Invalid reason" };
+																"Valid end date", "Invalid reason", "Standard concept" };
 		private String[]			columnNames			= defaultColumnNames;
 		private int					addInfoColCount		= 0;
 		private int					ADD_INFO_START_COL	= 4;
@@ -180,6 +180,8 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 						return targetConcept.validEndDate;
 					case 14:
 						return targetConcept.invalidReason;
+					case 15:
+						return targetConcept.standardConcept;
 					default:
 						return "";
 				}

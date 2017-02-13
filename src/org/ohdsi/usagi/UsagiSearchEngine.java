@@ -91,7 +91,8 @@ public class UsagiSearchEngine {
 	private QueryParser		conceptClassQueryParser;
 	private QueryParser		vocabularyQueryParser;
 	private QueryParser		keywordsQueryParser;
-	private QueryParser		invalidQueryParser;
+//	private QueryParser		invalidQueryParser;
+	private QueryParser		standardConceptParser;
 	private QueryParser		domainQueryParser;
 	private int				numDocs;
 	private FieldType		textVectorField			= getTextVectorFieldType();
@@ -150,6 +151,7 @@ public class UsagiSearchEngine {
 			document.add(new StringField("VALID_START_DATE", concept.validStartDate, Store.YES));
 			document.add(new StringField("VALID_END_DATE", concept.validEndDate, Store.YES));
 			document.add(new StringField("INVALID_REASON", concept.invalidReason, Store.YES));
+			document.add(new StringField("STANDARD_CONCEPT", concept.standardConcept, Store.YES));
 			document.add(new TextField("DOMAINS", StringUtilities.join(concept.domains, "\n"), Store.YES));
 			document.add(new StringField("ADDITIONAL_INFORMATION", concept.additionalInformation, Store.YES));
 			writer.addDocument(document);
@@ -260,7 +262,8 @@ public class UsagiSearchEngine {
 			vocabularyQueryParser = new QueryParser(Version.LUCENE_4_9, "VOCABULARY", new KeywordAnalyzer());
 			keywordsQueryParser = new QueryParser(Version.LUCENE_4_9, "TERM", analyzer);
 			domainQueryParser = new QueryParser(Version.LUCENE_4_9, "DOMAINS", analyzer);
-			invalidQueryParser = new QueryParser(Version.LUCENE_4_9, "INVALID_REASON", new KeywordAnalyzer());
+//			invalidQueryParser = new QueryParser(Version.LUCENE_4_9, "INVALID_REASON", new KeywordAnalyzer());
+			standardConceptParser = new QueryParser(Version.LUCENE_4_9, "STANDARD_CONCEPT", new KeywordAnalyzer());
 			numDocs = reader.numDocs();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -317,7 +320,7 @@ public class UsagiSearchEngine {
 	}
 
 	public List<ScoredConcept> search(String searchTerm, boolean useMlt, Collection<Integer> filterConceptIds, String filterDomain, String filterConceptClass,
-			String filterVocabulary, boolean filterInvalid) {
+			String filterVocabulary, boolean filterStandard) {
 		List<ScoredConcept> results = new ArrayList<ScoredConcept>();
 		try {
 			Query query;
@@ -365,9 +368,9 @@ public class UsagiSearchEngine {
 				Query vocabularyQuery = vocabularyQueryParser.parse("\"" + filterVocabulary.toString() + "\"");
 				booleanQuery.add(vocabularyQuery, Occur.MUST);
 			}
-			if (filterInvalid) {
-				Query invalidQuery = invalidQueryParser.parse("\"\"");
-				booleanQuery.add(invalidQuery, Occur.MUST);
+			if (filterStandard) {
+				Query standardQuery = standardConceptParser.parse("S");
+				booleanQuery.add(standardQuery, Occur.MUST);
 			}
 			TopDocs topDocs = searcher.search(booleanQuery, 100);
 
@@ -402,6 +405,7 @@ public class UsagiSearchEngine {
 			targetConcept.validStartDate = document.get("VALID_START_DATE");
 			targetConcept.validEndDate = document.get("VALID_END_DATE");
 			targetConcept.invalidReason = document.get("INVALID_REASON");
+			targetConcept.standardConcept = document.get("STANDARD_CONCEPT");
 			for (String domain : document.get("DOMAINS").split("\n"))
 				targetConcept.domains.add(domain);
 			targetConcept.additionalInformation = document.get("ADDITIONAL_INFORMATION");

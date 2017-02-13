@@ -38,6 +38,7 @@ public class TargetConcept {
 	public String				validEndDate;
 	public String				invalidReason;
 	public String				additionalInformation;
+	public String				standardConcept;
 	public static TargetConcept	EMPTY_CONCEPT	= createEmptyConcept();
 
 	public TargetConcept(Row row) {
@@ -52,6 +53,10 @@ public class TargetConcept {
 			validStartDate = row.get("VALID_START_DATE");
 			validEndDate = row.get("VALID_END_DATE");
 			invalidReason = row.get("INVALID_REASON");
+			if (row.getFieldNames().contains("STANDARDCONCEPT"))
+				standardConcept = row.get("STANDARDCONCEPT");
+			else
+				standardConcept = "";
 			for (String domain : row.get("DOMAINS").split("/"))
 				domains.add(domain);
 			additionalInformation = row.get("ADDITIONAL_INFORMATION");
@@ -65,6 +70,10 @@ public class TargetConcept {
 			validStartDate = row.get("VALIDSTARTDATE");
 			validEndDate = row.get("VALIDENDDATE");
 			invalidReason = row.get("INVALIDREASON");
+			if (row.getFieldNames().contains("STANDARDCONCEPT"))
+				standardConcept = row.get("STANDARDCONCEPT");
+			else
+				standardConcept = "";
 			for (String domain : row.get("DOMAINS").split("/"))
 				domains.add(domain);
 			additionalInformation = row.get("ADDITIONALINFORMATION");
@@ -82,6 +91,7 @@ public class TargetConcept {
 		concept.validStartDate = "";
 		concept.validEndDate = "";
 		concept.invalidReason = "";
+		concept.standardConcept = "";
 		concept.additionalInformation = "This is an empty concept";
 		return concept;
 	}
@@ -100,6 +110,7 @@ public class TargetConcept {
 		validEndDate = concept.validEndDate;
 		invalidReason = concept.invalidReason;
 		domains.addAll(concept.domains);
+		standardConcept = concept.standardConcept;
 		additionalInformation = concept.additionalInformation;
 	}
 
@@ -115,6 +126,7 @@ public class TargetConcept {
 		row.add("validEndDate", validEndDate);
 		row.add("invalidReason", invalidReason);
 		row.add("domains", StringUtilities.join(domains, "/"));
+		row.add("standardConcept", standardConcept);
 		if (additionalInformation == null)
 			row.add("additionalInformation", "");
 		else

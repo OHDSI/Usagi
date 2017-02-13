@@ -375,7 +375,7 @@ public class ImportDialog extends JDialog {
 			try {
 				Global.usagiSearchEngine.createDerivedIndex(sourceCodes, null);
 
-				boolean filterInvalid = filterPanel.getFilterInvalid();
+				boolean filterStandard = filterPanel.getFilterStandard();
 				String filterConceptClass = null;
 				if (filterPanel.getFilterByConceptClass())
 					filterConceptClass = filterPanel.getConceptClass();
@@ -394,7 +394,7 @@ public class ImportDialog extends JDialog {
 
 					CodeMapping codeMapping = new CodeMapping(sourceCode);
 					List<ScoredConcept> concepts = Global.usagiSearchEngine.search(sourceCode.sourceName, true, filterConceptIds, filterDomain,
-							filterConceptClass, filterVocabulary, filterInvalid);
+							filterConceptClass, filterVocabulary, filterStandard);
 					if (concepts.size() > 0) {
 						codeMapping.targetConcepts.add(concepts.get(0).concept);
 						codeMapping.matchScore = concepts.get(0).matchScore;

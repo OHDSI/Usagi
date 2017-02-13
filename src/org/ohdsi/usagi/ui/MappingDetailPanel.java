@@ -206,6 +206,10 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			}
 
 		});
+//		searchTable.hideColumn("Synonym");
+		searchTable.hideColumn("Valid start date");
+		searchTable.hideColumn("Valid end date");
+		searchTable.hideColumn("Invalid reason");
 		panel.add(new JScrollPane(searchTable));
 
 		JPanel buttonPanel = new JPanel();
@@ -384,7 +388,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			if (filterPanel.getFilterByAuto())
 				filterConceptIds = codeMapping.sourceCode.sourceAutoAssignedConceptIds;
 
-			boolean filterInvalid = filterPanel.getFilterInvalid();
+			boolean filterStandard = filterPanel.getFilterStandard();
 			String filterConceptClass = null;
 			if (filterPanel.getFilterByConceptClass())
 				filterConceptClass = filterPanel.getConceptClass();
@@ -400,7 +404,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 
 			if (Global.usagiSearchEngine.isOpenForSearching()) {
 				List<ScoredConcept> searchResults = Global.usagiSearchEngine.search(query, true, filterConceptIds, filterDomain, filterConceptClass,
-						filterVocabulary, filterInvalid);
+						filterVocabulary, filterStandard);
 
 				searchTableModel.setScoredConcepts(searchResults);
 				searchTable.scrollRectToVisible(new Rectangle(searchTable.getCellRect(0, 0, true)));
@@ -505,7 +509,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 
 		private String				scoreColumnName		= "Score";
 		private String[]			columnNames			= { "Synonym", "Concept ID", "Concept name", "Domain", "Concept class", "Vocabulary", "Concept code",
-																"Valid start date", "Valid end date", "Invalid reason" };
+																"Valid start date", "Valid end date", "Invalid reason", "Standard concept" };
 		private List<TargetConcept>	targetConcepts		= new ArrayList<TargetConcept>();
 		private boolean				hasScoreColumn;
 		private Double[]			scoreColumn;
@@ -585,6 +589,8 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 					return targetConcept.validEndDate;
 				case 9:
 					return targetConcept.invalidReason;
+				case 10:
+					return targetConcept.standardConcept;
 				default:
 					return "";
 			}
@@ -616,6 +622,8 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 				case 8:
 					return String.class;
 				case 9:
+					return String.class;
+				case 10:
 					return String.class;
 				default:
 					return String.class;

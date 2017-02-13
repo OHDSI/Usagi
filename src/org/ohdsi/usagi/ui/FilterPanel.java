@@ -35,7 +35,7 @@ public class FilterPanel extends JPanel {
 
 	private static final long			serialVersionUID	= 1378433878412231259L;
 	private JCheckBox					filterByAutoCheckBox;
-	private JCheckBox					filterInvalidCheckBox;
+	private JCheckBox					filterStandardCheckBox;
 	private JCheckBox					filterByConceptClassCheckBox;
 	private JCheckBox					filterByVocabularyCheckBox;
 	private JCheckBox					filterByDomainCheckBox;
@@ -70,16 +70,17 @@ public class FilterPanel extends JPanel {
 		c.gridy = 0;
 		c.weightx = 0.1;
 		c.gridwidth = 2;
-		filterInvalidCheckBox = new JCheckBox("Filter invalid concepts", false);
-		filterInvalidCheckBox.setToolTipText("Limit the search to only valid concepts");
-		filterInvalidCheckBox.addActionListener(new ActionListener() {
+		filterStandardCheckBox = new JCheckBox("Filter standard concepts", false);
+		filterStandardCheckBox.setToolTipText("Limit the search to only standard concepts");
+		filterStandardCheckBox.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				notifyListeners();
 			}
 		});
-		add(filterInvalidCheckBox, c);
+		filterStandardCheckBox.setSelected(true);
+		add(filterStandardCheckBox, c);
 
 		c.gridx = 0;
 		c.gridy = 1;
@@ -197,8 +198,8 @@ public class FilterPanel extends JPanel {
 		return filterByAutoCheckBox.isSelected();
 	}
 
-	public boolean getFilterInvalid() {
-		return filterInvalidCheckBox.isSelected();
+	public boolean getFilterStandard() {
+		return filterStandardCheckBox.isSelected();
 	}
 
 	public boolean getFilterByConceptClass() {
