@@ -60,10 +60,11 @@ public class Concept {
 	public static Concept createEmptyConcept() {
 		Concept concept = new Concept();
 		concept.conceptId = 0;
-		concept.conceptName = "";
+		concept.conceptName = "Unmapped";
 		concept.conceptClassId = "";
 		concept.vocabularyId = "";
 		concept.conceptCode = "";
+		concept.domainId = "";
 		concept.validStartDate = "";
 		concept.validEndDate = "";
 		concept.invalidReason = "";

@@ -63,8 +63,10 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 						Global.approveAction.setEnabled(true);
 						Global.approveAllAction.setEnabled(true);
 						Global.clearAllAction.setEnabled(true);
-						Global.conceptInfoAction.setEnabled(true);
-						Global.conceptInformationDialog.setConcept(tableModel.getCodeMapping(modelRow).targetConcepts.get(0));
+						if (tableModel.getCodeMapping(modelRow).targetConcepts.size() > 0) {
+							Global.conceptInfoAction.setEnabled(true);
+							Global.conceptInformationDialog.setConcept(tableModel.getCodeMapping(modelRow).targetConcepts.get(0));
+						}
 					} else {
 						Global.approveAllAction.setEnabled(false);
 						Global.approveAction.setEnabled(false);
@@ -91,8 +93,8 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		private static final long	serialVersionUID	= 169286268154988911L;
 
 		private String[]			defaultColumnNames	= { "Status", "Source code", "Source term", "Frequency", "Match score", "Concept ID",
-																"Concept name", "Domain", "Concept class", "Vocabulary", "Concept code", "Valid start date",
-																"Valid end date", "Invalid reason", "Standard concept", "Parents", "Children" };
+				"Concept name", "Domain", "Concept class", "Vocabulary", "Concept code", "Valid start date",
+				"Valid end date", "Invalid reason", "Standard concept", "Parents", "Children" };
 		private String[]			columnNames			= defaultColumnNames;
 		private int					addInfoColCount		= 0;
 		private int					ADD_INFO_START_COL	= 4;

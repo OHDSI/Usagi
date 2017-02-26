@@ -31,14 +31,10 @@ public class UsagiCellRenderer extends DefaultTableCellRenderer {
 	private static Color			oddColor					= new Color(0.95f, 0.95f, 1f);
 	private static Color			checkedColor				= new Color(0.75f, 1f, 0.75f);
 	private static Color			checkedOddColor				= new Color(0.85f, 1f, 0.85f);
-
-	// private static DecimalFormat intFormatter = new DecimalFormat("###,###,###,###");
 	private static DecimalFormat	doubleFormatter				= new DecimalFormat("###,###,###,##0.00");
 
 	@Override
 	public void setValue(Object aValue) {
-		if (aValue == null)
-			System.out.println("asdf");
 		setToolTipText("<html>" + wordWrap(aValue.toString(), MAX_TOOLTIP_WIDTH_IN_CHARS) + "</html>");
 		super.setValue(aValue);
 	}

@@ -21,6 +21,8 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -115,7 +117,14 @@ public class ExportSourceToConceptMapDialog extends JDialog {
 		WriteCSVFileWithHeader out = new WriteCSVFileWithHeader(filename);
 		for (CodeMapping mapping : Global.mapping)
 			if (mapping.mappingStatus == MappingStatus.APPROVED) {
-				for (Concept targetConcept : mapping.targetConcepts) {
+				List<Concept> targetConcepts;
+				if (mapping.targetConcepts.size() == 0) {
+					targetConcepts = new ArrayList<Concept>(1);
+					targetConcepts.add(Concept.EMPTY_CONCEPT);
+				} else
+					targetConcepts = mapping.targetConcepts;
+
+				for (Concept targetConcept : targetConcepts) {
 					Row row = new Row();
 					row.add("source_code", mapping.sourceCode.sourceCode);
 					row.add("source_concept_id", "0");

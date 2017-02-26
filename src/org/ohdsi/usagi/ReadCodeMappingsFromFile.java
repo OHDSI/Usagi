@@ -58,8 +58,10 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 				buffer.mappingStatus = MappingStatus.valueOf(row.get("mappingStatus"));
 				while (row != null && new SourceCode(row).sourceCode.equals(buffer.sourceCode.sourceCode)
 						&& new SourceCode(row).sourceName.equals(buffer.sourceCode.sourceName)) {
-					Concept concept = Global.dbEngine.getConcept(row.getInt("conceptId"));
-					buffer.targetConcepts.add(concept);
+					if (row.getInt("conceptId") != 0) {
+						Concept concept = Global.dbEngine.getConcept(row.getInt("conceptId"));
+						buffer.targetConcepts.add(concept);
+					}
 					if (iterator.hasNext())
 						row = iterator.next();
 					else
