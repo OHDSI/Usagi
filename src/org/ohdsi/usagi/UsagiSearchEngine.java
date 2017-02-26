@@ -42,7 +42,6 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.StringField;
-import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.FieldInvertState;
 import org.apache.lucene.index.IndexReader;
@@ -68,6 +67,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.Version;
+import org.ohdsi.usagi.ui.Global;
 import org.ohdsi.utilities.DirectoryUtilities;
 import org.ohdsi.utilities.StringUtilities;
 
@@ -80,6 +80,8 @@ public class UsagiSearchEngine {
 	public static String	DERIVED_INDEX_FOLDER	= "derivedIndex";
 	public static String	SOURCE_CODE_TYPE_STRING	= "S";
 	public static String	CONCEPT_TYPE_STRING		= "C";
+	public static String	CONCEPT_TERM			= "C";
+	public static String	SOURCE_TERM				= "S";
 
 	private String			folder;
 	private IndexWriter		writer;
@@ -91,9 +93,9 @@ public class UsagiSearchEngine {
 	private QueryParser		conceptClassQueryParser;
 	private QueryParser		vocabularyQueryParser;
 	private QueryParser		keywordsQueryParser;
-//	private QueryParser		invalidQueryParser;
-	private QueryParser		standardConceptParser;
+	private QueryParser		standardConceptQueryParser;
 	private QueryParser		domainQueryParser;
+	private QueryParser		termTypeQueryParser;
 	private int				numDocs;
 	private FieldType		textVectorField			= getTextVectorFieldType();
 
@@ -136,24 +138,19 @@ public class UsagiSearchEngine {
 		return new File(folder + "/" + MAIN_INDEX_FOLDER).exists();
 	}
 
-	public void addConceptToIndex(TargetConcept concept) {
+	public void addTermToIndex(String term, String termType, Concept concept) {
 		if (writer == null)
 			throw new RuntimeException("Indexed not open for writing");
 		try {
 			Document document = new Document();
 			document.add(new StringField("TYPE", CONCEPT_TYPE_STRING, Store.YES));
-			document.add(new Field("TERM", concept.term, textVectorField));
+			document.add(new Field("TERM", term, textVectorField));
 			document.add(new StringField("CONCEPT_ID", Integer.toString(concept.conceptId), Store.YES));
-			document.add(new StringField("CONCEPT_NAME", concept.conceptName, Store.YES));
-			document.add(new StringField("CONCEPT_CLASS", concept.conceptClass, Store.YES));
-			document.add(new StringField("CONCEPT_CODE", concept.conceptCode, Store.YES));
-			document.add(new StringField("VOCABULARY", concept.vocabulary, Store.YES));
-			document.add(new StringField("VALID_START_DATE", concept.validStartDate, Store.YES));
-			document.add(new StringField("VALID_END_DATE", concept.validEndDate, Store.YES));
-			document.add(new StringField("INVALID_REASON", concept.invalidReason, Store.YES));
+			document.add(new StringField("DOMAIN_ID", concept.domainId, Store.YES));
+			document.add(new StringField("VOCABULARY_ID", concept.vocabularyId, Store.YES));
+			document.add(new StringField("CONCEPT_CLASS_ID", concept.conceptClassId, Store.YES));
 			document.add(new StringField("STANDARD_CONCEPT", concept.standardConcept, Store.YES));
-			document.add(new TextField("DOMAINS", StringUtilities.join(concept.domains, "\n"), Store.YES));
-			document.add(new StringField("ADDITIONAL_INFORMATION", concept.additionalInformation, Store.YES));
+			document.add(new StringField("TERM_TYPE", termType, Store.YES));
 			writer.addDocument(document);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -258,12 +255,12 @@ public class UsagiSearchEngine {
 			QueryParser typeQueryParser = new QueryParser(Version.LUCENE_4_9, "TYPE", new KeywordAnalyzer());
 			conceptQuery = typeQueryParser.parse(CONCEPT_TYPE_STRING);
 			conceptIdQueryParser = new QueryParser(Version.LUCENE_4_9, "CONCEPT_ID", new KeywordAnalyzer());
-			conceptClassQueryParser = new QueryParser(Version.LUCENE_4_9, "CONCEPT_CLASS", new KeywordAnalyzer());
-			vocabularyQueryParser = new QueryParser(Version.LUCENE_4_9, "VOCABULARY", new KeywordAnalyzer());
+			conceptClassQueryParser = new QueryParser(Version.LUCENE_4_9, "CONCEPT_CLASS_ID", new KeywordAnalyzer());
+			vocabularyQueryParser = new QueryParser(Version.LUCENE_4_9, "VOCABULARY_ID", new KeywordAnalyzer());
 			keywordsQueryParser = new QueryParser(Version.LUCENE_4_9, "TERM", analyzer);
-			domainQueryParser = new QueryParser(Version.LUCENE_4_9, "DOMAINS", analyzer);
-//			invalidQueryParser = new QueryParser(Version.LUCENE_4_9, "INVALID_REASON", new KeywordAnalyzer());
-			standardConceptParser = new QueryParser(Version.LUCENE_4_9, "STANDARD_CONCEPT", new KeywordAnalyzer());
+			domainQueryParser = new QueryParser(Version.LUCENE_4_9, "DOMAIN_ID", new KeywordAnalyzer());
+			standardConceptQueryParser = new QueryParser(Version.LUCENE_4_9, "STANDARD_CONCEPT", new KeywordAnalyzer());
+			termTypeQueryParser = new QueryParser(Version.LUCENE_4_9, "TERM_TYPE", new KeywordAnalyzer());
 			numDocs = reader.numDocs();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -309,18 +306,17 @@ public class UsagiSearchEngine {
 				System.gc();
 			}
 			if (writer != null) {
-				writer.forceMerge(1);
+//				writer.forceMerge(1);
 				writer.close();
 				writer = null;
 			}
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public List<ScoredConcept> search(String searchTerm, boolean useMlt, Collection<Integer> filterConceptIds, String filterDomain, String filterConceptClass,
-			String filterVocabulary, boolean filterStandard) {
+			String filterVocabulary, boolean filterStandard, boolean includeSourceConcepts) {
 		List<ScoredConcept> results = new ArrayList<ScoredConcept>();
 		try {
 			Query query;
@@ -369,17 +365,24 @@ public class UsagiSearchEngine {
 				booleanQuery.add(vocabularyQuery, Occur.MUST);
 			}
 			if (filterStandard) {
-				Query standardQuery = standardConceptParser.parse("S");
+				Query standardQuery = standardConceptQueryParser.parse("S");
 				booleanQuery.add(standardQuery, Occur.MUST);
+			}
+			if (!includeSourceConcepts) {
+				Query termTypeQuery = termTypeQueryParser.parse(CONCEPT_TERM);
+				booleanQuery.add(termTypeQuery, Occur.MUST);
 			}
 			TopDocs topDocs = searcher.search(booleanQuery, 100);
 
 			recomputeScores(topDocs.scoreDocs, query);
 			for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
-				TargetConcept targetConcept = docIdToTargetConcept(scoreDoc.doc);
+				Document document = reader.document(scoreDoc.doc);
+				int conceptId = Integer.parseInt(document.get("CONCEPT_ID"));
+				Concept targetConcept = Global.dbEngine.getConcept(conceptId);
+				String term = document.get("TERM");
 				// If matchscore = 0 but it was the one concept that was automatically selected, still allow it:
 				if (scoreDoc.score > 0 || (filterConceptIds != null && filterConceptIds.size() == 1 && filterConceptIds.contains(targetConcept.conceptId)))
-					results.add(new ScoredConcept(scoreDoc.score, targetConcept));
+					results.add(new ScoredConcept(scoreDoc.score, term, targetConcept));
 			}
 			reorderTies(results);
 			removeDuplicateConcepts(results);
@@ -389,47 +392,6 @@ public class UsagiSearchEngine {
 		}
 
 		return results;
-	}
-
-	private TargetConcept docIdToTargetConcept(int docId) {
-		try {
-			Document document = reader.document(docId);
-			int conceptId = Integer.parseInt(document.get("CONCEPT_ID"));
-			TargetConcept targetConcept = new TargetConcept();
-			targetConcept.term = document.get("TERM");
-			targetConcept.conceptId = conceptId;
-			targetConcept.conceptName = document.get("CONCEPT_NAME");
-			targetConcept.conceptClass = document.get("CONCEPT_CLASS");
-			targetConcept.vocabulary = document.get("VOCABULARY");
-			targetConcept.conceptCode = document.get("CONCEPT_CODE");
-			targetConcept.validStartDate = document.get("VALID_START_DATE");
-			targetConcept.validEndDate = document.get("VALID_END_DATE");
-			targetConcept.invalidReason = document.get("INVALID_REASON");
-			targetConcept.standardConcept = document.get("STANDARD_CONCEPT");
-			for (String domain : document.get("DOMAINS").split("\n"))
-				targetConcept.domains.add(domain);
-			targetConcept.additionalInformation = document.get("ADDITIONAL_INFORMATION");
-			return targetConcept;
-		} catch (Exception e) {
-			System.err.println(e.getMessage());
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	public TargetConcept getTargetConcept(int conceptId) {
-		try {
-			Query query = conceptIdQueryParser.parse(Integer.toString(conceptId));
-			TopDocs topDocs = searcher.search(query, 1);
-			if (topDocs.totalHits > 0)
-				return docIdToTargetConcept(topDocs.scoreDocs[0].doc);
-			else
-				return null;
-		} catch (Exception e) {
-			System.err.println(e.getMessage());
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 	private void removeDuplicateConcepts(List<ScoredConcept> results) {
@@ -449,9 +411,9 @@ public class UsagiSearchEngine {
 			public int compare(ScoredConcept arg0, ScoredConcept arg1) {
 				int result = -Float.compare(arg0.matchScore, arg1.matchScore);
 				if (result == 0) {
-					if (arg0.concept.term.toLowerCase().equals(arg0.concept.conceptName.toLowerCase()))
+					if (arg0.term.toLowerCase().equals(arg0.concept.conceptName.toLowerCase()))
 						return -1;
-					else if (arg1.concept.term.toLowerCase().equals(arg1.concept.conceptName.toLowerCase()))
+					else if (arg1.term.toLowerCase().equals(arg1.concept.conceptName.toLowerCase()))
 						return 1;
 				}
 				return result;
@@ -495,11 +457,13 @@ public class UsagiSearchEngine {
 	}
 
 	public static class ScoredConcept {
-		public float			matchScore;
-		public TargetConcept	concept;
+		public float	matchScore;
+		public Concept	concept;
+		public String	term;
 
-		public ScoredConcept(float matchScore, TargetConcept concept) {
+		public ScoredConcept(float matchScore, String term, Concept concept) {
 			this.matchScore = matchScore;
+			this.term = term;
 			this.concept = concept;
 		}
 	}
@@ -617,5 +581,4 @@ public class UsagiSearchEngine {
 	public boolean isOpenForSearching() {
 		return (reader != null);
 	}
-
 }

@@ -17,6 +17,7 @@ package org.ohdsi.usagi.ui;
 
 import javax.swing.JFrame;
 
+import org.ohdsi.usagi.BerkeleyDbEngine;
 import org.ohdsi.usagi.UsagiSearchEngine;
 import org.ohdsi.usagi.ui.actions.AboutAction;
 import org.ohdsi.usagi.ui.actions.ApplyPreviousMappingAction;
@@ -36,6 +37,7 @@ public class Global {
 	public static JFrame							frame;
 	public static Mapping							mapping;
 	public static UsagiSearchEngine					usagiSearchEngine;
+	public static BerkeleyDbEngine					dbEngine;
 	public static String							folder;
 	public static String							filename;
 

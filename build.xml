@@ -8,7 +8,7 @@
   <property name="build" location="build"/>
   <property name="dist"  location="dist"/>
   
-  <property name="JDK_VERSION" value="1.7"/>
+  <property name="JDK_VERSION" value="1.8"/>
   
   <path id="classpath">
     <fileset dir="${lib}" includes="**/*.jar"/>

@@ -50,9 +50,8 @@ import javax.swing.table.AbstractTableModel;
 
 import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
-import org.ohdsi.usagi.TargetConcept;
+import org.ohdsi.usagi.Concept;
 import org.ohdsi.usagi.UsagiSearchEngine.ScoredConcept;
-import org.ohdsi.utilities.StringUtilities;
 
 public class MappingDetailPanel extends JPanel implements CodeSelectedListener, FilterChangeListener {
 
@@ -77,7 +76,6 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	public MappingDetailPanel() {
 		super();
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
 		add(createSourceCodePanel());
 		add(createTargetConceptsPanel());
 		add(createSearchPanel());
@@ -89,24 +87,26 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		panel.setBorder(BorderFactory.createTitledBorder("Search"));
 		panel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-		// c.anchor = GridBagConstraints.WEST;
 		c.fill = GridBagConstraints.BOTH;
 
 		c.gridx = 0;
 		c.gridy = 0;
 		c.weightx = 1;
+		c.weighty = 0.1;
 		panel.add(createQueryPanel(), c);
 
 		c.gridx = 1;
 		c.gridy = 0;
 		c.weightx = 0.1;
+		c.weighty = 0.1;
 		filterPanel = new FilterPanel();
 		filterPanel.addListener(this);
 		panel.add(filterPanel, c);
 
 		c.gridx = 0;
 		c.gridy = 1;
-		c.weightx = 0.1;
+		c.weightx = 1;
+		c.weighty = 1;
 		c.gridwidth = 2;
 		panel.add(createSearchResultsPanel(), c);
 		return panel;
@@ -206,7 +206,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			}
 
 		});
-//		searchTable.hideColumn("Synonym");
+		// searchTable.hideColumn("Synonym");
 		searchTable.hideColumn("Valid start date");
 		searchTable.hideColumn("Valid end date");
 		searchTable.hideColumn("Invalid reason");
@@ -258,12 +258,14 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		sourceCodeTableModel = new SourceCodeTableModel();
 		sourceCodeTable = new UsagiTable(sourceCodeTableModel);
-		sourceCodeTable.setPreferredScrollableViewportSize(new Dimension(500, 25));
+		sourceCodeTable.setPreferredScrollableViewportSize(new Dimension(500, 35));
 		sourceCodeTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		sourceCodeTable.setRowSelectionAllowed(false);
 		sourceCodeTable.setCellSelectionEnabled(false);
 		JScrollPane pane = new JScrollPane(sourceCodeTable);
 		pane.setBorder(BorderFactory.createEmptyBorder());
+		pane.setMinimumSize(new Dimension(500, 40));
+		pane.setPreferredSize(new Dimension(500, 40));
 		panel.add(pane);
 		return panel;
 	}
@@ -291,9 +293,14 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			}
 
 		});
+		targetConceptTable.hideColumn("Valid start date");
+		targetConceptTable.hideColumn("Valid end date");
+		targetConceptTable.hideColumn("Invalid reason");
 
 		JScrollPane pane = new JScrollPane(targetConceptTable);
 		pane.setBorder(BorderFactory.createEmptyBorder());
+		pane.setMinimumSize(new Dimension(500, 50));
+		pane.setPreferredSize(new Dimension(500, 50));
 		panel.add(pane);
 
 		JPanel buttonPanel = new JPanel();
@@ -401,24 +408,26 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			String query = manualQueryField.getText();
 			if (autoQueryButton.isSelected())
 				query = codeMapping.sourceCode.sourceName;
+			boolean includeSourceConcepts = filterPanel.getIncludeSourceTerms();
+		
 
 			if (Global.usagiSearchEngine.isOpenForSearching()) {
 				List<ScoredConcept> searchResults = Global.usagiSearchEngine.search(query, true, filterConceptIds, filterDomain, filterConceptClass,
-						filterVocabulary, filterStandard);
+						filterVocabulary, filterStandard, includeSourceConcepts);
 
 				searchTableModel.setScoredConcepts(searchResults);
 				searchTable.scrollRectToVisible(new Rectangle(searchTable.getCellRect(0, 0, true)));
 			}
-			Global.statusBar.setSearhing(false);
+			Global.statusBar.setSearching(false);
 		}
 	}
 
 	public void doSearch() {
-		Global.statusBar.setSearhing(true);
-		if (timer != null)
-			timer.cancel();
-		timer = new Timer();
-		timer.schedule(new SearchTask(), 500);
+		 Global.statusBar.setSearching(true);
+		 if (timer != null)
+		 timer.cancel();
+		 timer = new Timer();
+		 timer.schedule(new SearchTask(), 500);
 	}
 
 	class SourceCodeTableModel extends AbstractTableModel {
@@ -481,7 +490,6 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			if (col >= ADD_INFO_START_COL) {
 				return String.class;
 			} else {
-
 				switch (col) {
 					case 0:
 						return String.class;
@@ -508,39 +516,42 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		private static final long	serialVersionUID	= 169286268154988911L;
 
 		private String				scoreColumnName		= "Score";
-		private String[]			columnNames			= { "Synonym", "Concept ID", "Concept name", "Domain", "Concept class", "Vocabulary", "Concept code",
-																"Valid start date", "Valid end date", "Invalid reason", "Standard concept" };
-		private List<TargetConcept>	targetConcepts		= new ArrayList<TargetConcept>();
+		private String				termColumnName		= "Term";
+		private String[]			columnNames			= { "Concept ID", "Concept name", "Domain", "Concept class", "Vocabulary", "Concept code",
+																"Valid start date", "Valid end date", "Invalid reason", "Standard concept", "Parents", "Children" };
+		private List<Concept>		targetConcepts		= new ArrayList<Concept>();
 		private boolean				hasScoreColumn;
+		private List<String>		terms				= new ArrayList<String>();
 		private Double[]			scoreColumn;
 
 		public TargetConceptTableModel(boolean scoreColumn) {
 			this.hasScoreColumn = scoreColumn;
 		}
 
-		public TargetConcept getTargetConcept(int row) {
+		public Concept getTargetConcept(int row) {
 			return targetConcepts.get(row);
 		}
 
 		public int getColumnCount() {
 			if (hasScoreColumn)
-				return columnNames.length + 1;
+				return columnNames.length + 2;
 			else
 				return columnNames.length;
 		}
 
-		public void setTargetConcepts(List<TargetConcept> targetConcepts) {
+		public void setTargetConcepts(List<Concept> targetConcepts) {
 			this.targetConcepts = targetConcepts;
-
 			fireTableDataChanged();
 		}
 
 		public void setScoredConcepts(List<ScoredConcept> scoredConcepts) {
-			targetConcepts = new ArrayList<TargetConcept>(scoredConcepts.size());
+			targetConcepts = new ArrayList<Concept>(scoredConcepts.size());
+			terms = new ArrayList<String>();
 			scoreColumn = new Double[scoredConcepts.size()];
 			for (int i = 0; i < scoredConcepts.size(); i++) {
 				targetConcepts.add(scoredConcepts.get(i).concept);
 				scoreColumn[i] = (double) scoredConcepts.get(i).matchScore;
+				terms.add(scoredConcepts.get(i).term);
 			}
 			fireTableDataChanged();
 		}
@@ -553,8 +564,10 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			if (hasScoreColumn) {
 				if (col == 0)
 					return scoreColumnName;
+				else if (col == 1)
+					return termColumnName;
 				else
-					return columnNames[col - 1];
+					return columnNames[col - 2];
 			} else
 				return columnNames[col];
 		}
@@ -565,32 +578,36 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			if (hasScoreColumn) {
 				if (col == 0)
 					return scoreColumn[row];
-				col--;
+				if (col == 1)
+					return terms.get(row);
+				col -= 2;
 			}
-			TargetConcept targetConcept = targetConcepts.get(row);
+			Concept targetConcept = targetConcepts.get(row);
 			switch (col) {
 				case 0:
-					return targetConcept.term;
-				case 1:
 					return targetConcept.conceptId;
-				case 2:
+				case 1:
 					return targetConcept.conceptName;
+				case 2:
+					return targetConcept.domainId;
 				case 3:
-					return StringUtilities.join(targetConcept.domains, "/");
+					return targetConcept.conceptClassId;
 				case 4:
-					return targetConcept.conceptClass;
+					return targetConcept.vocabularyId;
 				case 5:
-					return targetConcept.vocabulary;
-				case 6:
 					return targetConcept.conceptCode;
-				case 7:
+				case 6:
 					return targetConcept.validStartDate;
-				case 8:
+				case 7:
 					return targetConcept.validEndDate;
+				case 8:
+					return targetConcept.invalidReason == null ? "" : targetConcept.invalidReason;
 				case 9:
-					return targetConcept.invalidReason;
-				case 10:
 					return targetConcept.standardConcept;
+				case 10:
+					return targetConcept.parentCount;
+				case 11:
+					return targetConcept.childCount;
 				default:
 					return "";
 			}
@@ -600,31 +617,17 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			if (hasScoreColumn) {
 				if (col == 0)
 					return Double.class;
-				col--;
+				if (col == 1)
+					return String.class;
+				col -= 2;
 			}
 			switch (col) {
-				case 0:
-					return String.class;
 				case 1:
 					return Integer.class;
-				case 2:
-					return String.class;
-				case 3:
-					return Integer.class;
-				case 4:
-					return String.class;
-				case 5:
-					return String.class;
-				case 6:
-					return String.class;
-				case 7:
-					return String.class;
-				case 8:
-					return String.class;
-				case 9:
-					return String.class;
 				case 10:
-					return String.class;
+					return Integer.class;
+				case 11:
+					return Integer.class;
 				default:
 					return String.class;
 			}

@@ -60,7 +60,7 @@ public class UsagiStatusBar extends JPanel implements DataChangeListener {
 		Global.mapping.addListener(this);
 	}
 
-	public void setSearhing(boolean value) {
+	public void setSearching(boolean value) {
 		searchLabel.setVisible(value);
 	}
 

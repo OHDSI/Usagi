@@ -32,21 +32,17 @@ public class WriteCodeMappingsToFile {
 	}
 
 	public void write(CodeMapping codeMapping) {
-		List<TargetConcept> targetConcepts;
+		List<Concept> targetConcepts;
 		if (codeMapping.targetConcepts.size() == 0) {
-			targetConcepts = new ArrayList<TargetConcept>(1);
-			targetConcepts.add(TargetConcept.EMPTY_CONCEPT);
+			targetConcepts = new ArrayList<Concept>(1);
+			targetConcepts.add(Concept.EMPTY_CONCEPT);
 		} else
 			targetConcepts = codeMapping.targetConcepts;
-		for (TargetConcept targetConcept : targetConcepts) {
+		for (Concept targetConcept : targetConcepts) {
 			Row row = codeMapping.sourceCode.toRow();
 			row.add("matchScore", codeMapping.matchScore);
 			row.add("mappingStatus", codeMapping.mappingStatus.toString());
-
-			Row targetConceptRow = targetConcept.toRow();
-			for (String field : targetConceptRow.getFieldNames())
-				row.add(field, targetConceptRow.get(field));
-
+			row.add("conceptId", targetConcept.conceptId);
 			out.write(row);
 		}
 	}

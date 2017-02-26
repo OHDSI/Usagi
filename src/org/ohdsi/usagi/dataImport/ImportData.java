@@ -21,7 +21,7 @@ import java.util.List;
 import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
 import org.ohdsi.usagi.SourceCode;
-import org.ohdsi.usagi.TargetConcept;
+import org.ohdsi.usagi.Concept;
 import org.ohdsi.usagi.UsagiSearchEngine;
 import org.ohdsi.usagi.UsagiSearchEngine.ScoredConcept;
 import org.ohdsi.usagi.WriteCodeMappingsToFile;
@@ -75,12 +75,12 @@ public class ImportData {
 			CodeMapping codeMapping = new CodeMapping(sourceCode);
 
 			List<ScoredConcept> concepts = usagiSearchEngine.search(sourceCode.sourceName, true, sourceCode.sourceAutoAssignedConceptIds,
-					settings.filterDomain, settings.filterConceptClass, settings.filterVocabulary, settings.filterInvalid);
+					settings.filterDomain, settings.filterConceptClass, settings.filterVocabulary, settings.filterStandard, settings.includeSourceTerms);
 			if (concepts.size() > 0) {
 				codeMapping.targetConcepts.add(concepts.get(0).concept);
 				codeMapping.matchScore = concepts.get(0).matchScore;
 			} else {
-				codeMapping.targetConcepts.add(TargetConcept.EMPTY_CONCEPT);
+				codeMapping.targetConcepts.add(Concept.EMPTY_CONCEPT);
 				codeMapping.matchScore = 0;
 			}
 			codeMapping.mappingStatus = MappingStatus.UNCHECKED;
@@ -126,9 +126,10 @@ public class ImportData {
 		public String		filterVocabulary		= null;
 
 		/**
-		 * Specify whether the search should be restricted to valid concepts only
+		 * Specify whether the search should be restricted to standard concepts only. If not, classification concepts will
+		 * also be allowed.
 		 */
-		public boolean		filterInvalid			= true;
+		public boolean		filterStandard			= true;
 
 		/**
 		 * The name of the column containing the source codes
@@ -154,6 +155,11 @@ public class ImportData {
 		 * The names of the columns containing additional information about the source codes that should be displayed in Usagi
 		 */
 		public List<String>	additionalInfoColumns	= new ArrayList<String>();
+		
+		/**
+		 * Include names of source concepts that map to standard concepts in the search?
+		 */
+		public boolean includeSourceTerms = true;
 	}
 
 }

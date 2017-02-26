@@ -48,6 +48,7 @@ public class OpenAction extends AbstractAction {
 			File file = fileChooser.getSelectedFile();
 			Global.frame.setTitle("Usagi - " + file.getName());
 			Global.filename = file.getAbsolutePath();
+			Global.dbEngine.openForReading();
 			Global.mapping.loadFromFile(Global.filename);
 			Global.usagiSearchEngine.close();
 			Global.usagiSearchEngine.createDerivedIndex(Global.mapping.getSourceCodes(), Global.frame);

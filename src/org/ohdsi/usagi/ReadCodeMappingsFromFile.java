@@ -18,6 +18,7 @@ package org.ohdsi.usagi;
 import java.util.Iterator;
 
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
+import org.ohdsi.usagi.ui.Global;
 import org.ohdsi.utilities.files.ReadCSVFileWithHeader;
 import org.ohdsi.utilities.files.Row;
 
@@ -53,12 +54,12 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 				buffer = null;
 			else {
 				buffer = new CodeMapping(new SourceCode(row));
-//				if (row.get("matchScore").equals("UNCHECKED"))
-//					System.out.println("asdf");
 				buffer.matchScore = row.getDouble("matchScore");
 				buffer.mappingStatus = MappingStatus.valueOf(row.get("mappingStatus"));
-				while (row != null && new SourceCode(row).sourceCode.equals(buffer.sourceCode.sourceCode) && new SourceCode(row).sourceName.equals(buffer.sourceCode.sourceName)) {
-					buffer.targetConcepts.add(new TargetConcept(row));
+				while (row != null && new SourceCode(row).sourceCode.equals(buffer.sourceCode.sourceCode)
+						&& new SourceCode(row).sourceName.equals(buffer.sourceCode.sourceName)) {
+					Concept concept = Global.dbEngine.getConcept(row.getInt("conceptId"));
+					buffer.targetConcepts.add(concept);
 					if (iterator.hasNext())
 						row = iterator.next();
 					else

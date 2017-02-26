@@ -16,6 +16,7 @@
 package org.ohdsi.usagi.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Toolkit;
@@ -29,7 +30,9 @@ import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 
+import org.ohdsi.usagi.BerkeleyDbEngine;
 import org.ohdsi.usagi.UsagiSearchEngine;
 import org.ohdsi.usagi.ui.actions.AboutAction;
 import org.ohdsi.usagi.ui.actions.ApplyPreviousMappingAction;
@@ -50,7 +53,7 @@ import org.ohdsi.usagi.ui.actions.SaveAsAction;
  */
 public class UsagiMain implements ActionListener {
 
-	private JFrame			frame;
+	private JFrame	frame;
 
 	public static void main(String[] args) {
 		new UsagiMain(args);
@@ -67,6 +70,7 @@ public class UsagiMain implements ActionListener {
 			Global.folder = new File("").getAbsolutePath();
 
 		Global.usagiSearchEngine = new UsagiSearchEngine(Global.folder);
+		Global.dbEngine = new BerkeleyDbEngine(Global.folder);
 		Global.conceptInformationDialog = new ConceptInformationDialog();
 		Global.frame = frame;
 		Global.openAction = new OpenAction();
@@ -94,6 +98,7 @@ public class UsagiMain implements ActionListener {
 
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
+				Global.dbEngine.shutdown();
 				System.exit(0);
 			}
 		});
@@ -102,11 +107,14 @@ public class UsagiMain implements ActionListener {
 
 		JPanel main = new JPanel();
 		main.setLayout(new BorderLayout());
-		Global.mappingTablePanel = new MappingTablePanel();
-		main.add(Global.mappingTablePanel, BorderLayout.CENTER);
 
+		Global.mappingTablePanel = new MappingTablePanel();
 		Global.mappingDetailPanel = new MappingDetailPanel();
-		main.add(Global.mappingDetailPanel, BorderLayout.SOUTH);
+		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, Global.mappingTablePanel, Global.mappingDetailPanel);
+		Global.mappingTablePanel.setMinimumSize(new Dimension(500, 100));
+		Global.mappingDetailPanel.setMinimumSize(new Dimension(500, 400));
+
+		main.add(splitPane, BorderLayout.CENTER);
 
 		Global.mappingTablePanel.addCodeSelectedListener(Global.mappingDetailPanel);
 		frame.add(main, BorderLayout.CENTER);

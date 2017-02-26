@@ -29,10 +29,10 @@ public class CodeMapping {
 		APPROVED, UNCHECKED, AUTO_MAPPED, AUTO_MAPPED_TO_1
 	};
 
-	public SourceCode			sourceCode;
-	public double				matchScore;
-	public MappingStatus		mappingStatus;
-	public List<TargetConcept>	targetConcepts	= new ArrayList<TargetConcept>(1);
+	public SourceCode		sourceCode;
+	public double			matchScore;
+	public MappingStatus	mappingStatus;
+	public List<Concept>	targetConcepts	= new ArrayList<Concept>(1);
 
 	public CodeMapping(SourceCode sourceCode) {
 		this.sourceCode = sourceCode;

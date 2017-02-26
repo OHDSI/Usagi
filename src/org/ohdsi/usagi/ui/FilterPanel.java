@@ -39,6 +39,7 @@ public class FilterPanel extends JPanel {
 	private JCheckBox					filterByConceptClassCheckBox;
 	private JCheckBox					filterByVocabularyCheckBox;
 	private JCheckBox					filterByDomainCheckBox;
+	private JCheckBox					includeSourceTermsCheckbox;
 	private JComboBox<String>			filterConceptClassComboBox;
 	private JComboBox<String>			filterVocabularyComboBox;
 	private JComboBox<String>			filterDomainComboBox;
@@ -54,7 +55,7 @@ public class FilterPanel extends JPanel {
 		c.gridy = 0;
 		c.weightx = 0.1;
 		c.gridwidth = 2;
-		filterByAutoCheckBox = new JCheckBox("Filter by automatically select concepts", false);
+		filterByAutoCheckBox = new JCheckBox("Filter by user selected concepts", false);
 		filterByAutoCheckBox.setToolTipText("Limit the search to those concept IDs specified in the input file");
 		filterByAutoCheckBox.addActionListener(new ActionListener() {
 
@@ -66,8 +67,8 @@ public class FilterPanel extends JPanel {
 		});
 		add(filterByAutoCheckBox, c);
 
-		c.gridx = 2;
-		c.gridy = 0;
+		c.gridx = 0;
+		c.gridy = 1;
 		c.weightx = 0.1;
 		c.gridwidth = 2;
 		filterStandardCheckBox = new JCheckBox("Filter standard concepts", false);
@@ -82,8 +83,8 @@ public class FilterPanel extends JPanel {
 		filterStandardCheckBox.setSelected(true);
 		add(filterStandardCheckBox, c);
 
-		c.gridx = 0;
-		c.gridy = 1;
+		c.gridx = 2;
+		c.gridy = 0;
 		c.weightx = 0.1;
 		c.gridwidth = 1;
 		filterByConceptClassCheckBox = new JCheckBox("Filter by concept class:", false);
@@ -98,8 +99,8 @@ public class FilterPanel extends JPanel {
 		});
 		add(filterByConceptClassCheckBox, c);
 
-		c.gridx = 1;
-		c.gridy = 1;
+		c.gridx = 3;
+		c.gridy = 0;
 		c.weightx = 1;
 		c.gridwidth = 1;
 		filterConceptClassComboBox = new JComboBox<String>(loadVectorFromFile(Global.folder + "/ConceptClassIds.txt"));
@@ -143,7 +144,7 @@ public class FilterPanel extends JPanel {
 		});
 		add(filterVocabularyComboBox, c);
 
-		c.gridx = 0;
+		c.gridx = 2;
 		c.gridy = 2;
 		c.weightx = 0.1;
 		c.gridwidth = 1;
@@ -158,7 +159,7 @@ public class FilterPanel extends JPanel {
 		});
 		add(filterByDomainCheckBox, c);
 
-		c.gridx = 1;
+		c.gridx = 3;
 		c.gridy = 2;
 		c.weightx = 1;
 		c.gridwidth = 1;
@@ -172,6 +173,21 @@ public class FilterPanel extends JPanel {
 			}
 		});
 		add(filterDomainComboBox, c);
+		
+		c.gridx = 0;
+		c.gridy = 2;
+		c.weightx = 1;
+		c.gridwidth = 2;
+		includeSourceTermsCheckbox = new JCheckBox("Include source terms", true);
+		includeSourceTermsCheckbox.setToolTipText("Include names of source concepts to be used to find standard concepts they map to");
+		includeSourceTermsCheckbox.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				notifyListeners();
+			}
+		});
+		add(includeSourceTermsCheckbox, c);
 
 	}
 
@@ -214,6 +230,10 @@ public class FilterPanel extends JPanel {
 		return filterByDomainCheckBox.isSelected();
 	}
 
+	public boolean getIncludeSourceTerms() {
+		return includeSourceTermsCheckbox.isSelected();
+	}
+	
 	public String getConceptClass() {
 		return filterConceptClassComboBox.getSelectedItem().toString();
 	}

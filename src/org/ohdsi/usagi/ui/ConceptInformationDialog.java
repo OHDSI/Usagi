@@ -21,7 +21,7 @@ import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import org.ohdsi.usagi.TargetConcept;
+import org.ohdsi.usagi.Concept;
 
 public class ConceptInformationDialog extends JDialog {
 
@@ -38,7 +38,7 @@ public class ConceptInformationDialog extends JDialog {
 		setLocationRelativeTo(Global.frame);
 	}
 
-	public void setConcept(TargetConcept concept) {
+	public void setConcept(Concept concept) {
 		setTitle("Information about concept '" + concept.conceptName + "' (" + concept.conceptId + ")");
 		area.setText(concept.additionalInformation.replaceAll("\\\\n", "\n"));
 	}

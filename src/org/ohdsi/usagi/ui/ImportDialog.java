@@ -48,7 +48,7 @@ import javax.swing.table.TableModel;
 import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
 import org.ohdsi.usagi.SourceCode;
-import org.ohdsi.usagi.TargetConcept;
+import org.ohdsi.usagi.Concept;
 import org.ohdsi.usagi.UsagiSearchEngine.ScoredConcept;
 import org.ohdsi.utilities.ReadXlsxFile;
 import org.ohdsi.utilities.StringUtilities;
@@ -374,6 +374,7 @@ public class ImportDialog extends JDialog {
 		public void run() {
 			try {
 				Global.usagiSearchEngine.createDerivedIndex(sourceCodes, null);
+				Global.dbEngine.openForReading();
 
 				boolean filterStandard = filterPanel.getFilterStandard();
 				String filterConceptClass = null;
@@ -385,7 +386,8 @@ public class ImportDialog extends JDialog {
 				String filterDomain = null;
 				if (filterPanel.getFilterByDomain())
 					filterDomain = filterPanel.getDomain();
-
+				boolean includeSourceConcepts = filterPanel.getIncludeSourceTerms();
+				
 				Global.mapping.clear();
 				for (SourceCode sourceCode : sourceCodes) {
 					Set<Integer> filterConceptIds = null;
@@ -394,12 +396,12 @@ public class ImportDialog extends JDialog {
 
 					CodeMapping codeMapping = new CodeMapping(sourceCode);
 					List<ScoredConcept> concepts = Global.usagiSearchEngine.search(sourceCode.sourceName, true, filterConceptIds, filterDomain,
-							filterConceptClass, filterVocabulary, filterStandard);
+							filterConceptClass, filterVocabulary, filterStandard, includeSourceConcepts);
 					if (concepts.size() > 0) {
 						codeMapping.targetConcepts.add(concepts.get(0).concept);
 						codeMapping.matchScore = concepts.get(0).matchScore;
 					} else {
-						codeMapping.targetConcepts.add(TargetConcept.EMPTY_CONCEPT);
+						codeMapping.targetConcepts.add(Concept.EMPTY_CONCEPT);
 						codeMapping.matchScore = 0;
 					}
 					codeMapping.mappingStatus = MappingStatus.UNCHECKED;

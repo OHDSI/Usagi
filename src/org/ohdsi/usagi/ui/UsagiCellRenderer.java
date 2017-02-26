@@ -37,6 +37,8 @@ public class UsagiCellRenderer extends DefaultTableCellRenderer {
 
 	@Override
 	public void setValue(Object aValue) {
+		if (aValue == null)
+			System.out.println("asdf");
 		setToolTipText("<html>" + wordWrap(aValue.toString(), MAX_TOOLTIP_WIDTH_IN_CHARS) + "</html>");
 		super.setValue(aValue);
 	}

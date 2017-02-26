@@ -31,8 +31,7 @@ import javax.swing.table.TableRowSorter;
 
 import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
-import org.ohdsi.usagi.TargetConcept;
-import org.ohdsi.utilities.StringUtilities;
+import org.ohdsi.usagi.Concept;
 
 public class MappingTablePanel extends JPanel implements DataChangeListener {
 	private static final long					serialVersionUID	= -5862314086097240860L;
@@ -76,7 +75,6 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		});
 
 		// Hide some less-informative columns:
-		table.hideColumn("Synonym");
 		table.hideColumn("Valid start date");
 		table.hideColumn("Valid end date");
 		table.hideColumn("Invalid reason");
@@ -92,9 +90,9 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 	class CodeMapTableModel extends AbstractTableModel {
 		private static final long	serialVersionUID	= 169286268154988911L;
 
-		private String[]			defaultColumnNames	= { "Status", "Source code", "Source term", "Frequency", "Match score", "Synonym", "Concept ID",
+		private String[]			defaultColumnNames	= { "Status", "Source code", "Source term", "Frequency", "Match score", "Concept ID",
 																"Concept name", "Domain", "Concept class", "Vocabulary", "Concept code", "Valid start date",
-																"Valid end date", "Invalid reason", "Standard concept" };
+																"Valid end date", "Invalid reason", "Standard concept", "Parents", "Children" };
 		private String[]			columnNames			= defaultColumnNames;
 		private int					addInfoColCount		= 0;
 		private int					ADD_INFO_START_COL	= 4;
@@ -144,11 +142,11 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 				if (col >= ADD_INFO_START_COL) {
 					col = col - addInfoColCount;
 				}
-				TargetConcept targetConcept;
+				Concept targetConcept;
 				if (codeMapping.targetConcepts.size() > 0)
 					targetConcept = codeMapping.targetConcepts.get(0);
 				else
-					targetConcept = TargetConcept.EMPTY_CONCEPT;
+					targetConcept = Concept.EMPTY_CONCEPT;
 				switch (col) {
 					case 0:
 						return codeMapping.mappingStatus;
@@ -161,32 +159,33 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 					case 4:
 						return codeMapping.matchScore;
 					case 5:
-						return targetConcept.term;
-					case 6:
 						return targetConcept.conceptId;
-					case 7:
+					case 6:
 						return targetConcept.conceptName;
+					case 7:
+						return targetConcept.domainId;
 					case 8:
-						return StringUtilities.join(targetConcept.domains, "/");
+						return targetConcept.conceptClassId;
 					case 9:
-						return targetConcept.conceptClass;
+						return targetConcept.vocabularyId;
 					case 10:
-						return targetConcept.vocabulary;
-					case 11:
 						return targetConcept.conceptCode;
-					case 12:
+					case 11:
 						return targetConcept.validStartDate;
-					case 13:
+					case 12:
 						return targetConcept.validEndDate;
+					case 13:
+						return targetConcept.invalidReason == null ? "" : targetConcept.invalidReason;
 					case 14:
-						return targetConcept.invalidReason;
-					case 15:
 						return targetConcept.standardConcept;
+					case 15:
+						return targetConcept.parentCount;
+					case 16:
+						return targetConcept.childCount;
 					default:
 						return "";
 				}
 			}
-
 		}
 
 		public Class<?> getColumnClass(int col) {
@@ -199,34 +198,18 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 				switch (col) {
 					case 0:
 						return MappingStatus.class;
-					case 1:
-						return String.class;
-					case 2:
-						return String.class;
 					case 3:
 						return Integer.class;
 					case 4:
 						return Double.class;
 					case 5:
-						return String.class;
-					case 6:
 						return Integer.class;
 					case 7:
-						return String.class;
-					case 8:
 						return Integer.class;
-					case 9:
-						return String.class;
-					case 10:
-						return String.class;
-					case 11:
-						return String.class;
-					case 12:
-						return String.class;
-					case 13:
-						return String.class;
-					case 14:
-						return String.class;
+					case 15:
+						return Integer.class;
+					case 16:
+						return Integer.class;						
 					default:
 						return String.class;
 				}

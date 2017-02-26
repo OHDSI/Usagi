@@ -35,7 +35,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
-import org.ohdsi.usagi.TargetConcept;
+import org.ohdsi.usagi.Concept;
 import org.ohdsi.utilities.files.Row;
 import org.ohdsi.utilities.files.WriteCSVFileWithHeader;
 
@@ -115,14 +115,14 @@ public class ExportSourceToConceptMapDialog extends JDialog {
 		WriteCSVFileWithHeader out = new WriteCSVFileWithHeader(filename);
 		for (CodeMapping mapping : Global.mapping)
 			if (mapping.mappingStatus == MappingStatus.APPROVED) {
-				for (TargetConcept targetConcept : mapping.targetConcepts) {
+				for (Concept targetConcept : mapping.targetConcepts) {
 					Row row = new Row();
 					row.add("source_code", mapping.sourceCode.sourceCode);
 					row.add("source_concept_id", "0");
 					row.add("source_vocabulary_id", sourceVocabularyIdField.getText());
 					row.add("source_code_description", mapping.sourceCode.sourceName);
 					row.add("target_concept_id", targetConcept.conceptId);
-					row.add("target_vocabulary_id", targetConcept.vocabulary);
+					row.add("target_vocabulary_id", targetConcept.vocabularyId);
 					row.add("valid_start_date", "1970-01-01");
 					row.add("valid_end_date", "2099-12-31");
 					row.add("invalid_reason", "");

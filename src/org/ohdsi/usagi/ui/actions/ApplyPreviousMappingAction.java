@@ -17,7 +17,6 @@ package org.ohdsi.usagi.ui.actions;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +29,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.ohdsi.usagi.CodeMapping;
-import org.ohdsi.usagi.TargetConcept;
+import org.ohdsi.usagi.Concept;
 import org.ohdsi.usagi.ui.Global;
 import org.ohdsi.usagi.ui.Mapping;
 
@@ -54,29 +53,20 @@ public class ApplyPreviousMappingAction extends AbstractAction {
 			File file = fileChooser.getSelectedFile();
 			Mapping mapping = new Mapping();
 			mapping.loadFromFile(file.getAbsolutePath());
-			Map<String, List<TargetConcept>> codeToTargetConcept = new HashMap<String, List<TargetConcept>>();
+			Map<String, List<Concept>> codeToTargetConcept = new HashMap<String, List<Concept>>();
 			for (CodeMapping codeMapping : mapping)
 				if (codeMapping.mappingStatus.equals(CodeMapping.MappingStatus.APPROVED))
 					codeToTargetConcept.put(codeMapping.sourceCode.sourceCode, codeMapping.targetConcepts);
 
 			for (CodeMapping codeMapping : Global.mapping) {
-				List<TargetConcept> targetConcepts = codeToTargetConcept.get(codeMapping.sourceCode.sourceCode);
+				List<Concept> targetConcepts = codeToTargetConcept.get(codeMapping.sourceCode.sourceCode);
 				if (targetConcepts != null) {
-					List<TargetConcept> newTargetConcepts = new ArrayList<TargetConcept>(targetConcepts.size());
-					for (TargetConcept targetConcept : targetConcepts) {
-						TargetConcept newTargetConcept = Global.usagiSearchEngine.getTargetConcept(targetConcept.conceptId);
-						if (newTargetConcept == null)
-							mappingsFailed++;
-						else
-							newTargetConcepts.add(newTargetConcept);
-
-					}
-					if (newTargetConcepts.size() > 0) {
-						codeMapping.targetConcepts = newTargetConcepts;
+					if (targetConcepts.size() > 0) {
+						if (codeMapping.targetConcepts.size() == targetConcepts.size())
+							codeMapping.mappingStatus = CodeMapping.MappingStatus.APPROVED;
+						codeMapping.targetConcepts = targetConcepts;
 						mappingsUsed++;
 					}
-					if (newTargetConcepts.size() == targetConcepts.size()) 
-						codeMapping.mappingStatus = CodeMapping.MappingStatus.APPROVED;
 				}
 			}
 			String message = "The old mapping contained " + codeToTargetConcept.size() + " approved mappings of which " + mappingsUsed

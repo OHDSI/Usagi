@@ -33,7 +33,7 @@ import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.ohdsi.usagi.indexBuilding.BuildIndex;
+import org.ohdsi.usagi.indexBuilding.IndexBuildCoordinator;
 
 public class RebuildIndexDialog extends JDialog {
 
@@ -72,8 +72,9 @@ public class RebuildIndexDialog extends JDialog {
 		}
 		setVisible(false);
 		Global.usagiSearchEngine.close();
-		BuildIndex buildIndex = new BuildIndex();
-		buildIndex.buildIndex(vocabFolder, loincCheckBox.isSelected() ? loincFile : null);
+		Global.dbEngine.shutdown();
+		IndexBuildCoordinator indexBuildCoordinator = new IndexBuildCoordinator();
+		indexBuildCoordinator.buildIndexes(vocabFolder, loincCheckBox.isSelected() ? loincFile : null);
 	}
 
 	private JPanel createVocabFolderPanel() {

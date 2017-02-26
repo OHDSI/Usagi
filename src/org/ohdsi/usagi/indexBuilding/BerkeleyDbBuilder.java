@@ -1,0 +1,123 @@
+/*******************************************************************************
+ * Copyright 2017 Observational Health Data Sciences and Informatics
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package org.ohdsi.usagi.indexBuilding;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.ohdsi.usagi.BerkeleyDbEngine;
+import org.ohdsi.usagi.MapsToRelationship;
+import org.ohdsi.usagi.SubsumesRelationship;
+import org.ohdsi.usagi.Concept;
+import org.ohdsi.usagi.indexBuilding.IndexBuildCoordinator.BuildThread;
+import org.ohdsi.usagi.ui.Global;
+import org.ohdsi.utilities.files.ReadCSVFileWithHeader;
+import org.ohdsi.utilities.files.Row;
+
+public class BerkeleyDbBuilder {
+	private BerkeleyDbEngine	dbEngine;
+	private BuildThread			buildThread;
+
+	public void buildIndex(String vocabFolder, String loincFileName, BuildThread buildThread) {
+		this.buildThread = buildThread;
+		dbEngine = new BerkeleyDbEngine(Global.folder);
+		dbEngine.createDatabase();
+		loadRelationships(vocabFolder + "/CONCEPT_RELATIONSHIP.csv");
+		loadConcepts(vocabFolder + "/CONCEPT.csv", loincFileName);
+		dbEngine.shutdown();
+	}
+
+	private void loadRelationships(String conceptRelationshipFileName) {
+		buildThread.report("Loading relationship information");
+		int count = 0;
+		for (Row row : new ReadAthenaFile(conceptRelationshipFileName)) {
+			if (row.get("invalid_reason") == null && !row.get("concept_id_1").equals(row.get("concept_id_2"))) {
+				if (row.get("relationship_id").equals("Maps to")) {
+					MapsToRelationship mapsToRelationship = new MapsToRelationship(row);
+					dbEngine.put(mapsToRelationship);
+				}
+				if (row.get("relationship_id").equals("Subsumes")) {
+					SubsumesRelationship subsumesRelationship = new SubsumesRelationship(row);
+					dbEngine.put(subsumesRelationship);
+				}
+			}
+			count++;
+			if (count % 100000 == 0)
+				System.out.println("Loaded " + count + " relationships");
+		}
+	}
+
+	private void loadConcepts(String conceptFileName, String loincFileName) {
+		Map<String, String> loincToInfo = null;
+		if (loincFileName != null) {
+			buildThread.report("Loading LOINC additional information");
+			loincToInfo = loadLoincInfo(loincFileName);
+		}
+		buildThread.report("Loading concept information");
+		int count = 0;
+		for (Row row : new ReadAthenaFile(conceptFileName)) {
+			Concept concept = new Concept(row);
+			if (loincToInfo != null) {
+				String info = loincToInfo.get(concept.conceptCode);
+				if (info != null)
+					concept.additionalInformation = info;
+			}
+			concept.parentCount = dbEngine.getSubsumesRelationshipsByChildConceptId(concept.conceptId).size();
+			concept.childCount = dbEngine.getSubsumesRelationshipsByParentConceptId(concept.conceptId).size();
+			dbEngine.put(concept);
+			count++;
+			if (count % 100000 == 0)
+				System.out.println("Loaded " + count + " concepts");
+		}
+	}
+
+	private Map<String, String> loadLoincInfo(String loincFile) {
+		Map<String, String> loincToInfo = new HashMap<String, String>();
+		for (Row row : new ReadCSVFileWithHeader(loincFile)) {
+			StringBuilder info = new StringBuilder();
+			info.append("LOINC concept information\n\n");
+			info.append("Component: ");
+			info.append(row.get("COMPONENT"));
+			info.append("\n");
+			info.append("Property: ");
+			info.append(row.get("PROPERTY"));
+			info.append("\n");
+			info.append("Time aspect: ");
+			info.append(row.get("TIME_ASPCT"));
+			info.append("\n");
+			info.append("System: ");
+			info.append(row.get("SYSTEM"));
+			info.append("\n");
+			info.append("Scale type: ");
+			info.append(row.get("SCALE_TYP"));
+			info.append("\n");
+			info.append("Method type: ");
+			info.append(row.get("METHOD_TYP"));
+			info.append("\n");
+			info.append("Comments: ");
+			info.append(row.get("COMMENTS"));
+			info.append("\n");
+			info.append("Formula: ");
+			info.append(row.get("FORMULA"));
+			info.append("\n");
+			info.append("Example units: ");
+			info.append(row.get("EXAMPLE_UNITS"));
+			info.append("\n");
+			loincToInfo.put(row.get("LOINC_NUM"), info.toString());
+		}
+		return loincToInfo;
+	}
+}
