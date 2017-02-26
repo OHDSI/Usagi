@@ -52,6 +52,7 @@ public class OpenAction extends AbstractAction {
 			Global.mapping.loadFromFile(Global.filename);
 			Global.usagiSearchEngine.close();
 			Global.usagiSearchEngine.createDerivedIndex(Global.mapping.getSourceCodes(), Global.frame);
+			// Global.usagiSearchEngine.openIndexForSearching();
 			Global.mappingDetailPanel.doSearch();
 			Global.applyPreviousMappingAction.setEnabled(true);
 			Global.saveAction.setEnabled(true);

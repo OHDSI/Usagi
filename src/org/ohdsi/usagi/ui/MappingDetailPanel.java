@@ -42,6 +42,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -59,9 +60,9 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private UsagiTable				sourceCodeTable;
 	private SourceCodeTableModel	sourceCodeTableModel;
 	private UsagiTable				targetConceptTable;
-	private TargetConceptTableModel	targetConceptTableModel;
+	private ConceptTableModel		targetConceptTableModel;
 	private UsagiTable				searchTable;
-	private TargetConceptTableModel	searchTableModel;
+	private ConceptTableModel		searchTableModel;
 	private JButton					approveButton;
 	private JButton					removeButton;
 	private JButton					replaceButton;
@@ -186,10 +187,11 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		JPanel panel = new JPanel();
 		panel.setBorder(BorderFactory.createTitledBorder("Results"));
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-		searchTableModel = new TargetConceptTableModel(true);
+		searchTableModel = new ConceptTableModel(true);
 		searchTable = new UsagiTable(searchTableModel);
 		searchTable.setPreferredScrollableViewportSize(new Dimension(100, 100));
 		searchTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		searchTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		searchTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {
 				int viewRow = searchTable.getSelectedRow();
@@ -201,7 +203,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 					replaceButton.setEnabled(true);
 					Global.conceptInfoAction.setEnabled(true);
 					int modelRow = searchTable.convertRowIndexToModel(viewRow);
-					Global.conceptInformationDialog.setConcept(searchTableModel.getTargetConcept(modelRow));
+					Global.conceptInformationDialog.setConcept(searchTableModel.getConcept(modelRow));
 				}
 			}
 
@@ -220,7 +222,9 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		replaceButton.setToolTipText("Replace selected concept");
 		replaceButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				replace();
+				int viewRow = searchTable.getSelectedRow();
+				int modelRow = searchTable.convertRowIndexToModel(viewRow);
+				replaceConcepts(searchTableModel.getConcept(modelRow));
 			}
 
 		});
@@ -230,7 +234,9 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		addButton.setToolTipText("Add selected concept");
 		addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				add();
+				int viewRow = searchTable.getSelectedRow();
+				int modelRow = searchTable.convertRowIndexToModel(viewRow);
+				addConcept(searchTableModel.getConcept(modelRow));
 			}
 
 		});
@@ -274,7 +280,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		JPanel panel = new JPanel();
 		panel.setBorder(BorderFactory.createTitledBorder("Target concepts"));
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-		targetConceptTableModel = new TargetConceptTableModel(false);
+		targetConceptTableModel = new ConceptTableModel(false);
 		targetConceptTable = new UsagiTable(targetConceptTableModel);
 		targetConceptTable.setPreferredScrollableViewportSize(new Dimension(500, 45));
 		targetConceptTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -288,7 +294,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 					removeButton.setEnabled(true);
 					Global.conceptInfoAction.setEnabled(true);
 					int modelRow = targetConceptTable.convertRowIndexToModel(viewRow);
-					Global.conceptInformationDialog.setConcept(targetConceptTableModel.getTargetConcept(modelRow));
+					Global.conceptInformationDialog.setConcept(targetConceptTableModel.getConcept(modelRow));
 				}
 			}
 
@@ -326,7 +332,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		this.codeMapping = codeMapping;
 		setApproveButton();
 		sourceCodeTableModel.setMapping(codeMapping);
-		targetConceptTableModel.setTargetConcepts(codeMapping.targetConcepts);
+		targetConceptTableModel.setConcepts(codeMapping.targetConcepts);
 		doSearch();
 	}
 
@@ -353,19 +359,15 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		}
 	}
 
-	private void add() {
-		for (int viewRow : searchTable.getSelectedRows())
-			if (viewRow != -1) {
-				int modelRow = searchTable.convertRowIndexToModel(viewRow);
-				codeMapping.targetConcepts.add(searchTableModel.getTargetConcept(modelRow));
-			}
+	public void addConcept(Concept concept) {
+		codeMapping.targetConcepts.add(concept);
 		targetConceptTableModel.fireTableDataChanged();
 		Global.mapping.fireDataChanged(DataChangeListener.SIMPLE_UPDATE_EVENT);
 	}
 
-	private void replace() {
+	public void replaceConcepts(Concept concept) {
 		codeMapping.targetConcepts.clear();
-		add();
+		addConcept(concept);
 	}
 
 	private void remove() {
@@ -409,7 +411,6 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			if (autoQueryButton.isSelected())
 				query = codeMapping.sourceCode.sourceName;
 			boolean includeSourceConcepts = filterPanel.getIncludeSourceTerms();
-		
 
 			if (Global.usagiSearchEngine.isOpenForSearching()) {
 				List<ScoredConcept> searchResults = Global.usagiSearchEngine.search(query, true, filterConceptIds, filterDomain, filterConceptClass,
@@ -423,11 +424,11 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	}
 
 	public void doSearch() {
-		 Global.statusBar.setSearching(true);
-		 if (timer != null)
-		 timer.cancel();
-		 timer = new Timer();
-		 timer.schedule(new SearchTask(), 500);
+		Global.statusBar.setSearching(true);
+		if (timer != null)
+			timer.cancel();
+		timer = new Timer();
+		timer.schedule(new SearchTask(), 500);
 	}
 
 	class SourceCodeTableModel extends AbstractTableModel {
@@ -500,136 +501,6 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 					default:
 						return String.class;
 				}
-			}
-		}
-
-		public boolean isCellEditable(int row, int col) {
-			return true;
-		}
-
-		public void setValueAt(Object value, int row, int col) {
-
-		}
-	}
-
-	class TargetConceptTableModel extends AbstractTableModel {
-		private static final long	serialVersionUID	= 169286268154988911L;
-
-		private String				scoreColumnName		= "Score";
-		private String				termColumnName		= "Term";
-		private String[]			columnNames			= { "Concept ID", "Concept name", "Domain", "Concept class", "Vocabulary", "Concept code",
-																"Valid start date", "Valid end date", "Invalid reason", "Standard concept", "Parents", "Children" };
-		private List<Concept>		targetConcepts		= new ArrayList<Concept>();
-		private boolean				hasScoreColumn;
-		private List<String>		terms				= new ArrayList<String>();
-		private Double[]			scoreColumn;
-
-		public TargetConceptTableModel(boolean scoreColumn) {
-			this.hasScoreColumn = scoreColumn;
-		}
-
-		public Concept getTargetConcept(int row) {
-			return targetConcepts.get(row);
-		}
-
-		public int getColumnCount() {
-			if (hasScoreColumn)
-				return columnNames.length + 2;
-			else
-				return columnNames.length;
-		}
-
-		public void setTargetConcepts(List<Concept> targetConcepts) {
-			this.targetConcepts = targetConcepts;
-			fireTableDataChanged();
-		}
-
-		public void setScoredConcepts(List<ScoredConcept> scoredConcepts) {
-			targetConcepts = new ArrayList<Concept>(scoredConcepts.size());
-			terms = new ArrayList<String>();
-			scoreColumn = new Double[scoredConcepts.size()];
-			for (int i = 0; i < scoredConcepts.size(); i++) {
-				targetConcepts.add(scoredConcepts.get(i).concept);
-				scoreColumn[i] = (double) scoredConcepts.get(i).matchScore;
-				terms.add(scoredConcepts.get(i).term);
-			}
-			fireTableDataChanged();
-		}
-
-		public int getRowCount() {
-			return targetConcepts.size();
-		}
-
-		public String getColumnName(int col) {
-			if (hasScoreColumn) {
-				if (col == 0)
-					return scoreColumnName;
-				else if (col == 1)
-					return termColumnName;
-				else
-					return columnNames[col - 2];
-			} else
-				return columnNames[col];
-		}
-
-		public Object getValueAt(int row, int col) {
-			if (row > targetConcepts.size())
-				return "";
-			if (hasScoreColumn) {
-				if (col == 0)
-					return scoreColumn[row];
-				if (col == 1)
-					return terms.get(row);
-				col -= 2;
-			}
-			Concept targetConcept = targetConcepts.get(row);
-			switch (col) {
-				case 0:
-					return targetConcept.conceptId;
-				case 1:
-					return targetConcept.conceptName;
-				case 2:
-					return targetConcept.domainId;
-				case 3:
-					return targetConcept.conceptClassId;
-				case 4:
-					return targetConcept.vocabularyId;
-				case 5:
-					return targetConcept.conceptCode;
-				case 6:
-					return targetConcept.validStartDate;
-				case 7:
-					return targetConcept.validEndDate;
-				case 8:
-					return targetConcept.invalidReason == null ? "" : targetConcept.invalidReason;
-				case 9:
-					return targetConcept.standardConcept;
-				case 10:
-					return targetConcept.parentCount;
-				case 11:
-					return targetConcept.childCount;
-				default:
-					return "";
-			}
-		}
-
-		public Class<?> getColumnClass(int col) {
-			if (hasScoreColumn) {
-				if (col == 0)
-					return Double.class;
-				if (col == 1)
-					return String.class;
-				col -= 2;
-			}
-			switch (col) {
-				case 1:
-					return Integer.class;
-				case 10:
-					return Integer.class;
-				case 11:
-					return Integer.class;
-				default:
-					return String.class;
 			}
 		}
 
