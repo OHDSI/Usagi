@@ -62,7 +62,7 @@ public class AboutDialog extends JDialog {
 
 		text = new JEditorPane(
 				"text/html",
-				"Usagi was developed by <a href=\"http://ohdsi.org\">Observational Health Data Sciences and Informatics</a> (OHDSI).<br/><br/>For help, please review the <a href =\"http://www.ohdsi.org/web/wiki/doku.php?id=documentation:software:usagi\">Usagi Wiki</a>.");
+				"Usagi was developed by Martijn Schuemie in <a href=\"http://ohdsi.org\">Observational Health Data Sciences and Informatics</a> (OHDSI).<br/><br/>For help, please review the <a href =\"http://www.ohdsi.org/web/wiki/doku.php?id=documentation:software:usagi\">Usagi Wiki</a>.");
 
 		text.setEditable(false);
 		text.setOpaque(false);
