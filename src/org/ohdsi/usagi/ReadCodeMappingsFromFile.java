@@ -56,6 +56,11 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 				buffer = new CodeMapping(new SourceCode(row));
 				buffer.matchScore = row.getDouble("matchScore");
 				buffer.mappingStatus = MappingStatus.valueOf(row.get("mappingStatus"));
+				try {
+					buffer.comment = row.get("comment");
+				} catch (Exception e) {
+					buffer.comment = "";
+				}
 				while (row != null && new SourceCode(row).sourceCode.equals(buffer.sourceCode.sourceCode)
 						&& new SourceCode(row).sourceName.equals(buffer.sourceCode.sourceName)) {
 					if (row.getInt("conceptId") != 0) {

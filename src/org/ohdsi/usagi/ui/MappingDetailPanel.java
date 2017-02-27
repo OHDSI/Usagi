@@ -37,6 +37,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -64,6 +65,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private UsagiTable				searchTable;
 	private ConceptTableModel		searchTableModel;
 	private JButton					approveButton;
+	private JTextField				commentField;
 	private JButton					removeButton;
 	private JButton					replaceButton;
 	private JButton					addButton;
@@ -250,7 +252,36 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private Component createApprovePanel() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-		panel.add(Box.createHorizontalGlue());
+		panel.add(new JLabel("Comment:"));
+
+		panel.add(Box.createHorizontalStrut(5));
+
+		commentField = new JTextField();
+		commentField.setMaximumSize(new Dimension(Integer.MAX_VALUE, commentField.getPreferredSize().height));
+		commentField.getDocument().addDocumentListener(new DocumentListener() {
+
+			@Override
+			public void removeUpdate(DocumentEvent arg0) {
+				codeMapping.comment = commentField.getText();
+				Global.mapping.fireDataChanged(DataChangeListener.SIMPLE_UPDATE_EVENT);
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent arg0) {
+				codeMapping.comment = commentField.getText();
+				Global.mapping.fireDataChanged(DataChangeListener.SIMPLE_UPDATE_EVENT);
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent arg0) {
+				codeMapping.comment = commentField.getText();
+				Global.mapping.fireDataChanged(DataChangeListener.SIMPLE_UPDATE_EVENT);
+			}
+		});
+		commentField.setToolTipText("Comments about the code mapping can be written here");
+		panel.add(commentField);
+
+		panel.add(Box.createHorizontalStrut(5));
 
 		approveButton = new JButton(Global.approveAction);
 		approveButton.setBackground(new Color(151, 220, 141));
@@ -333,6 +364,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		setApproveButton();
 		sourceCodeTableModel.setMapping(codeMapping);
 		targetConceptTableModel.setConcepts(codeMapping.targetConcepts);
+		commentField.setText(codeMapping.comment);
 		doSearch();
 	}
 

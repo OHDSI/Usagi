@@ -43,6 +43,7 @@ public class WriteCodeMappingsToFile {
 			row.add("matchScore", codeMapping.matchScore);
 			row.add("mappingStatus", codeMapping.mappingStatus.toString());
 			row.add("conceptId", targetConcept.conceptId);
+			row.add("comment", codeMapping.comment);
 			out.write(row);
 		}
 	}
