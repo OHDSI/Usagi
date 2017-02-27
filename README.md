@@ -7,11 +7,14 @@ Usagi is an application to help create mappings between coding systems and the V
 
 Features
 ========
-- Automatically creates an initial full mapping based on term similarity
-- Uses concept names and synonyms to find potential matches
-- Allows filtering the search results based on target vocabulary, domain, concept class, as well as user-defined subsets of concepts
-- Interactive review and correction of the initial mapping
-- Export to source_to_concept_map format
+- Automatically creates an initial full mapping based on term similarity.
+- Uses concept names and synonyms to find potential matches.
+- Optionally use names and synonyms of source concepts to find potential matches.
+- Allows filtering the search results based on target vocabulary, domain, concept class, as well as user-defined subsets of concepts.
+- Interactive review and correction of the initial mapping.
+- Inspect information about target concepts, such as their parents, children, and source concepts.
+- Export to source_to_concept_map format.
+- Apply an old mapping to an updated set of source codes. Useful for when the vocab or the set of source codes has updated (or both).
 
 Screenshot
 ===========
@@ -19,22 +22,22 @@ Screenshot
 
 Technology
 ============
-Usagi is a pure Java application. It makes use of [Apache's Lucene Java library](http://lucene.apache.org/) for term matching and [Apache's POI Java libraries](http://poi.apache.org/) to read Excel files.
+Usagi is a pure Java application. It makes use of [Apache's Lucene Java library](http://lucene.apache.org/) for term matching, [Apache's POI Java libraries](http://poi.apache.org/) to read Excel files, [Apache Commons CSV](https://commons.apache.org/proper/commons-csv/) to read CSV files, and [Oracle's Berkeley DB](http://www.oracle.com/technetwork/database/database-technologies/berkeleydb/overview/index.html) to store concept information.
 
 System Requirements
 ============
-Requires Java 1.7 or higher. Java can be downloaded from <a href="http://www.java.com" target="_blank">http://www.java.com</a>.
+Requires Java 1.8 or higher. Java can be downloaded from <a href="http://www.java.com" target="_blank">http://www.java.com</a>.
 
 Dependencies
 ============
- * Vocabulary version 5 (CSV files). These can be obtained from [Athena](http://www.ohdsi.org/web/athena).
+ * Vocabulary version 5 files. These can be obtained from [Athena](http://www.ohdsi.org/web/athena).
 
 Getting Started
 ===============
 1. Under the [Releases](https://github.com/OHDSI/Usagi/releases) tab, download Usagi*.zip
 2. Unzip the download
 3. Click on Usagi_vx.x.x.jar to start Usagi
-4. Usagi will prompt you to specifiy the location of the Vocabulary CSV files to create the index (needs to be done only once)
+4. Usagi will prompt you to specify the location of the Vocabulary files to create the index (needs to be done only once)
 
 Getting Involved
 =============
@@ -53,5 +56,5 @@ Usagi is being developed in Eclipse. Contributions are welcome.
 Beta testing
 
 Acknowledgements
-===========
+================
 Martijn Schuemie is the author of this application.

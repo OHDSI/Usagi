@@ -23,7 +23,7 @@ import org.ohdsi.utilities.files.ReadCSVFileWithHeader;
 import org.ohdsi.utilities.files.Row;
 
 public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
-	private String	filename;
+	private String filename;
 
 	public ReadCodeMappingsFromFile(String filename) {
 		this.filename = filename;
@@ -41,7 +41,7 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 		private Row				row;
 
 		public RowIterator() {
-			iterator = new ReadCSVFileWithHeader(filename, "UTF-8").iterator();
+			iterator = new ReadCSVFileWithHeader(filename).iterator();
 			if (iterator.hasNext()) {
 				row = iterator.next();
 				readNext();

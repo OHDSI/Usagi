@@ -25,10 +25,10 @@ import org.ohdsi.utilities.files.WriteCSVFileWithHeader;
  * Class for writing code mappings (source codes and mapped target concept(s)) to a CSV file.
  */
 public class WriteCodeMappingsToFile {
-	private WriteCSVFileWithHeader	out;
+	private WriteCSVFileWithHeader out;
 
 	public WriteCodeMappingsToFile(String filename) {
-		out = new WriteCSVFileWithHeader(filename, "UTF-8");
+		out = new WriteCSVFileWithHeader(filename);
 	}
 
 	public void write(CodeMapping codeMapping) {
