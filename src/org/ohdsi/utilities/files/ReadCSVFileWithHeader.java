@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  * Copyright 2017 Observational Health Data Sciences and Informatics
  * 
@@ -15,32 +16,50 @@
  ******************************************************************************/
 package org.ohdsi.utilities.files;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-
 public class ReadCSVFileWithHeader implements Iterable<Row> {
+	private InputStream	inputstream;
+	private char		delimiter	= ',';
+	private String		charSet		= "ISO-8859-1";
 
-	private CSVParser parser;
-
-	public ReadCSVFileWithHeader(String filename) {
-		this(filename, CSVFormat.DEFAULT);
+	public ReadCSVFileWithHeader(String filename, char delimiter) {
+		this(filename);
+		this.delimiter = delimiter;
 	}
 
-	public ReadCSVFileWithHeader(String filename, CSVFormat format) {
+	public ReadCSVFileWithHeader(String filename, String charSet) {
+		this(filename);
+		this.charSet = charSet;
+	}
+
+	public ReadCSVFileWithHeader(String filename, char delimiter, String charSet) {
+		this(filename);
+		this.delimiter = delimiter;
+		this.charSet = charSet;
+	}
+
+	public ReadCSVFileWithHeader(String filename) {
 		try {
-			parser = new CSVParser(new FileReader(filename), format);
-		} catch (IOException e) {
-			throw new RuntimeException(e.getMessage());
+			inputstream = new FileInputStream(filename);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 		}
+	}
+
+	public ReadCSVFileWithHeader(InputStream inputstream) {
+		this.inputstream = inputstream;
+	}
+
+	public ReadCSVFileWithHeader(InputStream inputstream, String charSet) {
+		this.charSet = charSet;
+		this.inputstream = inputstream;
 	}
 
 	@Override
@@ -50,14 +69,13 @@ public class ReadCSVFileWithHeader implements Iterable<Row> {
 
 	public class RowIterator implements Iterator<Row> {
 
-		private Iterator<CSVRecord>		iterator;
+		private Iterator<List<String>>	iterator;
 		private Map<String, Integer>	fieldName2ColumnIndex;
 
 		public RowIterator() {
-			iterator = parser.iterator();
-			CSVRecord record = iterator.next();
+			iterator = new ReadCSVFile(inputstream, delimiter, charSet).iterator();
 			fieldName2ColumnIndex = new HashMap<String, Integer>();
-			for (String header : record)
+			for (String header : iterator.next())
 				fieldName2ColumnIndex.put(header, fieldName2ColumnIndex.size());
 		}
 
@@ -68,16 +86,13 @@ public class ReadCSVFileWithHeader implements Iterable<Row> {
 
 		@Override
 		public Row next() {
-			CSVRecord record = iterator.next();
-			List<String> row = new ArrayList<String>(record.size());
-			for (int i = 0; i < record.size(); i++)
-				row.add(record.get(i));
-			return new Row(row, fieldName2ColumnIndex);
+			return new Row(iterator.next(), fieldName2ColumnIndex);
 		}
 
 		@Override
 		public void remove() {
 			throw new RuntimeException("Remove not supported");
 		}
+
 	}
 }

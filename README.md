@@ -22,7 +22,7 @@ Screenshot
 
 Technology
 ============
-Usagi is a pure Java application. It makes use of [Apache's Lucene Java library](http://lucene.apache.org/) for term matching, [Apache's POI Java libraries](http://poi.apache.org/) to read Excel files, [Apache Commons CSV](https://commons.apache.org/proper/commons-csv/) to read CSV files, and [Oracle's Berkeley DB](http://www.oracle.com/technetwork/database/database-technologies/berkeleydb/overview/index.html) to store concept information.
+Usagi is a pure Java application. It makes use of [Apache's Lucene Java library](http://lucene.apache.org/) for term matching, [Apache's POI Java libraries](http://poi.apache.org/) to read Excel files, and [Oracle's Berkeley DB](http://www.oracle.com/technetwork/database/database-technologies/berkeleydb/overview/index.html) to store concept information.
 
 System Requirements
 ============
