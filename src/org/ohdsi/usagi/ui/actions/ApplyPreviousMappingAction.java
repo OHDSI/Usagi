@@ -18,7 +18,6 @@ package org.ohdsi.usagi.ui.actions;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
@@ -29,13 +28,12 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.ohdsi.usagi.CodeMapping;
-import org.ohdsi.usagi.Concept;
 import org.ohdsi.usagi.ui.Global;
 import org.ohdsi.usagi.ui.Mapping;
 
 public class ApplyPreviousMappingAction extends AbstractAction {
 
-	private static final long	serialVersionUID	= 3420357922150237898L;
+	private static final long serialVersionUID = 3420357922150237898L;
 
 	public ApplyPreviousMappingAction() {
 		putValue(Action.NAME, "Apply previous mapping");
@@ -49,28 +47,25 @@ public class ApplyPreviousMappingAction extends AbstractAction {
 		fileChooser.setFileFilter(csvFilter);
 		if (fileChooser.showOpenDialog(Global.frame) == JFileChooser.APPROVE_OPTION) {
 			int mappingsUsed = 0;
-			int mappingsFailed = 0;
 			File file = fileChooser.getSelectedFile();
 			Mapping mapping = new Mapping();
 			mapping.loadFromFile(file.getAbsolutePath());
-			Map<String, List<Concept>> codeToTargetConcept = new HashMap<String, List<Concept>>();
+			Map<String, CodeMapping> codeToOldMapping = new HashMap<String, CodeMapping>();
 			for (CodeMapping codeMapping : mapping)
 				if (codeMapping.mappingStatus.equals(CodeMapping.MappingStatus.APPROVED))
-					codeToTargetConcept.put(codeMapping.sourceCode.sourceCode, codeMapping.targetConcepts);
+					codeToOldMapping.put(codeMapping.sourceCode.sourceCode, codeMapping);
 
-			for (CodeMapping codeMapping : Global.mapping) {
-				List<Concept> targetConcepts = codeToTargetConcept.get(codeMapping.sourceCode.sourceCode);
-				if (targetConcepts != null) {
-					if (targetConcepts.size() > 0) {
-						if (codeMapping.targetConcepts.size() == targetConcepts.size())
-							codeMapping.mappingStatus = CodeMapping.MappingStatus.APPROVED;
-						codeMapping.targetConcepts = targetConcepts;
-						mappingsUsed++;
-					}
+			for (CodeMapping newCodeMapping : Global.mapping) {
+				CodeMapping oldCodeMapping = codeToOldMapping.get(newCodeMapping.sourceCode.sourceCode);
+				if (oldCodeMapping != null) {
+					newCodeMapping.targetConcepts = oldCodeMapping.targetConcepts;
+					newCodeMapping.mappingStatus = oldCodeMapping.mappingStatus;
+					newCodeMapping.comment = oldCodeMapping.comment;
+					mappingsUsed++;
 				}
 			}
-			String message = "The old mapping contained " + codeToTargetConcept.size() + " approved mappings of which " + mappingsUsed
-					+ " were applied to the current mapping. " + mappingsFailed + " old target concepts could not be found in the new vocabulary.";
+			String message = "The old mapping contained " + codeToOldMapping.size() + " approved mappings of which " + mappingsUsed
+					+ " were applied to the current mapping.";
 			Global.mappingTablePanel.updateUI();
 			Global.mappingDetailPanel.updateUI();
 			JOptionPane.showMessageDialog(Global.frame, message);
