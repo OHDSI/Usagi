@@ -48,7 +48,6 @@ import javax.swing.table.TableModel;
 import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
 import org.ohdsi.usagi.SourceCode;
-import org.ohdsi.usagi.Concept;
 import org.ohdsi.usagi.UsagiSearchEngine.ScoredConcept;
 import org.ohdsi.utilities.ReadXlsxFile;
 import org.ohdsi.utilities.StringUtilities;
@@ -387,7 +386,7 @@ public class ImportDialog extends JDialog {
 				if (filterPanel.getFilterByDomain())
 					filterDomain = filterPanel.getDomain();
 				boolean includeSourceConcepts = filterPanel.getIncludeSourceTerms();
-				
+
 				Global.mapping.clear();
 				for (SourceCode sourceCode : sourceCodes) {
 					Set<Integer> filterConceptIds = null;
@@ -401,9 +400,9 @@ public class ImportDialog extends JDialog {
 						codeMapping.targetConcepts.add(concepts.get(0).concept);
 						codeMapping.matchScore = concepts.get(0).matchScore;
 					} else {
-						codeMapping.targetConcepts.add(Concept.EMPTY_CONCEPT);
 						codeMapping.matchScore = 0;
 					}
+					codeMapping.comment = "";
 					codeMapping.mappingStatus = MappingStatus.UNCHECKED;
 					if (sourceCode.sourceAutoAssignedConceptIds.size() == 1 && concepts.size() > 0) {
 						codeMapping.mappingStatus = MappingStatus.AUTO_MAPPED_TO_1;
