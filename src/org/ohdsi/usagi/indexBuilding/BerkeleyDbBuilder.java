@@ -107,16 +107,16 @@ public class BerkeleyDbBuilder {
 			info.append("Method type: ");
 			info.append(row.get("METHOD_TYP"));
 			info.append("\n");
-			info.append("Comments: ");
-			info.append(row.get("COMMENTS"));
+			info.append("Definition description: ");
+			info.append(row.get("DefinitionDescription"));
 			info.append("\n");
 			info.append("Formula: ");
 			info.append(row.get("FORMULA"));
 			info.append("\n");
 			info.append("Example units: ");
-			info.append(row.get("EXAMPLE_UNITS"));
+			info.append(row.get("EXAMPLE_UCUM_UNITS"));
 			info.append("\n");
-			loincToInfo.put(row.get("LOINC_NUM"), info.toString());
+			loincToInfo.put(row.getCells().get(0), info.toString());
 		}
 		return loincToInfo;
 	}

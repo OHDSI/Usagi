@@ -302,7 +302,7 @@ public class ConceptInformationDialog extends JDialog {
 		conceptInfo.append("Invalid reason: " + (concept.invalidReason == null ? "" : concept.invalidReason) + "\n");
 		conceptInfo.append("Standard concept: " + concept.standardConcept + "\n");
 		if (concept.additionalInformation != null)
-			conceptInfo.append(concept.additionalInformation.replaceAll("\\\\n", "\n"));
+			conceptInfo.append("\n" + concept.additionalInformation.replaceAll("\\\\n", "\n"));
 		area.setText(conceptInfo.toString());
 
 		List<Concept> parents = new ArrayList<Concept>();
