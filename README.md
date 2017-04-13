@@ -52,8 +52,8 @@ Usagi is licensed under Apache License 2.0
 Development
 ===========
 Usagi is being developed in Eclipse. Contributions are welcome.
-###Development status
-Beta testing
+### Development status
+Ready for use.
 
 Acknowledgements
 ================
