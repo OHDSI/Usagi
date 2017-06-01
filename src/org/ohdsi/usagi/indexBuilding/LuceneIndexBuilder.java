@@ -59,6 +59,8 @@ public class LuceneIndexBuilder {
 				MapsToRelationship mapsToRelationship = dbEngine.getMapsToRelationship(concept.conceptId);
 				if (mapsToRelationship != null) {
 					Concept mappedToConcept = dbEngine.getConcept(mapsToRelationship.conceptId2);
+					if (mappedToConcept == null)
+						throw new RuntimeException("Error: cannot find concept with concept ID " + mapsToRelationship.conceptId2);
 					if (!mappedToConcept.conceptName.toLowerCase().equals(concept.conceptName.toLowerCase()))
 						usagiSearchEngine.addTermToIndex(concept.conceptName, UsagiSearchEngine.SOURCE_TERM, mappedToConcept);
 				}

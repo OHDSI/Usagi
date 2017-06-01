@@ -47,6 +47,7 @@ import org.ohdsi.usagi.ui.actions.OpenAction;
 import org.ohdsi.usagi.ui.actions.RebuildIndexAction;
 import org.ohdsi.usagi.ui.actions.SaveAction;
 import org.ohdsi.usagi.ui.actions.SaveAsAction;
+import org.ohdsi.utilities.files.ReadTextFile;
 
 /**
  * The main application class
@@ -71,6 +72,7 @@ public class UsagiMain implements ActionListener {
 
 		Global.usagiSearchEngine = new UsagiSearchEngine(Global.folder);
 		Global.dbEngine = new BerkeleyDbEngine(Global.folder);
+		Global.vocabularyVersion = loadVocabularyVersion(Global.folder);
 		Global.conceptInformationDialog = new ConceptInformationDialog();
 		Global.frame = frame;
 		Global.openAction = new OpenAction();
@@ -128,6 +130,16 @@ public class UsagiMain implements ActionListener {
 
 		if (!Global.usagiSearchEngine.mainIndexExists())
 			Global.rebuildIndexAction.actionPerformed(null);
+	}
+
+	private String loadVocabularyVersion(String folder) {
+		String versionFileName = folder + "/vocabularyVersion.txt";
+		String version = "Unknown";
+		if (new File(versionFileName).exists()) {
+			for (String line : new ReadTextFile(versionFileName))
+			  version = line;
+		} 
+		return version;
 	}
 
 	@Override

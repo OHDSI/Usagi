@@ -87,6 +87,9 @@ public class IndexBuildCoordinator {
 
 		public void run() {
 			try {
+				VocabVersionGrabber vocabVersionGrabber = new VocabVersionGrabber();
+				vocabVersionGrabber.grabVersion(vocabFolder);
+				
 				BerkeleyDbBuilder berkeleyDbBuilder = new BerkeleyDbBuilder();
 				berkeleyDbBuilder.buildIndex(vocabFolder, loincFile, this);
 

@@ -59,4 +59,5 @@ public class Global {
 	public static ExportSourceToConceptMapAction	exportAction;
 	public static RebuildIndexAction				rebuildIndexAction;
 	public static ExitAction						exitAction;
+	public static String							vocabularyVersion;
 }
