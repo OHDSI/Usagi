@@ -9,7 +9,7 @@ import com.sleepycat.persist.model.SecondaryKey;
 import static com.sleepycat.persist.model.Relationship.*;
 
 @Entity
-public class SubsumesRelationship {
+public class ParentChildRelationShip {
 	@PrimaryKey(sequence="Sequence_Namespace")
 	public int id;
 	
@@ -18,10 +18,10 @@ public class SubsumesRelationship {
 	@SecondaryKey(relate=MANY_TO_ONE)
 	public int childConceptId;
 	
-	public SubsumesRelationship() {}
+	public ParentChildRelationShip() {}
 	
-	public SubsumesRelationship(Row row) {
-		parentConceptId = row.getInt("concept_id_1");
-		childConceptId = row.getInt("concept_id_2");
+	public ParentChildRelationShip(Row row) {
+		parentConceptId = row.getInt("ancestor_concept_id");
+		childConceptId = row.getInt("descendant_concept_id");
 	}
 }

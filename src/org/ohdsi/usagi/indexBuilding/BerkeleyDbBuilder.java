@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.ohdsi.usagi.BerkeleyDbEngine;
 import org.ohdsi.usagi.MapsToRelationship;
-import org.ohdsi.usagi.SubsumesRelationship;
+import org.ohdsi.usagi.ParentChildRelationShip;
 import org.ohdsi.usagi.Concept;
 import org.ohdsi.usagi.indexBuilding.IndexBuildCoordinator.BuildThread;
 import org.ohdsi.usagi.ui.Global;
@@ -36,6 +36,7 @@ public class BerkeleyDbBuilder {
 		dbEngine = new BerkeleyDbEngine(Global.folder);
 		dbEngine.createDatabase();
 		loadRelationships(vocabFolder + "/CONCEPT_RELATIONSHIP.csv");
+		loadAncestors(vocabFolder + "/CONCEPT_ANCESTOR.csv");
 		loadConcepts(vocabFolder + "/CONCEPT.csv", loincFileName);
 		dbEngine.shutdown();
 	}
@@ -44,19 +45,27 @@ public class BerkeleyDbBuilder {
 		buildThread.report("Loading relationship information");
 		int count = 0;
 		for (Row row : new ReadAthenaFile(conceptRelationshipFileName)) {
-			if (row.get("invalid_reason") == null && !row.get("concept_id_1").equals(row.get("concept_id_2"))) {
-				if (row.get("relationship_id").equals("Maps to")) {
-					MapsToRelationship mapsToRelationship = new MapsToRelationship(row);
-					dbEngine.put(mapsToRelationship);
-				}
-				if (row.get("relationship_id").equals("Subsumes")) {
-					SubsumesRelationship subsumesRelationship = new SubsumesRelationship(row);
-					dbEngine.put(subsumesRelationship);
-				}
+			if (row.get("relationship_id").equals("Maps to") && row.get("invalid_reason") == null && !row.get("concept_id_1").equals(row.get("concept_id_2"))) {
+				MapsToRelationship mapsToRelationship = new MapsToRelationship(row);
+				dbEngine.put(mapsToRelationship);
 			}
 			count++;
 			if (count % 100000 == 0)
-				System.out.println("Loaded " + count + " relationships");
+				System.out.println("Processed " + count + " relationships");
+		}
+	}
+
+	private void loadAncestors(String conceptAncestorFileName) {
+		buildThread.report("Loading parent-child information");
+		int count = 0;
+		for (Row row : new ReadAthenaFile(conceptAncestorFileName)) {
+			if (row.get("min_levels_of_separation").equals("1") && !row.get("ancestor_concept_id").equals(row.get("descendant_concept_id"))) {
+				ParentChildRelationShip parentChildRelationship = new ParentChildRelationShip(row);
+				dbEngine.put(parentChildRelationship);
+			}
+			count++;
+			if (count % 100000 == 0)
+				System.out.println("Processed " + count + " relationships");
 		}
 	}
 
@@ -75,8 +84,8 @@ public class BerkeleyDbBuilder {
 				if (info != null)
 					concept.additionalInformation = info;
 			}
-			concept.parentCount = dbEngine.getSubsumesRelationshipsByChildConceptId(concept.conceptId).size();
-			concept.childCount = dbEngine.getSubsumesRelationshipsByParentConceptId(concept.conceptId).size();
+			concept.parentCount = dbEngine.getParentChildRelationshipsByChildConceptId(concept.conceptId).size();
+			concept.childCount = dbEngine.getParentChildRelationshipsByParentConceptId(concept.conceptId).size();
 			dbEngine.put(concept);
 			count++;
 			if (count % 100000 == 0)

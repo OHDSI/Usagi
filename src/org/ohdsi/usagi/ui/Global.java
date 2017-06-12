@@ -32,6 +32,7 @@ import org.ohdsi.usagi.ui.actions.OpenAction;
 import org.ohdsi.usagi.ui.actions.RebuildIndexAction;
 import org.ohdsi.usagi.ui.actions.SaveAction;
 import org.ohdsi.usagi.ui.actions.SaveAsAction;
+import org.ohdsi.usagi.ui.actions.ShowStatsAction;
 
 public class Global {
 	public static JFrame							frame;
@@ -60,4 +61,5 @@ public class Global {
 	public static RebuildIndexAction				rebuildIndexAction;
 	public static ExitAction						exitAction;
 	public static String							vocabularyVersion;
+	public static ShowStatsAction					showStatsAction;
 }

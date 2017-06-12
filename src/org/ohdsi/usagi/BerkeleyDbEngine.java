@@ -22,7 +22,7 @@ public class BerkeleyDbEngine {
 	private EntityStore							store;
 	private ConceptDataAccessor					conceptDataAccessor;
 	private MapsToRelationshipDataAccessor		mapsToRelationshipDataAccessor;
-	private SubsumesRelationshipDataAccessor	subsumesRelationshipDataAccessor;
+	private ParentChildRelationshipDataAccessor	parentChildRelationshipDataAccessor;
 	private String								databaseFolder;
 	private boolean								isOpenForReading	= false;
 	private boolean								isOpenForWriting	= false;
@@ -60,10 +60,24 @@ public class BerkeleyDbEngine {
 			store = new EntityStore(dbEnvironment, "EntityStore", storeConfig);
 			conceptDataAccessor = new ConceptDataAccessor();
 			mapsToRelationshipDataAccessor = new MapsToRelationshipDataAccessor();
-			subsumesRelationshipDataAccessor = new SubsumesRelationshipDataAccessor();
+			parentChildRelationshipDataAccessor = new ParentChildRelationshipDataAccessor();
 		} catch (DatabaseException dbe) {
 			throw new RuntimeException(dbe);
 		}
+	}
+
+	public class BerkeleyDbStats {
+		public long	conceptCount;
+		public long	mapsToRelationshipCount;
+		public long	parentChildCount;
+	}
+
+	public BerkeleyDbStats getStats() {
+		BerkeleyDbStats berkeleyDbStats = new BerkeleyDbStats();
+		berkeleyDbStats.conceptCount = store.getPrimaryIndex(Integer.class, Concept.class).count();
+		berkeleyDbStats.mapsToRelationshipCount = store.getPrimaryIndex(Integer.class, MapsToRelationship.class).count();
+		berkeleyDbStats.parentChildCount = store.getPrimaryIndex(Integer.class, ParentChildRelationShip.class).count();
+		return berkeleyDbStats;
 	}
 
 	public void put(Concept concept) {
@@ -74,8 +88,8 @@ public class BerkeleyDbEngine {
 		mapsToRelationshipDataAccessor.primaryIndex.put(mapsToRelationship);
 	}
 
-	public void put(SubsumesRelationship subsumesRelationship) {
-		subsumesRelationshipDataAccessor.primaryIndex.put(subsumesRelationship);
+	public void put(ParentChildRelationShip parentChildRelationship) {
+		parentChildRelationshipDataAccessor.primaryIndex.put(parentChildRelationship);
 	}
 
 	public EntityCursor<Concept> getConceptCursor() {
@@ -99,25 +113,25 @@ public class BerkeleyDbEngine {
 		return relationships;
 	}
 
-	public List<SubsumesRelationship> getSubsumesRelationshipsByParentConceptId(int conceptId) {
-		EntityIndex<Integer, SubsumesRelationship> subIndex = subsumesRelationshipDataAccessor.secondaryIndexParent.subIndex(conceptId);
-		EntityCursor<SubsumesRelationship> cursor = subIndex.entities();
-		List<SubsumesRelationship> relationships = new ArrayList<SubsumesRelationship>();
+	public List<ParentChildRelationShip> getParentChildRelationshipsByParentConceptId(int conceptId) {
+		EntityIndex<Integer, ParentChildRelationShip> subIndex = parentChildRelationshipDataAccessor.secondaryIndexParent.subIndex(conceptId);
+		EntityCursor<ParentChildRelationShip> cursor = subIndex.entities();
+		List<ParentChildRelationShip> relationships = new ArrayList<ParentChildRelationShip>();
 		try {
-			for (SubsumesRelationship relationship : cursor)
+			for (ParentChildRelationShip relationship : cursor)
 				relationships.add(relationship);
 		} finally {
 			cursor.close();
 		}
 		return relationships;
 	}
-	
-	public List<SubsumesRelationship> getSubsumesRelationshipsByChildConceptId(int conceptId) {
-		EntityIndex<Integer, SubsumesRelationship> subIndex = subsumesRelationshipDataAccessor.secondaryIndexChild.subIndex(conceptId);
-		EntityCursor<SubsumesRelationship> cursor = subIndex.entities();
-		List<SubsumesRelationship> relationships = new ArrayList<SubsumesRelationship>();
+
+	public List<ParentChildRelationShip> getParentChildRelationshipsByChildConceptId(int conceptId) {
+		EntityIndex<Integer, ParentChildRelationShip> subIndex = parentChildRelationshipDataAccessor.secondaryIndexChild.subIndex(conceptId);
+		EntityCursor<ParentChildRelationShip> cursor = subIndex.entities();
+		List<ParentChildRelationShip> relationships = new ArrayList<ParentChildRelationShip>();
 		try {
-			for (SubsumesRelationship relationship : cursor)
+			for (ParentChildRelationShip relationship : cursor)
 				relationships.add(relationship);
 		} finally {
 			cursor.close();
@@ -141,7 +155,7 @@ public class BerkeleyDbEngine {
 	}
 
 	private class ConceptDataAccessor {
-		public PrimaryIndex<Integer, Concept>	primaryIndex;
+		public PrimaryIndex<Integer, Concept> primaryIndex;
 
 		public ConceptDataAccessor() throws DatabaseException {
 			primaryIndex = store.getPrimaryIndex(Integer.class, Concept.class);
@@ -159,13 +173,13 @@ public class BerkeleyDbEngine {
 		}
 	}
 
-	private class SubsumesRelationshipDataAccessor {
-		public PrimaryIndex<Integer, SubsumesRelationship>				primaryIndex;
-		public SecondaryIndex<Integer, Integer, SubsumesRelationship>	secondaryIndexParent;
-		public SecondaryIndex<Integer, Integer, SubsumesRelationship>	secondaryIndexChild;
+	private class ParentChildRelationshipDataAccessor {
+		public PrimaryIndex<Integer, ParentChildRelationShip>				primaryIndex;
+		public SecondaryIndex<Integer, Integer, ParentChildRelationShip>	secondaryIndexParent;
+		public SecondaryIndex<Integer, Integer, ParentChildRelationShip>	secondaryIndexChild;
 
-		public SubsumesRelationshipDataAccessor() throws DatabaseException {
-			primaryIndex = store.getPrimaryIndex(Integer.class, SubsumesRelationship.class);
+		public ParentChildRelationshipDataAccessor() throws DatabaseException {
+			primaryIndex = store.getPrimaryIndex(Integer.class, ParentChildRelationShip.class);
 			secondaryIndexParent = store.getSecondaryIndex(primaryIndex, Integer.class, "parentConceptId");
 			secondaryIndexChild = store.getSecondaryIndex(primaryIndex, Integer.class, "childConceptId");
 		}

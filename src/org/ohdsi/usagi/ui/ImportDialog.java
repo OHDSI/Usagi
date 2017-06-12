@@ -373,7 +373,7 @@ public class ImportDialog extends JDialog {
 		public void run() {
 			try {
 				Global.usagiSearchEngine.createDerivedIndex(sourceCodes, null);
-				Global.dbEngine.openForReading();
+//				Global.dbEngine.openForReading();
 
 				boolean filterStandard = filterPanel.getFilterStandard();
 				String filterConceptClass = null;

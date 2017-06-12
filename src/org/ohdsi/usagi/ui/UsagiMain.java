@@ -47,6 +47,7 @@ import org.ohdsi.usagi.ui.actions.OpenAction;
 import org.ohdsi.usagi.ui.actions.RebuildIndexAction;
 import org.ohdsi.usagi.ui.actions.SaveAction;
 import org.ohdsi.usagi.ui.actions.SaveAsAction;
+import org.ohdsi.usagi.ui.actions.ShowStatsAction;
 import org.ohdsi.utilities.files.ReadTextFile;
 
 /**
@@ -72,6 +73,10 @@ public class UsagiMain implements ActionListener {
 
 		Global.usagiSearchEngine = new UsagiSearchEngine(Global.folder);
 		Global.dbEngine = new BerkeleyDbEngine(Global.folder);
+		if (Global.usagiSearchEngine.mainIndexExists()) {
+			Global.usagiSearchEngine.openIndexForSearching(false);
+			Global.dbEngine.openForReading();
+		}
 		Global.vocabularyVersion = loadVocabularyVersion(Global.folder);
 		Global.conceptInformationDialog = new ConceptInformationDialog();
 		Global.frame = frame;
@@ -83,6 +88,7 @@ public class UsagiMain implements ActionListener {
 		Global.saveAsAction = new SaveAsAction();
 		Global.approveAction = new ApproveAction();
 		Global.conceptInfoAction = new ConceptInformationAction();
+		Global.showStatsAction = new ShowStatsAction();
 		Global.aboutAction = new AboutAction();
 		Global.approveAllAction = new ApproveAllAction();
 		Global.rebuildIndexAction = new RebuildIndexAction();
@@ -137,7 +143,7 @@ public class UsagiMain implements ActionListener {
 		String version = "Unknown";
 		if (new File(versionFileName).exists()) {
 			for (String line : new ReadTextFile(versionFileName))
-			  version = line;
+				version = line;
 		} 
 		return version;
 	}
@@ -147,7 +153,7 @@ public class UsagiMain implements ActionListener {
 
 	}
 
-	private void loadIcons(JFrame f) {
+	protected static void loadIcons(JFrame f) {
 		List<Image> icons = new ArrayList<Image>();
 		icons.add(loadIcon("Usagi16.png", f));
 		icons.add(loadIcon("Usagi32.png", f));
@@ -158,7 +164,7 @@ public class UsagiMain implements ActionListener {
 		f.setIconImages(icons);
 	}
 
-	private Image loadIcon(String name, JFrame f) {
+	private static Image loadIcon(String name, JFrame f) {
 		Image icon = Toolkit.getDefaultToolkit().getImage(UsagiMain.class.getResource(name));
 		MediaTracker mediaTracker = new MediaTracker(f);
 		mediaTracker.addImage(icon, 0);

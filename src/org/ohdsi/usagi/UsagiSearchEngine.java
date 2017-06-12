@@ -43,7 +43,6 @@ import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.FieldInvertState;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -239,18 +238,21 @@ public class UsagiSearchEngine {
 				System.gc();
 				if (dialog != null)
 					dialog.setVisible(false);
-				openIndexForSearching();
+				openIndexForSearching(true);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 		}
 	}
 
-	public void openIndexForSearching() {
+	public void openIndexForSearching(boolean useDerivedIndex) {
 		try {
-			reader = DirectoryReader.open(FSDirectory.open(new File(folder + "/" + DERIVED_INDEX_FOLDER)));
+			if (useDerivedIndex)
+				reader = DirectoryReader.open(FSDirectory.open(new File(folder + "/" + DERIVED_INDEX_FOLDER)));
+			else
+				reader = DirectoryReader.open(FSDirectory.open(new File(folder + "/" + MAIN_INDEX_FOLDER)));
 			searcher = new IndexSearcher(reader);
-			searcher.setSimilarity(new CustomSimilarity());
+			searcher.setSimilarity(new DefaultSimilarity());
 			BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
 			QueryParser typeQueryParser = new QueryParser(Version.LUCENE_4_9, "TYPE", new KeywordAnalyzer());
 			conceptQuery = typeQueryParser.parse(CONCEPT_TYPE_STRING);
@@ -267,37 +269,6 @@ public class UsagiSearchEngine {
 		}
 	}
 
-	public class CustomSimilarity extends DefaultSimilarity {
-
-		@Override
-		public float lengthNorm(FieldInvertState state) {
-			// simply return the field's configured boost value
-			// instead of also factoring in the field's length
-			return 1;
-		}
-
-		@Override
-		public float idf(long docFreq, long numDocs) {
-			return (float) (Math.log(numDocs / (docFreq + 1)));
-		}
-
-		@Override
-		public float queryNorm(float sumOfSquaredWeights) {
-			return 1;
-		}
-
-		@Override
-		public float tf(float freq) {
-			return freq;
-		}
-
-		@Override
-		public float coord(int overlap, int maxOverlap) {
-			return 1;
-		}
-
-	}
-
 	public void close() {
 		try {
 			if (reader != null) {
@@ -306,13 +277,18 @@ public class UsagiSearchEngine {
 				System.gc();
 			}
 			if (writer != null) {
-//				writer.forceMerge(1);
+				// writer.forceMerge(1);
 				writer.close();
 				writer = null;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public int getTermCount() {
+		return reader.numDocs();
+
 	}
 
 	public List<ScoredConcept> search(String searchTerm, boolean useMlt, Collection<Integer> filterConceptIds, String filterDomain, String filterConceptClass,

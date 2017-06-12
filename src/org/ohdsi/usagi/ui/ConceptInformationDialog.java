@@ -29,7 +29,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -40,12 +40,13 @@ import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableRowSorter;
 
 import org.ohdsi.usagi.Concept;
 import org.ohdsi.usagi.MapsToRelationship;
-import org.ohdsi.usagi.SubsumesRelationship;
+import org.ohdsi.usagi.ParentChildRelationShip;
 
-public class ConceptInformationDialog extends JDialog {
+public class ConceptInformationDialog extends JFrame {
 
 	private static final long	serialVersionUID	= -2112565437136224217L;
 	private JTextArea			area;
@@ -70,6 +71,7 @@ public class ConceptInformationDialog extends JDialog {
 		add(createButtonPanel(), BorderLayout.SOUTH);
 		setSize(800, 600);
 		setLocationRelativeTo(Global.frame);
+		UsagiMain.loadIcons(this);
 	}
 
 	private Component createCenterPanel() {
@@ -96,6 +98,7 @@ public class ConceptInformationDialog extends JDialog {
 		sourceConceptTable.setPreferredScrollableViewportSize(new Dimension(500, 45));
 		sourceConceptTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		sourceConceptTable.setRowSelectionAllowed(false);
+		sourceConceptTable.setRowSorter(new TableRowSorter<ConceptTableModel>(sourceConceptTableModel));
 		sourceConceptTable.hideColumn("Parents");
 		sourceConceptTable.hideColumn("Children");
 		sourceConceptTable.hideColumn("Valid start date");
@@ -119,6 +122,7 @@ public class ConceptInformationDialog extends JDialog {
 
 		parentConceptTableModel = new ConceptTableModel(false);
 		parentsConceptTable = new UsagiTable(parentConceptTableModel);
+		parentsConceptTable.setRowSorter(new TableRowSorter<ConceptTableModel>(parentConceptTableModel));
 		parentsConceptTable.setPreferredScrollableViewportSize(new Dimension(500, 45));
 		parentsConceptTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		parentsConceptTable.setRowSelectionAllowed(true);
@@ -151,6 +155,7 @@ public class ConceptInformationDialog extends JDialog {
 
 		childrenConceptTableModel = new ConceptTableModel(false);
 		childrenConceptTable = new UsagiTable(childrenConceptTableModel);
+		childrenConceptTable.setRowSorter(new TableRowSorter<ConceptTableModel>(childrenConceptTableModel));
 		childrenConceptTable.setPreferredScrollableViewportSize(new Dimension(500, 45));
 		childrenConceptTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		childrenConceptTable.setRowSelectionAllowed(true);
@@ -306,12 +311,12 @@ public class ConceptInformationDialog extends JDialog {
 		area.setText(conceptInfo.toString());
 
 		List<Concept> parents = new ArrayList<Concept>();
-		for (SubsumesRelationship relationship : Global.dbEngine.getSubsumesRelationshipsByChildConceptId(concept.conceptId))
+		for (ParentChildRelationShip relationship : Global.dbEngine.getParentChildRelationshipsByChildConceptId(concept.conceptId))
 			parents.add(Global.dbEngine.getConcept(relationship.parentConceptId));
 		parentConceptTableModel.setConcepts(parents);
 
 		List<Concept> children = new ArrayList<Concept>();
-		for (SubsumesRelationship relationship : Global.dbEngine.getSubsumesRelationshipsByParentConceptId(concept.conceptId))
+		for (ParentChildRelationShip relationship : Global.dbEngine.getParentChildRelationshipsByParentConceptId(concept.conceptId))
 			children.add(Global.dbEngine.getConcept(relationship.childConceptId));
 		childrenConceptTableModel.setConcepts(children);
 
