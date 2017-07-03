@@ -35,7 +35,8 @@ public class UsagiCellRenderer extends DefaultTableCellRenderer {
 
 	@Override
 	public void setValue(Object aValue) {
-		setToolTipText("<html>" + wordWrap(aValue.toString(), MAX_TOOLTIP_WIDTH_IN_CHARS) + "</html>");
+		if (aValue != null)
+			setToolTipText("<html>" + wordWrap(aValue.toString(), MAX_TOOLTIP_WIDTH_IN_CHARS) + "</html>");
 		super.setValue(aValue);
 	}
 
