@@ -26,6 +26,7 @@ import org.ohdsi.usagi.ui.actions.ApproveAllAction;
 import org.ohdsi.usagi.ui.actions.ClearAllAction;
 import org.ohdsi.usagi.ui.actions.ConceptInformationAction;
 import org.ohdsi.usagi.ui.actions.ExitAction;
+import org.ohdsi.usagi.ui.actions.ExportForReviewAction;
 import org.ohdsi.usagi.ui.actions.ExportSourceToConceptMapAction;
 import org.ohdsi.usagi.ui.actions.ImportAction;
 import org.ohdsi.usagi.ui.actions.OpenAction;
@@ -58,6 +59,7 @@ public class Global {
 	public static ConceptInformationAction			conceptInfoAction;
 	public static AboutAction						aboutAction;
 	public static ExportSourceToConceptMapAction	exportAction;
+	public static ExportForReviewAction				exportForReviewAction;
 	public static RebuildIndexAction				rebuildIndexAction;
 	public static ExitAction						exitAction;
 	public static String							vocabularyVersion;

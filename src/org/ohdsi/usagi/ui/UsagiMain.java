@@ -41,6 +41,7 @@ import org.ohdsi.usagi.ui.actions.ApproveAllAction;
 import org.ohdsi.usagi.ui.actions.ClearAllAction;
 import org.ohdsi.usagi.ui.actions.ConceptInformationAction;
 import org.ohdsi.usagi.ui.actions.ExitAction;
+import org.ohdsi.usagi.ui.actions.ExportForReviewAction;
 import org.ohdsi.usagi.ui.actions.ExportSourceToConceptMapAction;
 import org.ohdsi.usagi.ui.actions.ImportAction;
 import org.ohdsi.usagi.ui.actions.OpenAction;
@@ -84,6 +85,7 @@ public class UsagiMain implements ActionListener {
 		Global.applyPreviousMappingAction = new ApplyPreviousMappingAction();
 		Global.importAction = new ImportAction();
 		Global.exportAction = new ExportSourceToConceptMapAction();
+		Global.exportForReviewAction = new ExportForReviewAction();
 		Global.saveAction = new SaveAction();
 		Global.saveAsAction = new SaveAsAction();
 		Global.approveAction = new ApproveAction();
@@ -98,6 +100,7 @@ public class UsagiMain implements ActionListener {
 		Global.saveAction.setEnabled(false);
 		Global.saveAsAction.setEnabled(false);
 		Global.exportAction.setEnabled(false);
+		Global.exportForReviewAction.setEnabled(false);
 		Global.approveAction.setEnabled(false);
 		Global.approveAllAction.setEnabled(false);
 		Global.clearAllAction = new ClearAllAction();
