@@ -89,7 +89,6 @@ public class ExportForReviewAction extends AbstractAction {
 						}
 					}
 				out.close();
-				Global.mapping.saveToFile(Global.filename);
 				Global.frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			}
 		} else {
