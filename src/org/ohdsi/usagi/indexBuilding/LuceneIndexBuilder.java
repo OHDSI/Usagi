@@ -73,9 +73,7 @@ public class LuceneIndexBuilder {
 		count = 0;
 		for (Row row : new ReadAthenaFile(vocabFolder + "/CONCEPT_SYNONYM.csv")) {
 			Concept concept = dbEngine.getConcept(row.getInt("concept_id"));
-			if (concept == null) {
-				System.err.println("Concept not found for concept ID " + row.getInt("concept_id"));
-			} else {
+			if (concept != null) {
 				if ((concept.standardConcept.equals("S") || concept.standardConcept.equals("C"))
 						&& !concept.conceptName.toLowerCase().equals(row.get("concept_synonym_name").toLowerCase())) {
 					usagiSearchEngine.addTermToIndex(row.get("concept_synonym_name"), UsagiSearchEngine.CONCEPT_TERM, concept);

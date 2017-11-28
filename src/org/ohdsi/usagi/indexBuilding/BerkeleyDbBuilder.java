@@ -36,10 +36,19 @@ public class BerkeleyDbBuilder {
 		this.buildThread = buildThread;
 		dbEngine = new BerkeleyDbEngine(Global.folder);
 		dbEngine.createDatabase();
-		IntHashSet validConceptIds = loadConcepts(vocabFolder + "/CONCEPT.csv", loincFileName);
+		IntHashSet validConceptIds = loadValidConceptIds(vocabFolder + "/CONCEPT.csv");
 		loadAncestors(vocabFolder + "/CONCEPT_ANCESTOR.csv", validConceptIds);
 		loadRelationships(vocabFolder + "/CONCEPT_RELATIONSHIP.csv", validConceptIds);
+		loadConcepts(vocabFolder + "/CONCEPT.csv", loincFileName);
 		dbEngine.shutdown();
+	}
+
+	private IntHashSet loadValidConceptIds(String conceptFileName) {
+		IntHashSet validConceptIds = new IntHashSet();
+		for (Row row : new ReadAthenaFile(conceptFileName)) 
+			if (row.get("invalid_reason") == null)
+				validConceptIds.add(row.getInt("concept_id"));
+		return validConceptIds;
 	}
 
 	private void loadRelationships(String conceptRelationshipFileName, IntHashSet validConceptIds) {
@@ -72,14 +81,14 @@ public class BerkeleyDbBuilder {
 		}
 	}
 
-	private IntHashSet loadConcepts(String conceptFileName, String loincFileName) {
+	private void loadConcepts(String conceptFileName, String loincFileName) {
 		Map<String, String> loincToInfo = null;
 		if (loincFileName != null) {
 			buildThread.report("Loading LOINC additional information");
 			loincToInfo = loadLoincInfo(loincFileName);
 		}
 		buildThread.report("Loading concept information");
-		IntHashSet validConceptIds = new IntHashSet();
+		int count = 0;
 		for (Row row : new ReadAthenaFile(conceptFileName)) {
 			Concept concept = new Concept(row);
 			if (concept.invalidReason == null) {
@@ -91,12 +100,11 @@ public class BerkeleyDbBuilder {
 				concept.parentCount = dbEngine.getParentChildRelationshipsByChildConceptId(concept.conceptId).size();
 				concept.childCount = dbEngine.getParentChildRelationshipsByParentConceptId(concept.conceptId).size();
 				dbEngine.put(concept);
-				validConceptIds.add(concept.conceptId);
-				if (validConceptIds.size() % 100000 == 0)
-					System.out.println("Loaded " + validConceptIds.size() + " concepts");
+				count++;
+				if (count % 100000 == 0)
+					System.out.println("Loaded " + count + " concepts");
 			}
 		}
-		return validConceptIds;
 	}
 
 	private Map<String, String> loadLoincInfo(String loincFile) {
