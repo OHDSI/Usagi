@@ -34,10 +34,11 @@ Dependencies
 
 Getting Started
 ===============
-1. Under the [Releases](https://github.com/OHDSI/Usagi/releases) tab, download Usagi*.zip
-2. Unzip the download
-3. Click on Usagi_vx.x.x.jar to start Usagi
-4. Usagi will prompt you to specify the location of the Vocabulary files to create the index (needs to be done only once)
+1. Get the latest version of the vocabulary from [Athena](http://www.ohdsi.org/web/athena).
+2. Under the [Releases](https://github.com/OHDSI/Usagi/releases) tab, download Usagi*.zip
+3. Unzip the download
+4. Click on Usagi_vx.x.x.jar to start Usagi
+5. Usagi will prompt you to specify the location of the Vocabulary files to create the index (needs to be done only once)
 
 Getting Involved
 =============
