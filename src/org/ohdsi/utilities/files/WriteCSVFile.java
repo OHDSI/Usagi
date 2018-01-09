@@ -27,7 +27,7 @@ import java.util.List;
 public class WriteCSVFile {
 
 	private char	delimiter	= ',';
-	private String	charSet		= "ISO-8859-1";
+	private String	charSet		= "UTF-8";
 
 	public WriteCSVFile(String filename, boolean append) {
 		FileOutputStream stream;

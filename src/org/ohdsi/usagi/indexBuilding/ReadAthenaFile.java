@@ -22,7 +22,7 @@ public class ReadAthenaFile implements Iterable<Row> {
 		this.filename = filename;
 		try {
 			FileInputStream inputStream = new FileInputStream(filename);
-			bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "ISO-8859-1"));
+			bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {

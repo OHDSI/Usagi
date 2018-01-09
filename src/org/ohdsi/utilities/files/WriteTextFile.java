@@ -28,11 +28,11 @@ public class WriteTextFile {
     FileOutputStream stream;
     try {
       stream = new FileOutputStream(filename);
-      bufferedWrite = new BufferedWriter( new OutputStreamWriter(stream, "ISO-8859-1"),10000);      
+      bufferedWrite = new BufferedWriter( new OutputStreamWriter(stream, "UTF-8"),10000);      
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     } catch (UnsupportedEncodingException e) {
-      System.err.println("Computer does not support ISO-8859-1 encoding");
+      System.err.println("Computer does not support UTF-8 encoding");
       e.printStackTrace();
     }
   }

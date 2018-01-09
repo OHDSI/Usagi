@@ -27,7 +27,7 @@ import java.util.Map;
 public class ReadCSVFileWithHeader implements Iterable<Row> {
 	private InputStream	inputstream;
 	private char		delimiter	= ',';
-	private String		charSet		= "ISO-8859-1";
+	private String		charSet		= "UTF-8";
 
 	public ReadCSVFileWithHeader(String filename, char delimiter) {
 		this(filename);

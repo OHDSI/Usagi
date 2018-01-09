@@ -31,7 +31,7 @@ public class ReadCSVFile implements Iterable<List<String>> {
 	protected BufferedReader	bufferedReader;
 	public boolean				EOF			= false;
 	private char				delimiter	= ',';
-	private String				charSet		= "ISO-8859-1";
+	private String				charSet		= "UTF-8";
 
 	public ReadCSVFile(String filename, char delimiter) {
 		this(filename);
