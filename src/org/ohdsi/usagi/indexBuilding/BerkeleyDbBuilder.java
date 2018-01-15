@@ -15,6 +15,7 @@
  ******************************************************************************/
 package org.ohdsi.usagi.indexBuilding;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,17 +68,20 @@ public class BerkeleyDbBuilder {
 	}
 
 	private void loadAncestors(String conceptAncestorFileName, IntHashSet validConceptIds) {
-		buildThread.report("Loading parent-child information");
-		int count = 0;
-		for (Row row : new ReadAthenaFile(conceptAncestorFileName)) {
-			if (row.get("min_levels_of_separation").equals("1") && !row.get("ancestor_concept_id").equals(row.get("descendant_concept_id"))
-					&& validConceptIds.contains(row.getInt("ancestor_concept_id")) && validConceptIds.contains(row.getInt("descendant_concept_id"))) {
-				ParentChildRelationShip parentChildRelationship = new ParentChildRelationShip(row);
-				dbEngine.put(parentChildRelationship);
+		File file = new File(conceptAncestorFileName);
+		if (file.exists()) {
+			buildThread.report("Loading parent-child information");
+			int count = 0;
+			for (Row row : new ReadAthenaFile(conceptAncestorFileName)) {
+				if (row.get("min_levels_of_separation").equals("1") && !row.get("ancestor_concept_id").equals(row.get("descendant_concept_id"))
+						&& validConceptIds.contains(row.getInt("ancestor_concept_id")) && validConceptIds.contains(row.getInt("descendant_concept_id"))) {
+					ParentChildRelationShip parentChildRelationship = new ParentChildRelationShip(row);
+					dbEngine.put(parentChildRelationship);
+				}
+				count++;
+				if (count % 100000 == 0)
+					System.out.println("Processed " + count + " relationships");
 			}
-			count++;
-			if (count % 100000 == 0)
-				System.out.println("Processed " + count + " relationships");
 		}
 	}
 
