@@ -73,6 +73,7 @@ public class ExportForReviewAction extends AbstractAction {
 
 						for (Concept targetConcept : targetConcepts) {
 							Row row = mapping.sourceCode.toRow();
+							row.add("matchScore", mapping.matchScore);
 							row.add("targetConceptId", targetConcept.conceptId);
 							row.add("targetConceptName", targetConcept.conceptName);
 							row.add("targetVocabularyId", targetConcept.vocabularyId);
