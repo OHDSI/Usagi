@@ -292,7 +292,13 @@ public class UsagiSearchEngine {
 	}
 
 	public List<ScoredConcept> search(String searchTerm, boolean useMlt, Collection<Integer> filterConceptIds, String filterDomain, String filterConceptClass,
-			String filterVocabulary, boolean filterStandard, boolean includeSourceConcepts) {
+									  String filterVocabulary, boolean filterStandard, boolean includeSourceConcepts) {
+		return search(searchTerm, useMlt, filterConceptIds, filterDomain, filterConceptClass,
+				filterVocabulary, filterStandard, includeSourceConcepts, Global.dbEngine);
+	}
+
+	public List<ScoredConcept> search(String searchTerm, boolean useMlt, Collection<Integer> filterConceptIds, String filterDomain, String filterConceptClass,
+			String filterVocabulary, boolean filterStandard, boolean includeSourceConcepts, BerkeleyDbEngine dbEngine) {
 		List<ScoredConcept> results = new ArrayList<ScoredConcept>();
 		try {
 			Query query;
@@ -354,7 +360,7 @@ public class UsagiSearchEngine {
 			for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
 				Document document = reader.document(scoreDoc.doc);
 				int conceptId = Integer.parseInt(document.get("CONCEPT_ID"));
-				Concept targetConcept = Global.dbEngine.getConcept(conceptId);
+				Concept targetConcept = dbEngine.getConcept(conceptId);
 				String term = document.get("TERM");
 				// If matchscore = 0 but it was the one concept that was automatically selected, still allow it:
 				if (scoreDoc.score > 0 || (filterConceptIds != null && filterConceptIds.size() == 1 && filterConceptIds.contains(targetConcept.conceptId)))
