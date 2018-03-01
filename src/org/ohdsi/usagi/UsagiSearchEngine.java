@@ -459,7 +459,9 @@ public class UsagiSearchEngine {
 			int i = 0;
 			BytesRef text;
 			while ((text = termsEnum.next()) != null) {
-				double tfidf = termsEnum.totalTermFreq() * idf(reader.docFreq(new Term(field, termsEnum.term())), numDocs);
+//				double tfidf = termsEnum.totalTermFreq() * idf(reader.docFreq(new Term(field, termsEnum.term())), numDocs);
+				// Cannot use term frequency because MoreLikeThis doesn't report term frequency, and want to keep process similar:
+				double tfidf = idf(reader.docFreq(new Term(field, termsEnum.term())), numDocs);
 				pairs[i++] = new TermTfidfPair(BytesRef.deepCopyOf(text), tfidf);
 				l1 += sqr(tfidf);
 			}
