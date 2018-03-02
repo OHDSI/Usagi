@@ -58,12 +58,12 @@ public class RebuildIndexDialog extends JDialog {
 	private void buildIndex() {
 		String vocabFolder = vocabFolderField.getText();
 		String loincFile = loincFileField.getText();
-		if (!(new File(vocabFolder + "/concept.csv").exists())) {
-			JOptionPane.showMessageDialog(this, "Vocabulary file concept.csv not found", "Cannot build index", JOptionPane.ERROR_MESSAGE);
+		if (!(new File(vocabFolder + "/CONCEPT.csv").exists())) {
+			JOptionPane.showMessageDialog(this, "Vocabulary file CONCEPT.csv not found", "Cannot build index", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		if (!(new File(vocabFolder + "/concept_synonym.csv").exists())) {
-			JOptionPane.showMessageDialog(this, "Vocabulary file concept_synonym.csv not found", "Cannot build index", JOptionPane.ERROR_MESSAGE);
+		if (!(new File(vocabFolder + "/CONCEPT_SYNONYM.csv").exists())) {
+			JOptionPane.showMessageDialog(this, "Vocabulary file CONCEPT_SYNONYM.csv not found", "Cannot build index", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		if (loincCheckBox.isSelected() && !(new File(loincFile).exists())) {
