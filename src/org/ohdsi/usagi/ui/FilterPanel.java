@@ -26,7 +26,6 @@ import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 import org.ohdsi.utilities.files.ReadTextFile;
@@ -40,9 +39,9 @@ public class FilterPanel extends JPanel {
 	private JCheckBox					filterByVocabularyCheckBox;
 	private JCheckBox					filterByDomainCheckBox;
 	private JCheckBox					includeSourceTermsCheckbox;
-	private JComboBox<String>			filterConceptClassComboBox;
-	private JComboBox<String>			filterVocabularyComboBox;
-	private JComboBox<String>			filterDomainComboBox;
+	private CheckedComboBox				filterConceptClassComboBox;
+	private CheckedComboBox				filterVocabularyComboBox;
+	private CheckedComboBox				filterDomainComboBox;
 	private List<FilterChangeListener>	listeners			= new ArrayList<FilterChangeListener>();
 
 	public FilterPanel() {
@@ -103,7 +102,7 @@ public class FilterPanel extends JPanel {
 		c.gridy = 0;
 		c.weightx = 1;
 		c.gridwidth = 1;
-		filterConceptClassComboBox = new JComboBox<String>(loadVectorFromFile(Global.folder + "/ConceptClassIds.txt"));
+		filterConceptClassComboBox = new CheckedComboBox(loadVectorFromFile(Global.folder + "/ConceptClassIds.txt"));
 		filterConceptClassComboBox.addActionListener(new ActionListener() {
 
 			@Override
@@ -133,7 +132,7 @@ public class FilterPanel extends JPanel {
 		c.gridy = 1;
 		c.weightx = 1;
 		c.gridwidth = 1;
-		filterVocabularyComboBox = new JComboBox<String>(loadVectorFromFile(Global.folder + "/VocabularyIds.txt"));
+		filterVocabularyComboBox = new CheckedComboBox(loadVectorFromFile(Global.folder + "/VocabularyIds.txt"));
 		filterVocabularyComboBox.addActionListener(new ActionListener() {
 
 			@Override
@@ -163,7 +162,7 @@ public class FilterPanel extends JPanel {
 		c.gridy = 2;
 		c.weightx = 1;
 		c.gridwidth = 1;
-		filterDomainComboBox = new JComboBox<String>(loadVectorFromFile(Global.folder + "/DomainIds.txt"));
+		filterDomainComboBox = new CheckedComboBox(loadVectorFromFile(Global.folder + "/DomainIds.txt"));
 		filterDomainComboBox.addActionListener(new ActionListener() {
 
 			@Override
@@ -173,7 +172,7 @@ public class FilterPanel extends JPanel {
 			}
 		});
 		add(filterDomainComboBox, c);
-		
+
 		c.gridx = 0;
 		c.gridy = 2;
 		c.weightx = 1;
@@ -218,31 +217,31 @@ public class FilterPanel extends JPanel {
 		return filterStandardCheckBox.isSelected();
 	}
 
-	public boolean getFilterByConceptClass() {
+	public boolean getFilterByConceptClasses() {
 		return filterByConceptClassCheckBox.isSelected();
 	}
 
-	public boolean getFilterByVocabulary() {
+	public boolean getFilterByVocabularies() {
 		return filterByVocabularyCheckBox.isSelected();
 	}
 
-	public boolean getFilterByDomain() {
+	public boolean getFilterByDomains() {
 		return filterByDomainCheckBox.isSelected();
 	}
 
 	public boolean getIncludeSourceTerms() {
 		return includeSourceTermsCheckbox.isSelected();
 	}
-	
-	public String getConceptClass() {
-		return filterConceptClassComboBox.getSelectedItem().toString();
+
+	public Vector<String> getConceptClass() {
+		return filterConceptClassComboBox.getSelectedItems();
 	}
 
-	public String getVocabulary() {
-		return filterVocabularyComboBox.getSelectedItem().toString();
+	public Vector<String> getVocabulary() {
+		return filterVocabularyComboBox.getSelectedItems();
 	}
 
-	public String getDomain() {
-		return filterDomainComboBox.getSelectedItem().toString();
+	public Vector<String> getDomain() {
+		return filterDomainComboBox.getSelectedItems();
 	}
 }

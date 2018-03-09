@@ -15,27 +15,47 @@
  ******************************************************************************/
 package org.ohdsi.usagi.ui;
 
-import org.ohdsi.usagi.BerkeleyDbEngine;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.Vector;
+import java.util.concurrent.ForkJoinPool;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
+
 import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
 import org.ohdsi.usagi.SourceCode;
-import org.ohdsi.usagi.UsagiSearchEngine;
 import org.ohdsi.usagi.UsagiSearchEngine.ScoredConcept;
 import org.ohdsi.utilities.ReadXlsxFile;
 import org.ohdsi.utilities.StringUtilities;
 import org.ohdsi.utilities.collections.Pair;
 import org.ohdsi.utilities.files.ReadCSVFile;
-
-import javax.swing.*;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.*;
-import java.util.List;
-import java.util.concurrent.ForkJoinPool;
 
 public class ImportDialog extends JDialog {
 
@@ -356,91 +376,40 @@ public class ImportDialog extends JDialog {
 		public void run() {
 			try {
 				Global.usagiSearchEngine.createDerivedIndex(sourceCodes, null);
-//				Global.dbEngine.openForReading();
 
 				boolean filterStandard = filterPanel.getFilterStandard();
-				String filterConceptClass = null;
-				if (filterPanel.getFilterByConceptClass())
-					filterConceptClass = filterPanel.getConceptClass();
-				String filterVocabulary = null;
-				if (filterPanel.getFilterByVocabulary())
-					filterVocabulary = filterPanel.getVocabulary();
-				String filterDomain = null;
-				if (filterPanel.getFilterByDomain())
-					filterDomain = filterPanel.getDomain();
+				Vector<String> filterConceptClasses = null;
+				if (filterPanel.getFilterByConceptClasses())
+					filterConceptClasses = filterPanel.getConceptClass();
+				Vector<String> filterVocabularies = null;
+				if (filterPanel.getFilterByVocabularies())
+					filterVocabularies = filterPanel.getVocabulary();
+				Vector<String> filterDomains = null;
+				if (filterPanel.getFilterByDomains())
+					filterDomains = filterPanel.getDomain();
 				boolean includeSourceConcepts = filterPanel.getIncludeSourceTerms();
-
-				final String filterConceptClassFinal = filterConceptClass;
-				final String filterVocabularyFinal = filterVocabulary;
-				final String filterDomainFinal = filterDomain;
+				final Vector<String> filterConceptClassesFinal = filterConceptClasses;
+				final Vector<String> filterVocabulariesFinal = filterVocabularies;
+				final Vector<String> filterDomainsFinal = filterDomains;
 
 				Global.mapping.clear();
 
-				List globalMappingList = Collections.synchronizedList(Global.mapping);
-                Integer threadCount = Runtime.getRuntime().availableProcessors();
-                if (threadCount <= 0) {
-                	threadCount = 1;
+				List<CodeMapping> globalMappingList = Collections.synchronizedList(Global.mapping);
+				Integer threadCount = Runtime.getRuntime().availableProcessors();
+				if (threadCount <= 0) {
+					threadCount = 1;
 				}
+				
+				// Note: Lucene's and BerkeleyDB's search objects are thread safe, so do not need to be recreated for each thread.
 				ForkJoinPool forkJoinPool = new ForkJoinPool(threadCount);
-
-				Hashtable<UsagiSearchEngine, String> usagiSearchEngineMap = new Hashtable<>();
-				Hashtable<BerkeleyDbEngine, String> dbEngineMap = new Hashtable<>();
-                for (int i = 0; i <= threadCount; ++i) {
-                    UsagiSearchEngine usagiSearchEngine = new UsagiSearchEngine(Global.folder);
-                    BerkeleyDbEngine dbEngine = new BerkeleyDbEngine(Global.folder);
-                    usagiSearchEngine.openIndexForSearching(false);
-                    dbEngine.openForReading();
-					usagiSearchEngineMap.put(usagiSearchEngine, "");
-					dbEngineMap.put(dbEngine, "");
-                }
-
-				forkJoinPool.submit(() -> sourceCodes.parallelStream().forEach(s -> {
+				forkJoinPool.submit(() -> sourceCodes.parallelStream().forEach(sourceCode -> {
 					Set<Integer> filterConceptIds = null;
 					if (filterPanel.getFilterByAuto())
-						filterConceptIds = s.sourceAutoAssignedConceptIds;
-
-					String threadName = Thread.currentThread().getName();
-
+						filterConceptIds = sourceCode.sourceAutoAssignedConceptIds;
 					try {
-						UsagiSearchEngine usagiSearchEngine = null;
-						if (usagiSearchEngineMap.contains(threadName)) {
-							for (Map.Entry<UsagiSearchEngine, String> u : usagiSearchEngineMap.entrySet()) {
-								if (u.getValue().equals(threadName)) {
-									usagiSearchEngine = u.getKey();
-									break;
-								}
-							}
-						} else {
-							for (Map.Entry<UsagiSearchEngine, String> u : usagiSearchEngineMap.entrySet()) {
-								if (u.getValue().isEmpty()) {
-									usagiSearchEngine = u.getKey();
-									u.setValue(threadName);
-									break;
-								}
-							}
-						}
-
-						BerkeleyDbEngine dbEngine = null;
-						if (dbEngineMap.contains(threadName)) {
-							for (Map.Entry<BerkeleyDbEngine, String> d : dbEngineMap.entrySet()) {
-								if (d.getValue().equals(threadName)) {
-									dbEngine = d.getKey();
-									break;
-								}
-							}
-						} else {
-							for (Map.Entry<BerkeleyDbEngine, String> d : dbEngineMap.entrySet()) {
-								if (d.getValue().isEmpty()) {
-									dbEngine = d.getKey();
-									d.setValue(threadName);
-									break;
-								}
-							}
-						}
-
-						CodeMapping codeMapping = new CodeMapping(s);
-						List<ScoredConcept> concepts = usagiSearchEngine.search(s.sourceName, true, filterConceptIds, filterDomainFinal,
-								filterConceptClassFinal, filterVocabularyFinal, filterStandard, includeSourceConcepts, dbEngine);
+						CodeMapping codeMapping = new CodeMapping(sourceCode);
+						List<ScoredConcept> concepts = Global.usagiSearchEngine.search(sourceCode.sourceName, true, filterConceptIds, filterDomainsFinal,
+								filterConceptClassesFinal, filterVocabulariesFinal, filterStandard, includeSourceConcepts);
 						if (concepts.size() > 0) {
 							codeMapping.targetConcepts.add(concepts.get(0).concept);
 							codeMapping.matchScore = concepts.get(0).matchScore;
@@ -449,9 +418,9 @@ public class ImportDialog extends JDialog {
 						}
 						codeMapping.comment = "";
 						codeMapping.mappingStatus = MappingStatus.UNCHECKED;
-						if (s.sourceAutoAssignedConceptIds.size() == 1 && concepts.size() > 0) {
+						if (sourceCode.sourceAutoAssignedConceptIds.size() == 1 && concepts.size() > 0) {
 							codeMapping.mappingStatus = MappingStatus.AUTO_MAPPED_TO_1;
-						} else if (s.sourceAutoAssignedConceptIds.size() > 1 && concepts.size() > 0) {
+						} else if (sourceCode.sourceAutoAssignedConceptIds.size() > 1 && concepts.size() > 0) {
 							codeMapping.mappingStatus = MappingStatus.AUTO_MAPPED;
 						}
 						synchronized (globalMappingList) {
@@ -461,11 +430,8 @@ public class ImportDialog extends JDialog {
 					} catch (Exception e) {
 						System.out.println(e.toString());
 					}
-                })).get();
-                forkJoinPool.shutdown();
-				usagiSearchEngineMap.forEach((u, s) -> u.close());
-				dbEngineMap.forEach((d, s) -> d.shutdown());
-
+				})).get();
+				forkJoinPool.shutdown();
 				dialog.setVisible(false);
 				Global.applyPreviousMappingAction.setEnabled(true);
 				Global.saveAction.setEnabled(true);

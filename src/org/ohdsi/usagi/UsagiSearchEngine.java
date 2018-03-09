@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
@@ -291,14 +292,8 @@ public class UsagiSearchEngine {
 
 	}
 
-	public List<ScoredConcept> search(String searchTerm, boolean useMlt, Collection<Integer> filterConceptIds, String filterDomain, String filterConceptClass,
-									  String filterVocabulary, boolean filterStandard, boolean includeSourceConcepts) {
-		return search(searchTerm, useMlt, filterConceptIds, filterDomain, filterConceptClass,
-				filterVocabulary, filterStandard, includeSourceConcepts, Global.dbEngine);
-	}
-
-	public List<ScoredConcept> search(String searchTerm, boolean useMlt, Collection<Integer> filterConceptIds, String filterDomain, String filterConceptClass,
-			String filterVocabulary, boolean filterStandard, boolean includeSourceConcepts, BerkeleyDbEngine dbEngine) {
+	public List<ScoredConcept> search(String searchTerm, boolean useMlt, Collection<Integer> filterConceptIds, Vector<String> filterDomains, Vector<String> filterConceptClasses,
+			Vector<String> filterVocabularies, boolean filterStandard, boolean includeSourceConcepts) {
 		List<ScoredConcept> results = new ArrayList<ScoredConcept>();
 		try {
 			Query query;
@@ -334,17 +329,29 @@ public class UsagiSearchEngine {
 				booleanQuery.add(conceptIdQuery, Occur.MUST);
 			}
 
-			if (filterDomain != null) {
-				Query domainQuery = domainQueryParser.parse("\"" + filterDomain + "\"");
-				booleanQuery.add(domainQuery, Occur.MUST);
+			if (filterDomains != null && filterDomains.size() != 0) {
+				BooleanQuery booleanSubQuery = new BooleanQuery();
+				for (String filterDomain : filterDomains) {
+					Query domainQuery = domainQueryParser.parse("\"" + filterDomain + "\"");
+					booleanSubQuery.add(domainQuery, Occur.SHOULD);
+				}
+				booleanQuery.add(booleanSubQuery, Occur.MUST);
 			}
-			if (filterConceptClass != null) {
-				Query conceptClassQuery = conceptClassQueryParser.parse("\"" + filterConceptClass.toString() + "\"");
-				booleanQuery.add(conceptClassQuery, Occur.MUST);
+			if (filterConceptClasses != null && filterConceptClasses.size() != 0) {
+				BooleanQuery booleanSubQuery = new BooleanQuery();
+				for (String filterConceptClass : filterConceptClasses) {
+					Query conceptClassQuery = conceptClassQueryParser.parse("\"" + filterConceptClass + "\"");
+					booleanSubQuery.add(conceptClassQuery, Occur.SHOULD);
+				}
+				booleanQuery.add(booleanSubQuery, Occur.MUST);
 			}
-			if (filterVocabulary != null) {
-				Query vocabularyQuery = vocabularyQueryParser.parse("\"" + filterVocabulary.toString() + "\"");
-				booleanQuery.add(vocabularyQuery, Occur.MUST);
+			if (filterVocabularies != null && filterVocabularies.size() != 0) {
+				BooleanQuery booleanSubQuery = new BooleanQuery();
+				for (String filterVocabulary : filterVocabularies) {
+					Query vocabularyQuery = vocabularyQueryParser.parse("\"" + filterVocabulary + "\"");
+					booleanSubQuery.add(vocabularyQuery, Occur.SHOULD);
+				}
+				booleanQuery.add(booleanSubQuery, Occur.MUST);
 			}
 			if (filterStandard) {
 				Query standardQuery = standardConceptQueryParser.parse("S");
@@ -360,7 +367,7 @@ public class UsagiSearchEngine {
 			for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
 				Document document = reader.document(scoreDoc.doc);
 				int conceptId = Integer.parseInt(document.get("CONCEPT_ID"));
-				Concept targetConcept = dbEngine.getConcept(conceptId);
+				Concept targetConcept = Global.dbEngine.getConcept(conceptId);
 				String term = document.get("TERM");
 				// If matchscore = 0 but it was the one concept that was automatically selected, still allow it:
 				if (scoreDoc.score > 0 || (filterConceptIds != null && filterConceptIds.size() == 1 && filterConceptIds.contains(targetConcept.conceptId)))

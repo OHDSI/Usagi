@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Vector;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -430,23 +431,23 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 				filterConceptIds = codeMapping.sourceCode.sourceAutoAssignedConceptIds;
 
 			boolean filterStandard = filterPanel.getFilterStandard();
-			String filterConceptClass = null;
-			if (filterPanel.getFilterByConceptClass())
-				filterConceptClass = filterPanel.getConceptClass();
-			String filterVocabulary = null;
-			if (filterPanel.getFilterByVocabulary())
-				filterVocabulary = filterPanel.getVocabulary();
-			String filterDomain = null;
-			if (filterPanel.getFilterByDomain())
-				filterDomain = filterPanel.getDomain();
+			Vector<String> filterConceptClasses = null;
+			if (filterPanel.getFilterByConceptClasses())
+				filterConceptClasses = filterPanel.getConceptClass();
+			Vector<String> filterVocabularies = null;
+			if (filterPanel.getFilterByVocabularies())
+				filterVocabularies = filterPanel.getVocabulary();
+			Vector<String> filterDomains = null;
+			if (filterPanel.getFilterByDomains())
+				filterDomains = filterPanel.getDomain();
 			String query = manualQueryField.getText();
 			if (autoQueryButton.isSelected())
 				query = codeMapping.sourceCode.sourceName;
 			boolean includeSourceConcepts = filterPanel.getIncludeSourceTerms();
 
 			if (Global.usagiSearchEngine.isOpenForSearching()) {
-				List<ScoredConcept> searchResults = Global.usagiSearchEngine.search(query, true, filterConceptIds, filterDomain, filterConceptClass,
-						filterVocabulary, filterStandard, includeSourceConcepts);
+				List<ScoredConcept> searchResults = Global.usagiSearchEngine.search(query, true, filterConceptIds, filterDomains, filterConceptClasses,
+						filterVocabularies, filterStandard, includeSourceConcepts);
 
 				searchTableModel.setScoredConcepts(searchResults);
 				searchTable.scrollRectToVisible(new Rectangle(searchTable.getCellRect(0, 0, true)));

@@ -17,6 +17,7 @@ package org.ohdsi.usagi.dataImport;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
@@ -75,7 +76,7 @@ public class ImportData {
 			CodeMapping codeMapping = new CodeMapping(sourceCode);
 
 			List<ScoredConcept> concepts = usagiSearchEngine.search(sourceCode.sourceName, true, sourceCode.sourceAutoAssignedConceptIds,
-					settings.filterDomain, settings.filterConceptClass, settings.filterVocabulary, settings.filterStandard, settings.includeSourceTerms);
+					settings.filterDomains, settings.filterConceptClasses, settings.filterVocabularies, settings.filterStandard, settings.includeSourceTerms);
 			if (concepts.size() > 0) {
 				codeMapping.targetConcepts.add(concepts.get(0).concept);
 				codeMapping.matchScore = concepts.get(0).matchScore;
@@ -113,17 +114,17 @@ public class ImportData {
 		/**
 		 * The domain to which the search should be restricted. Set to null if not restricting by domain
 		 */
-		public String		filterDomain			= null;
+		public Vector<String>		filterDomains			= null;
 
 		/**
 		 * The concept class to which the search should be restricted. Set to null if not restricting by concept class
 		 */
-		public String		filterConceptClass		= null;
+		public Vector<String>		filterConceptClasses		= null;
 
 		/**
 		 * The vocabulary to which the search should be restricted. Set to null if not restricting by vocabulary
 		 */
-		public String		filterVocabulary		= null;
+		public Vector<String>		filterVocabularies		= null;
 
 		/**
 		 * Specify whether the search should be restricted to standard concepts only. If not, classification concepts will
