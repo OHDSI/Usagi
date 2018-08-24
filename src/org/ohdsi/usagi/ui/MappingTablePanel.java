@@ -157,7 +157,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 					case 2:
 						return codeMapping.sourceCode.sourceName;
 					case 3:
-						return codeMapping.sourceCode.sourceFrequency;
+						return codeMapping.sourceCode.sourceFrequency == -1 ? "" : codeMapping.sourceCode.sourceFrequency;
 					case 4:
 						return codeMapping.matchScore;
 					case 5:
@@ -240,8 +240,10 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 			ignoreSelection = true;
 			tableModel.fireTableDataChanged();
 			ignoreSelection = false;
-			table.setRowSelectionInterval(row + 1, row + 1);
-			table.scrollRectToVisible(new Rectangle(table.getCellRect(row + 1, row + 1, true)));
+			if (row < table.getRowCount() - 1) {
+				table.setRowSelectionInterval(row + 1, row + 1);
+				table.scrollRectToVisible(new Rectangle(table.getCellRect(row + 1, row + 1, true)));
+			}
 		} else if (event.structureChange) {
 			tableModel.restructure();
 			table.setRowSelectionInterval(0, 0);

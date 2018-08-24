@@ -74,9 +74,15 @@ public class UsagiStatusBar extends JPanel implements DataChangeListener {
 		for (CodeMapping codeMapping : Global.mapping) {
 			if (codeMapping.mappingStatus == MappingStatus.APPROVED) {
 				approved++;
-				approvedFreq += codeMapping.sourceCode.sourceFrequency;
+				if (codeMapping.sourceCode.sourceFrequency == -1)
+					approvedFreq++;
+				else
+					approvedFreq += codeMapping.sourceCode.sourceFrequency;
 			}
-			totalFreq += codeMapping.sourceCode.sourceFrequency;
+			if (codeMapping.sourceCode.sourceFrequency == -1)
+				totalFreq++;
+			else
+				totalFreq += codeMapping.sourceCode.sourceFrequency;
 		}
 		countLabel.setText(approved + " / " + Global.mapping.size());
 		countLabel.setToolTipText(approved + " of the " + Global.mapping.size() + " source codes now has an approved mapping");
