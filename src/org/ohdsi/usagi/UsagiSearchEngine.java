@@ -89,13 +89,6 @@ public class UsagiSearchEngine {
 	private IndexSearcher	searcher;
 	private UsagiAnalyzer	analyzer				= new UsagiAnalyzer();
 	private Query			conceptQuery;
-	private QueryParser		conceptIdQueryParser;
-	private QueryParser		conceptClassQueryParser;
-	private QueryParser		vocabularyQueryParser;
-	private QueryParser		keywordsQueryParser;
-	private QueryParser		standardConceptQueryParser;
-	private QueryParser		domainQueryParser;
-	private QueryParser		termTypeQueryParser;
 	private int				numDocs;
 	private FieldType		textVectorField			= getTextVectorFieldType();
 
@@ -257,13 +250,6 @@ public class UsagiSearchEngine {
 			BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
 			QueryParser typeQueryParser = new QueryParser(Version.LUCENE_4_9, "TYPE", new KeywordAnalyzer());
 			conceptQuery = typeQueryParser.parse(CONCEPT_TYPE_STRING);
-			conceptIdQueryParser = new QueryParser(Version.LUCENE_4_9, "CONCEPT_ID", new KeywordAnalyzer());
-			conceptClassQueryParser = new QueryParser(Version.LUCENE_4_9, "CONCEPT_CLASS_ID", new KeywordAnalyzer());
-			vocabularyQueryParser = new QueryParser(Version.LUCENE_4_9, "VOCABULARY_ID", new KeywordAnalyzer());
-			keywordsQueryParser = new QueryParser(Version.LUCENE_4_9, "TERM", analyzer);
-			domainQueryParser = new QueryParser(Version.LUCENE_4_9, "DOMAIN_ID", new KeywordAnalyzer());
-			standardConceptQueryParser = new QueryParser(Version.LUCENE_4_9, "STANDARD_CONCEPT", new KeywordAnalyzer());
-			termTypeQueryParser = new QueryParser(Version.LUCENE_4_9, "TERM_TYPE", new KeywordAnalyzer());
 			numDocs = reader.numDocs();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -314,6 +300,7 @@ public class UsagiSearchEngine {
 				query = mlt.like("TERM", new StringReader(searchTerm));
 			} else {
 				try {
+					QueryParser keywordsQueryParser = new QueryParser(Version.LUCENE_4_9, "TERM", analyzer);
 					query = keywordsQueryParser.parse(searchTerm);
 				} catch (ParseException e) {
 					return results;
@@ -325,6 +312,7 @@ public class UsagiSearchEngine {
 			booleanQuery.add(conceptQuery, Occur.MUST);
 
 			if (filterConceptIds != null && filterConceptIds.size() > 0) {
+				QueryParser conceptIdQueryParser = new QueryParser(Version.LUCENE_4_9, "CONCEPT_ID", new KeywordAnalyzer());
 				Query conceptIdQuery = conceptIdQueryParser.parse(StringUtilities.join(filterConceptIds, " OR "));
 				booleanQuery.add(conceptIdQuery, Occur.MUST);
 			}
@@ -332,6 +320,7 @@ public class UsagiSearchEngine {
 			if (filterDomains != null && filterDomains.size() != 0) {
 				BooleanQuery booleanSubQuery = new BooleanQuery();
 				for (String filterDomain : filterDomains) {
+					QueryParser domainQueryParser = new QueryParser(Version.LUCENE_4_9, "DOMAIN_ID", new KeywordAnalyzer());
 					Query domainQuery = domainQueryParser.parse("\"" + filterDomain + "\"");
 					booleanSubQuery.add(domainQuery, Occur.SHOULD);
 				}
@@ -340,6 +329,7 @@ public class UsagiSearchEngine {
 			if (filterConceptClasses != null && filterConceptClasses.size() != 0) {
 				BooleanQuery booleanSubQuery = new BooleanQuery();
 				for (String filterConceptClass : filterConceptClasses) {
+					QueryParser conceptClassQueryParser = new QueryParser(Version.LUCENE_4_9, "CONCEPT_CLASS_ID", new KeywordAnalyzer());
 					Query conceptClassQuery = conceptClassQueryParser.parse("\"" + filterConceptClass + "\"");
 					booleanSubQuery.add(conceptClassQuery, Occur.SHOULD);
 				}
@@ -348,16 +338,19 @@ public class UsagiSearchEngine {
 			if (filterVocabularies != null && filterVocabularies.size() != 0) {
 				BooleanQuery booleanSubQuery = new BooleanQuery();
 				for (String filterVocabulary : filterVocabularies) {
+					QueryParser vocabularyQueryParser = new QueryParser(Version.LUCENE_4_9, "VOCABULARY_ID", new KeywordAnalyzer());
 					Query vocabularyQuery = vocabularyQueryParser.parse("\"" + filterVocabulary + "\"");
 					booleanSubQuery.add(vocabularyQuery, Occur.SHOULD);
 				}
 				booleanQuery.add(booleanSubQuery, Occur.MUST);
 			}
 			if (filterStandard) {
+				QueryParser standardConceptQueryParser = new QueryParser(Version.LUCENE_4_9, "STANDARD_CONCEPT", new KeywordAnalyzer());
 				Query standardQuery = standardConceptQueryParser.parse("S");
 				booleanQuery.add(standardQuery, Occur.MUST);
 			}
 			if (!includeSourceConcepts) {
+				QueryParser termTypeQueryParser = new QueryParser(Version.LUCENE_4_9, "TERM_TYPE", new KeywordAnalyzer());
 				Query termTypeQuery = termTypeQueryParser.parse(CONCEPT_TERM);
 				booleanQuery.add(termTypeQuery, Occur.MUST);
 			}
