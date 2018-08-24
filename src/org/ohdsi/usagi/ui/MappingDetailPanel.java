@@ -50,6 +50,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableRowSorter;
 
 import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
@@ -58,24 +59,25 @@ import org.ohdsi.usagi.UsagiSearchEngine.ScoredConcept;
 
 public class MappingDetailPanel extends JPanel implements CodeSelectedListener, FilterChangeListener {
 
-	private static final long		serialVersionUID	= 2127318722005512776L;
-	private UsagiTable				sourceCodeTable;
-	private SourceCodeTableModel	sourceCodeTableModel;
-	private UsagiTable				targetConceptTable;
-	private ConceptTableModel		targetConceptTableModel;
-	private UsagiTable				searchTable;
-	private ConceptTableModel		searchTableModel;
-	private JButton					approveButton;
-	private JTextField				commentField;
-	private JButton					removeButton;
-	private JButton					replaceButton;
-	private JButton					addButton;
-	private JRadioButton			autoQueryButton;
-	private JRadioButton			manualQueryButton;
-	private JTextField				manualQueryField;
-	private CodeMapping				codeMapping;
-	private FilterPanel				filterPanel;
-	private Timer					timer;
+	private static final long					serialVersionUID	= 2127318722005512776L;
+	private UsagiTable							sourceCodeTable;
+	private SourceCodeTableModel				sourceCodeTableModel;
+	private UsagiTable							targetConceptTable;
+	private ConceptTableModel					targetConceptTableModel;
+	private UsagiTable							searchTable;
+	private TableRowSorter<ConceptTableModel>	sorter;
+	private ConceptTableModel					searchTableModel;
+	private JButton								approveButton;
+	private JTextField							commentField;
+	private JButton								removeButton;
+	private JButton								replaceButton;
+	private JButton								addButton;
+	private JRadioButton						autoQueryButton;
+	private JRadioButton						manualQueryButton;
+	private JTextField							manualQueryField;
+	private CodeMapping							codeMapping;
+	private FilterPanel							filterPanel;
+	private Timer								timer;
 
 	public MappingDetailPanel() {
 		super();
@@ -192,6 +194,8 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		searchTableModel = new ConceptTableModel(true);
 		searchTable = new UsagiTable(searchTableModel);
+		sorter = new TableRowSorter<ConceptTableModel>(searchTableModel);
+		searchTable.setRowSorter(sorter);
 		searchTable.setPreferredScrollableViewportSize(new Dimension(100, 100));
 		searchTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		searchTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
