@@ -56,16 +56,20 @@ import org.ohdsi.utilities.ReadXlsxFile;
 import org.ohdsi.utilities.StringUtilities;
 import org.ohdsi.utilities.collections.Pair;
 import org.ohdsi.utilities.files.ReadCSVFile;
+import org.ohdsi.utilities.files.ReadTextFile;
 
 public class ImportDialog extends JDialog {
 
 	private static final long		serialVersionUID		= 8119661833870381094L;
+	private static String			CONCEPT_IDS				= "Auto concept ID column";
+	private static String			ATC						= "ATC column";
 	private List<String>			columnNames				= new ArrayList<String>();
 	private String[]				comboBoxOptions;
 	private List<List<String>>		data					= new ArrayList<List<String>>();
 	private FilterPanel				filterPanel;
 	private JPanel					columnMappingPanel;
 	private JScrollPane				columnMappingScrollPane;
+	private JComboBox<String>		conceptIdsOrAtc;
 	private JComboBox<String>		sourceCodeColumn;
 	private JComboBox<String>		sourceNameColumn;
 	private JComboBox<String>		sourceFrequencyColumn;
@@ -232,7 +236,8 @@ public class ImportDialog extends JDialog {
 		c.gridy = 3;
 		c.anchor = GridBagConstraints.WEST;
 		c.weightx = 1;
-		columnMappingPanel.add(new JLabel("Auto concept ID column"), c);
+		conceptIdsOrAtc = new JComboBox<String>(new String[] { CONCEPT_IDS, ATC });
+		columnMappingPanel.add(conceptIdsOrAtc, c);
 		c.gridx = 1;
 		c.gridy = 3;
 		c.anchor = GridBagConstraints.EAST;
@@ -290,10 +295,27 @@ public class ImportDialog extends JDialog {
 				return;
 			}
 			if (filterPanel.getFilterByAuto() && autoConceptIdColumn.getSelectedItem().toString().equals("")) {
-				JOptionPane.showMessageDialog(this, "Must select an auto concept ID column when filtering by automatically selected concept IDs",
+				JOptionPane.showMessageDialog(this,
+						"Must select an auto concept ID column / ATC column when filtering by automatically selected concept IDs / ATC code",
 						"Cannot complete import", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
+			if (filterPanel.getFilterByAuto() && conceptIdsOrAtc.getSelectedItem().toString().equals(ATC)) {
+				boolean atcLoaded = false;
+				for (String line : new ReadTextFile(Global.folder + "/VocabularyIds.txt"))
+					if (line.equals("ATC")) {
+						atcLoaded = true;
+						break;
+					}
+				if (!atcLoaded) {
+					JOptionPane.showMessageDialog(this,
+							"Filtering by ATC codes is selected, but the vocabulary does not contain ATC concept. Please reload the vocabulary from Athena.",
+							"ATC vocabulary missing",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+			}
+
 			List<SourceCode> sourceCodes = createSourceCodes();
 
 			JDialog dialog = new JDialog(this, "Progress Dialog", false);
@@ -351,10 +373,17 @@ public class ImportDialog extends JDialog {
 				sourceCode.sourceCode = row.get(sourceCodeIndex);
 			if (sourceFrequencyIndex != -1)
 				sourceCode.sourceFrequency = Integer.parseInt(row.get(sourceFrequencyIndex));
+			else
+				sourceCode.sourceFrequency = -1;
 			if (sourceAutoIndex != -1)
-				for (String conceptId : row.get(sourceAutoIndex).split(";"))
-					if (!conceptId.equals(""))
-						sourceCode.sourceAutoAssignedConceptIds.add(Integer.parseInt(conceptId));
+				if (conceptIdsOrAtc.getSelectedItem().toString().equals(CONCEPT_IDS)) {
+					for (String conceptId : row.get(sourceAutoIndex).split(";"))
+						if (!conceptId.equals(""))
+							sourceCode.sourceAutoAssignedConceptIds.add(Integer.parseInt(conceptId));
+				} else {
+					Set<Integer> conceptIds = Global.dbEngine.getRxNormConceptIds(row.get(sourceAutoIndex));
+					sourceCode.sourceAutoAssignedConceptIds.addAll(conceptIds);
+				}
 			for (int additionalInfoIndex : additionalInfoIndexes)
 				sourceCode.sourceAdditionalInfo.add(new Pair<String, String>(columnNames.get(additionalInfoIndex), row.get(additionalInfoIndex)));
 			sourceCodes.add(sourceCode);
@@ -399,7 +428,7 @@ public class ImportDialog extends JDialog {
 				if (threadCount <= 0) {
 					threadCount = 1;
 				}
-				
+
 				// Note: Lucene's and BerkeleyDB's search objects are thread safe, so do not need to be recreated for each thread.
 				ForkJoinPool forkJoinPool = new ForkJoinPool(threadCount);
 				forkJoinPool.submit(() -> sourceCodes.parallelStream().forEach(sourceCode -> {

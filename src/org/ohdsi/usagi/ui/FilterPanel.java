@@ -54,7 +54,7 @@ public class FilterPanel extends JPanel {
 		c.gridy = 0;
 		c.weightx = 0.1;
 		c.gridwidth = 2;
-		filterByAutoCheckBox = new JCheckBox("Filter by user selected concepts", false);
+		filterByAutoCheckBox = new JCheckBox("Filter by user selected concepts / ATC code", false);
 		filterByAutoCheckBox.setToolTipText("Limit the search to those concept IDs specified in the input file");
 		filterByAutoCheckBox.addActionListener(new ActionListener() {
 

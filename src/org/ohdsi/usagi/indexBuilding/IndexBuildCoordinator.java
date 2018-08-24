@@ -17,10 +17,10 @@ import org.ohdsi.utilities.StringUtilities;
 public class IndexBuildCoordinator {
 
 	public static void main(String[] args) {
-		Global.folder = "c:/temp/";
-		String vocabFolder = "S:/Data/OMOP Standard Vocabulary V5/Vocabulary-20161230";
-		String loincFolder = "S:/Data/LOINC/loinc.csv";
-		///String loincFolder = null;
+		Global.folder = "c:/data/usagi/";
+		String vocabFolder = "C:\\Data\\OMOP Standard Vocabulary V5\\Vocabulary-20180823";
+//		String loincFolder = "c:/Data/LOINC/loinc.csv";
+		String loincFolder = null;
 		IndexBuildCoordinator buildIndex = new IndexBuildCoordinator();
 		buildIndex.buildIndexes(vocabFolder, loincFolder);
 	}

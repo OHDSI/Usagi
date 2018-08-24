@@ -30,29 +30,36 @@ import org.ohdsi.utilities.files.ReadCSVFileWithHeader;
 import org.ohdsi.utilities.files.Row;
 
 public class BerkeleyDbBuilder {
-	private BerkeleyDbEngine	dbEngine;
-	private BuildThread			buildThread;
+	private BerkeleyDbEngine		dbEngine;
+	private BuildThread				buildThread;
+	private IntHashSet				validConceptIds;
+	private Map<Integer, String>	conceptIdToAtcCode;
 
 	public void buildIndex(String vocabFolder, String loincFileName, BuildThread buildThread) {
 		this.buildThread = buildThread;
 		dbEngine = new BerkeleyDbEngine(Global.folder);
 		dbEngine.createDatabase();
-		IntHashSet validConceptIds = loadValidConceptIds(vocabFolder + "/CONCEPT.csv");
-		loadAncestors(vocabFolder + "/CONCEPT_ANCESTOR.csv", validConceptIds);
-		loadRelationships(vocabFolder + "/CONCEPT_RELATIONSHIP.csv", validConceptIds);
+		loadValidConceptIdsAndAtcCodes(vocabFolder + "/CONCEPT.csv");
+		loadAncestors(vocabFolder + "/CONCEPT_ANCESTOR.csv");
+		loadRelationships(vocabFolder + "/CONCEPT_RELATIONSHIP.csv");
 		loadConcepts(vocabFolder + "/CONCEPT.csv", loincFileName);
 		dbEngine.shutdown();
 	}
 
-	private IntHashSet loadValidConceptIds(String conceptFileName) {
-		IntHashSet validConceptIds = new IntHashSet();
-		for (Row row : new ReadAthenaFile(conceptFileName)) 
-			if (row.get("invalid_reason") == null)
+	private IntHashSet loadValidConceptIdsAndAtcCodes(String conceptFileName) {
+		validConceptIds = new IntHashSet();
+		conceptIdToAtcCode = new HashMap<Integer, String>();
+		
+		for (Row row : new ReadAthenaFile(conceptFileName))
+			if (row.get("invalid_reason") == null) {
 				validConceptIds.add(row.getInt("concept_id"));
+				if (row.get("vocabulary_id").equals("ATC"))
+					conceptIdToAtcCode.put(row.getInt("concept_id"), row.get("concept_code"));
+			}
 		return validConceptIds;
 	}
 
-	private void loadRelationships(String conceptRelationshipFileName, IntHashSet validConceptIds) {
+	private void loadRelationships(String conceptRelationshipFileName) {
 		buildThread.report("Loading relationship information");
 		int count = 0;
 		for (Row row : new ReadAthenaFile(conceptRelationshipFileName)) {
@@ -61,13 +68,20 @@ public class BerkeleyDbBuilder {
 				MapsToRelationship mapsToRelationship = new MapsToRelationship(row);
 				dbEngine.put(mapsToRelationship);
 			}
+			if (row.get("relationship_id").equals("ATC - RxNorm") && row.get("invalid_reason") == null && validConceptIds.contains(row.getInt("concept_id_1"))
+					&& validConceptIds.contains(row.getInt("concept_id_2"))) {
+				String atc = conceptIdToAtcCode.get(row.getInt("concept_id_1"));
+				if (atc != null) {
+					dbEngine.putAtcToRxNorm(atc, row.getInt("concept_id_2"));
+				}
+			}
 			count++;
 			if (count % 100000 == 0)
 				System.out.println("Processed " + count + " relationships");
 		}
 	}
 
-	private void loadAncestors(String conceptAncestorFileName, IntHashSet validConceptIds) {
+	private void loadAncestors(String conceptAncestorFileName) {
 		File file = new File(conceptAncestorFileName);
 		if (file.exists()) {
 			buildThread.report("Loading parent-child information");
