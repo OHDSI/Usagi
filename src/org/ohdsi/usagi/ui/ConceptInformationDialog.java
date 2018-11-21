@@ -304,7 +304,7 @@ public class ConceptInformationDialog extends JFrame {
 		conceptInfo.append("Vocabulary ID: " + concept.vocabularyId + "\n");
 		conceptInfo.append("Concept ID: " + concept.conceptId + "\n");
 		conceptInfo.append("Concept code: " + concept.conceptCode + "\n");
-		conceptInfo.append("Invalid reason: " + (concept.invalidReason == null ? "" : concept.invalidReason) + "\n");
+		conceptInfo.append("Invalid reason: " + concept.invalidReason + "\n");
 		conceptInfo.append("Standard concept: " + concept.standardConcept + "\n");
 		if (concept.additionalInformation != null)
 			conceptInfo.append("\n" + concept.additionalInformation.replaceAll("\\\\n", "\n"));

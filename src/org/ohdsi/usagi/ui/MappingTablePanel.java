@@ -177,7 +177,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 					case 12:
 						return targetConcept.validEndDate;
 					case 13:
-						return targetConcept.invalidReason == null ? "" : targetConcept.invalidReason;
+						return targetConcept.invalidReason;
 					case 14:
 						return targetConcept.standardConcept;
 					case 15:

@@ -51,7 +51,7 @@ public class BerkeleyDbBuilder {
 		conceptIdToAtcCode = new HashMap<Integer, String>();
 		
 		for (Row row : new ReadAthenaFile(conceptFileName))
-			if (row.get("invalid_reason") == null) {
+			if (row.get("invalid_reason").length() == 0) {
 				validConceptIds.add(row.getInt("concept_id"));
 				if (row.get("vocabulary_id").equals("ATC"))
 					conceptIdToAtcCode.put(row.getInt("concept_id"), row.get("concept_code"));
@@ -109,7 +109,7 @@ public class BerkeleyDbBuilder {
 		int count = 0;
 		for (Row row : new ReadAthenaFile(conceptFileName)) {
 			Concept concept = new Concept(row);
-			if (concept.invalidReason == null) {
+			if (concept.invalidReason.length() == 0) {
 				if (loincToInfo != null) {
 					String info = loincToInfo.get(concept.conceptCode);
 					if (info != null)

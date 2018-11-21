@@ -85,7 +85,7 @@ public class ExportForReviewAction extends AbstractAction {
 							row.add("targetConceptCode", targetConcept.conceptCode);
 							row.add("targetValidStartDate", targetConcept.validStartDate);
 							row.add("targetValidEndDate", targetConcept.validEndDate);
-							row.add("targetInvalidReason", targetConcept.invalidReason == null?"":targetConcept.invalidReason);
+							row.add("targetInvalidReason", targetConcept.invalidReason);
 							out.write(row);
 						}
 					}

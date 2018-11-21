@@ -49,7 +49,7 @@ public class Row {
 			throw new RuntimeException("Field \"" + fieldName + "\" not found");
 		}
 		if (cells.size() <= index)
-			return null;
+			return "";
 		else
 			return cells.get(index);
 	}

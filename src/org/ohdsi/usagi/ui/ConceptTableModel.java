@@ -97,7 +97,7 @@ class ConceptTableModel extends AbstractTableModel {
 			case 7:
 				return targetConcept.validEndDate;
 			case 8:
-				return targetConcept.invalidReason == null ? "" : targetConcept.invalidReason;
+				return targetConcept.invalidReason;
 			case 9:
 				return targetConcept.standardConcept;
 			case 10:

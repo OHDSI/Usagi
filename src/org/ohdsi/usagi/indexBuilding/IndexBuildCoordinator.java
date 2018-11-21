@@ -18,7 +18,7 @@ public class IndexBuildCoordinator {
 
 	public static void main(String[] args) {
 		Global.folder = "c:/data/usagi/";
-		String vocabFolder = "C:\\Data\\OMOP Standard Vocabulary V5\\Vocabulary-20180823";
+		String vocabFolder = "C:\\Data\\OMOP Standard Vocabulary V5\\Vocabulary-20181119";
 //		String loincFolder = "c:/Data/LOINC/loinc.csv";
 		String loincFolder = null;
 		IndexBuildCoordinator buildIndex = new IndexBuildCoordinator();
