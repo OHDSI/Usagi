@@ -18,6 +18,8 @@ package org.ohdsi.usagi.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.ReadCodeMappingsFromFile;
 import org.ohdsi.usagi.SourceCode;
@@ -30,8 +32,14 @@ public class Mapping extends ArrayList<CodeMapping> {
 
 	public void loadFromFile(String filename) {
 		clear();
-		for (CodeMapping codeMapping : new ReadCodeMappingsFromFile(filename))
+		boolean invalidTargets = false;
+		for (CodeMapping codeMapping : new ReadCodeMappingsFromFile(filename)) {
 			add(codeMapping);
+			if (codeMapping.mappingStatus == CodeMapping.MappingStatus.INVALID_TARGET)
+				invalidTargets = true;
+		}
+		if (invalidTargets)
+			JOptionPane.showMessageDialog(null, "Illegal target concepts found. The corresponding source codes are marked in red.", "Illegal target concepts", JOptionPane.WARNING_MESSAGE);
 		fireDataChanged(DataChangeListener.RESTRUCTURE_EVENT);
 	}
 

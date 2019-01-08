@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class CodeMapping {
 	public static enum MappingStatus {
-		APPROVED, UNCHECKED, AUTO_MAPPED, AUTO_MAPPED_TO_1
+		APPROVED, UNCHECKED, AUTO_MAPPED, AUTO_MAPPED_TO_1, INVALID_TARGET
 	};
 
 	public SourceCode		sourceCode;

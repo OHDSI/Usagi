@@ -65,7 +65,11 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 						&& new SourceCode(row).sourceName.equals(buffer.sourceCode.sourceName)) {
 					if (row.getInt("conceptId") != 0) {
 						Concept concept = Global.dbEngine.getConcept(row.getInt("conceptId"));
-						buffer.targetConcepts.add(concept);
+						if (concept == null) {
+							buffer.mappingStatus = CodeMapping.MappingStatus.INVALID_TARGET;
+						} else {
+							buffer.targetConcepts.add(concept);
+						}
 					}
 					if (iterator.hasNext())
 						row = iterator.next();

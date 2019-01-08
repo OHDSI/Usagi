@@ -31,6 +31,8 @@ public class UsagiCellRenderer extends DefaultTableCellRenderer {
 	private static Color			oddColor					= new Color(0.95f, 0.95f, 1f);
 	private static Color			checkedColor				= new Color(0.75f, 1f, 0.75f);
 	private static Color			checkedOddColor				= new Color(0.85f, 1f, 0.85f);
+	private static Color			errorColor					= new Color(1f, 0.75f, 0.75f);
+	private static Color			errorOddColor				= new Color(1f, 0.85f, 0.85f);
 	private static DecimalFormat	doubleFormatter				= new DecimalFormat("###,###,###,##0.00");
 
 	@Override
@@ -68,6 +70,8 @@ public class UsagiCellRenderer extends DefaultTableCellRenderer {
 				value = "Auto mapped to 1";
 			else if (value == MappingStatus.UNCHECKED)
 				value = "Unchecked";
+			else if (value == MappingStatus.INVALID_TARGET)
+				value = "Invalid target";
 		}
 		Component component = super.getTableCellRendererComponent(aTable, value, isSelected, hasFocus, row, column);
 
@@ -78,6 +82,11 @@ public class UsagiCellRenderer extends DefaultTableCellRenderer {
 					component.setBackground(checkedColor);
 				else
 					component.setBackground(checkedOddColor);
+			} else if (aTable.getModel().getValueAt(modelRow, 0) == MappingStatus.INVALID_TARGET) {
+				if (row % 2 == 1)
+					component.setBackground(errorColor);
+				else
+					component.setBackground(errorOddColor);
 			} else {
 				if (row % 2 == 1) {
 					component.setBackground(oddColor);
