@@ -1,5 +1,7 @@
 package org.ohdsi.usagi;
 
+import java.io.File;
+
 import org.ohdsi.usagi.ui.UsagiMain;
 
 public class Launcher {
@@ -16,6 +18,8 @@ public class Launcher {
 			System.out.println("Starting new VM");
 			String pathToJar = UsagiMain.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
 			ProcessBuilder pb = new ProcessBuilder("java", "-Xmx" + MIN_HEAP + "m", "-classpath", pathToJar, "org.ohdsi.usagi.ui.UsagiMain");
+			pb.inheritIO();
+			pb.redirectError(new File("ErrorStream.txt"));
 			pb.start();
 		}
 	}
