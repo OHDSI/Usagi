@@ -119,7 +119,7 @@ public class UsagiSearchEngine {
 
 			IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_4_9, new UsagiAnalyzer());
 			iwc.setOpenMode(OpenMode.CREATE);
-			iwc.setRAMBufferSizeMB(256.0);
+			iwc.setRAMBufferSizeMB(128.0);
 			writer = new IndexWriter(dir, iwc);
 
 		} catch (Exception e) {
