@@ -45,9 +45,9 @@ public class ImportAction extends AbstractAction {
 		JFileChooser fileChooser = new JFileChooser(Global.folder);
 		FileFilter csvFilter = new FileNameExtensionFilter("CSV files", "csv", "txt");
 		fileChooser.addChoosableFileFilter(csvFilter);
-		FileFilter xlsxFilter = new FileNameExtensionFilter("Microsoft Excell files", "xlsx");
+		FileFilter xlsxFilter = new FileNameExtensionFilter("Microsoft Excel files", "xlsx");
 		fileChooser.addChoosableFileFilter(xlsxFilter);
-		FileFilter allFilter = new FileNameExtensionFilter("CSV files or Microsoft Excell files", "csv", "txt", "xlsx");
+		FileFilter allFilter = new FileNameExtensionFilter("CSV files or Microsoft Excel files", "csv", "txt", "xlsx");
 		fileChooser.addChoosableFileFilter(allFilter);
 		fileChooser.setFileFilter(allFilter);
 		fileChooser.setAcceptAllFileFilterUsed(false);

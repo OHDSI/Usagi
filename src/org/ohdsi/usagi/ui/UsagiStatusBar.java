@@ -58,7 +58,7 @@ public class UsagiStatusBar extends JPanel implements DataChangeListener {
 		searchLabel.setVisible(false);
 		add(searchLabel);
 		add(Box.createHorizontalGlue());
-		JLabel versionLabel = new JLabel("Vocbulary version: " + Global.vocabularyVersion);
+		JLabel versionLabel = new JLabel("Vocabulary version: " + Global.vocabularyVersion);
 		add(versionLabel);
 		Global.mapping.addListener(this);
 	}
