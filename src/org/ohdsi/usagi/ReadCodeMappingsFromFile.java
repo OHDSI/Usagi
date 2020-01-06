@@ -67,6 +67,7 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 						Concept concept = Global.dbEngine.getConcept(row.getInt("conceptId"));
 						if (concept == null) {
 							buffer.mappingStatus = CodeMapping.MappingStatus.INVALID_TARGET;
+							buffer.comment = "Invalid existing target: " + row.get("conceptId");
 						} else {
 							buffer.targetConcepts.add(concept);
 						}
