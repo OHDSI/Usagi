@@ -52,6 +52,7 @@ public class SaveAction extends AbstractAction {
 					file = new File(file.getAbsolutePath() + ".csv");
 				Global.frame.setTitle("Usagi - " + file.getName());
 				Global.filename = file.getAbsolutePath();
+				Global.folder = file.getParentFile().getAbsolutePath();
 			}
 		}
 		if (Global.filename != null) {
