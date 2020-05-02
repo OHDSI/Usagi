@@ -53,6 +53,7 @@ public class ImportAction extends AbstractAction {
 		fileChooser.setAcceptAllFileFilterUsed(false);
 		if (fileChooser.showOpenDialog(Global.frame) == JFileChooser.APPROVE_OPTION) {
 			File file = fileChooser.getSelectedFile();
+			Global.folder = file.getParentFile().getAbsolutePath();
 			new ImportDialog(file.getAbsolutePath());
 		}
 	}
