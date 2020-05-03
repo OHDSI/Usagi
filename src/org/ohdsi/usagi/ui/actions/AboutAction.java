@@ -31,7 +31,7 @@ public class AboutAction extends AbstractAction {
 	public AboutAction() {
 		putValue(Action.NAME, "About Usagi");
 		putValue(Action.SHORT_DESCRIPTION, "About Usagi");
-		putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_A));
+		putValue(Action.MNEMONIC_KEY, KeyEvent.VK_A);
 	}
 
 	@Override

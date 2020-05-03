@@ -38,12 +38,6 @@ public class ShowStatsDialog extends JDialog {
 	private static final long	serialVersionUID	= 2028328868610404663L;
 
 	public ShowStatsDialog() {
-		String versionFileName = Global.folder + "/vocabularyVersion.txt";
-		String version = "Unknown";
-		if (new File(versionFileName).exists()) {
-			for (String line : new ReadTextFile(versionFileName))
-			  version = line;
-		} 
 		int termCount = Global.usagiSearchEngine.getTermCount();
 		BerkeleyDbStats berkeleyDbStats = Global.dbEngine.getStats();
 		NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
@@ -62,7 +56,7 @@ public class ShowStatsDialog extends JDialog {
 		
 		g.gridx = 1;
 		g.gridy = 0;
-		add(new JLabel(version), g);
+		add(new JLabel(Global.vocabularyVersion), g);
 
 		g.gridx = 0;
 		g.gridy = 1;

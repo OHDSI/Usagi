@@ -31,7 +31,7 @@ public class ConceptInformationAction extends AbstractAction {
 	public ConceptInformationAction() {
 		putValue(Action.NAME, "Concept information");
 		putValue(Action.SHORT_DESCRIPTION, "Show additional concept information");
-		putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_C));
+		putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
 		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.ALT_MASK));
 	}
 

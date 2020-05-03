@@ -31,7 +31,7 @@ public class ApproveAction extends AbstractAction {
 	public ApproveAction() {
 		putValue(Action.NAME, "Approve");
 		putValue(Action.SHORT_DESCRIPTION, "Approve the selected single mapping");
-		putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_A));
+		putValue(Action.MNEMONIC_KEY, KeyEvent.VK_A);
 		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.ALT_MASK));
 	}
 
