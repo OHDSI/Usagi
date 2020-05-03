@@ -86,15 +86,17 @@ public class WriteCSVFile {
 		Iterator<String> iterator = columns.iterator();
 		while (iterator.hasNext()) {
 			String column = iterator.next();
-			boolean hasQuotes = column.contains("\"");
-			column = column.replaceAll("\\\\", "\\\\\\\\");
-			if (hasQuotes)
-				column = column.replaceAll("\"", "\\\\\"");
-			column = column.replaceAll("\r", "");
-			column = column.replaceAll("\n", "\\\\n");
-			if (hasQuotes || column.contains(Character.toString(delimiter)))
-				column = "\"" + column + "\"";
-			sb.append(column);
+			if (column != null) {
+				boolean hasQuotes = column.contains("\"");
+				column = column.replaceAll("\\\\", "\\\\\\\\");
+				if (hasQuotes)
+					column = column.replaceAll("\"", "\\\\\"");
+				column = column.replaceAll("\r", "");
+				column = column.replaceAll("\n", "\\\\n");
+				if (hasQuotes || column.contains(Character.toString(delimiter)))
+					column = "\"" + column + "\"";
+				sb.append(column);
+			}
 			if (iterator.hasNext())
 				sb.append(delimiter);
 		}
