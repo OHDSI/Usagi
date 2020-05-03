@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2019 Observational Health Data Sciences and Informatics
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,9 +28,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
+import javax.swing.*;
 
 import org.ohdsi.usagi.BerkeleyDbEngine;
 import org.ohdsi.usagi.UsagiSearchEngine;
@@ -56,22 +54,16 @@ import org.ohdsi.utilities.files.ReadTextFile;
  */
 public class UsagiMain implements ActionListener {
 
-	private JFrame	frame;
-
 	public static void main(String[] args) {
 		new UsagiMain(args);
 	}
 
 	public UsagiMain(String[] args) {
-		frame = new JFrame("Usagi");
+		JFrame frame = new JFrame("Usagi");
 
 		// Initialize global variables:
 		Global.mapping = new Mapping();
-		if (args.length != 0)
-			Global.folder = args[0];
-		else
-			Global.folder = new File("").getAbsolutePath();
-
+		Global.folder = new File("").getAbsolutePath();
 		Global.usagiSearchEngine = new UsagiSearchEngine(Global.folder);
 		Global.dbEngine = new BerkeleyDbEngine(Global.folder);
 		if (Global.usagiSearchEngine.mainIndexExists()) {
@@ -139,6 +131,12 @@ public class UsagiMain implements ActionListener {
 
 		if (!Global.usagiSearchEngine.mainIndexExists())
 			Global.rebuildIndexAction.actionPerformed(null);
+
+		if (args.length == 1) {
+			Global.folder = args[0];
+		} else if (args.length > 1 && args[0].equals("--file")) {
+			OpenAction.open(new File(args[1]));
+		}
 	}
 
 	private String loadVocabularyVersion(String folder) {
@@ -147,7 +145,7 @@ public class UsagiMain implements ActionListener {
 		if (new File(versionFileName).exists()) {
 			for (String line : new ReadTextFile(versionFileName))
 				version = line;
-		} 
+		}
 		return version;
 	}
 

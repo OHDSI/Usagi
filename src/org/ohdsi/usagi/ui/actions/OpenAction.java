@@ -46,19 +46,24 @@ public class OpenAction extends AbstractAction {
 		fileChooser.setFileFilter(csvFilter);
 		if (fileChooser.showOpenDialog(Global.frame) == JFileChooser.APPROVE_OPTION) {
 			File file = fileChooser.getSelectedFile();
-			Global.frame.setTitle("Usagi - " + file.getName());
-			Global.filename = file.getAbsolutePath();
-			Global.folder = file.getParentFile().getAbsolutePath();
-			Global.mapping.loadFromFile(Global.filename);
-			Global.usagiSearchEngine.close();
-			Global.usagiSearchEngine.createDerivedIndex(Global.mapping.getSourceCodes(), Global.frame);
-			Global.mappingDetailPanel.doSearch();
-			Global.applyPreviousMappingAction.setEnabled(true);
-			Global.saveAction.setEnabled(true);
-			Global.saveAsAction.setEnabled(true);
-			Global.exportAction.setEnabled(true);
-			Global.exportForReviewAction.setEnabled(true);
+			open(file);
 		}
+	}
+
+	public static void open(File file) {
+		String a  = file.getName();
+		Global.frame.setTitle("Usagi - " + file.getName());
+		Global.filename = file.getAbsolutePath();
+		Global.folder = file.getParentFile().getAbsolutePath();
+		Global.mapping.loadFromFile(Global.filename);
+		Global.usagiSearchEngine.close();
+		Global.usagiSearchEngine.createDerivedIndex(Global.mapping.getSourceCodes(), Global.frame);
+		Global.mappingDetailPanel.doSearch();
+		Global.applyPreviousMappingAction.setEnabled(true);
+		Global.saveAction.setEnabled(true);
+		Global.saveAsAction.setEnabled(true);
+		Global.exportAction.setEnabled(true);
+		Global.exportForReviewAction.setEnabled(true);
 	}
 
 }
