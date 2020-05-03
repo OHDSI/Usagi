@@ -15,16 +15,14 @@
  ******************************************************************************/
 package org.ohdsi.usagi.ui.actions;
 
-import java.awt.Cursor;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -42,6 +40,8 @@ public class ExportForReviewAction extends AbstractAction {
 	public ExportForReviewAction() {
 		putValue(Action.NAME, "Export for review");
 		putValue(Action.SHORT_DESCRIPTION, "Export mapping to a human readable format for reviewing");
+		putValue(Action.MNEMONIC_KEY, KeyEvent.VK_R);
+		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 	}
 
 	@Override

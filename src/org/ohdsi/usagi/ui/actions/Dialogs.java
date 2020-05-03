@@ -6,17 +6,18 @@ import javax.swing.*;
 
 public class Dialogs {
     public static boolean askExportUnapprovedMappings() {
+        String[] options = {"Only approved","Approved and Unapproved"};
         int PromptResult = JOptionPane.showOptionDialog(
                 Global.frame,
                 "Do you want to export both approved and unapproved mappings?",
                 "Export for review",
-                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null,
-                new String [] {"Only approved","Approved and Unapproved"},
-                "Only approved"
+                options,
+                options[0]
         );
-        return PromptResult == JOptionPane.YES_OPTION;
+        return PromptResult == 1;
     }
 
     public static void warningNothingToExport() {

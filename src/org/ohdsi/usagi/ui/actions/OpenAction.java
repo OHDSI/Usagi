@@ -15,6 +15,7 @@
  ******************************************************************************/
 package org.ohdsi.usagi.ui.actions;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -35,8 +36,8 @@ public class OpenAction extends AbstractAction {
 	public OpenAction() {
 		putValue(Action.NAME, "Open");
 		putValue(Action.SHORT_DESCRIPTION, "Open mapping file");
-		putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_O));
-		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+		putValue(Action.MNEMONIC_KEY, KeyEvent.VK_O);
+		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 	}
 
 	@Override
