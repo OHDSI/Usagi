@@ -45,6 +45,7 @@ public class ExportSourceToConceptMapDialog extends JDialog {
 
 	private JTextField			sourceVocabularyIdField;
 	private static final long	serialVersionUID	= -6846083121849826818L;
+	private boolean exportUnapproved = false;
 
 	public ExportSourceToConceptMapDialog() {
 		setTitle("Export to source_to_concept_map");
@@ -56,7 +57,7 @@ public class ExportSourceToConceptMapDialog extends JDialog {
 
 		g.gridx = 0;
 		g.gridy = 0;
-		add(new JLabel("Source vocabulary id:"), g);
+		add(new JLabel("Source vocabulary id (max 20 alphanumerical characters):"), g);
 
 		g.gridx = 1;
 		g.gridy = 0;
@@ -73,29 +74,21 @@ public class ExportSourceToConceptMapDialog extends JDialog {
 		buttonPanel.add(Box.createHorizontalGlue());
 		JButton cancelButton = new JButton("Cancel");
 		cancelButton.setToolTipText("Cancel the export");
-		cancelButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				setVisible(false);
-			}
-		});
+		cancelButton.addActionListener(arg0 -> setVisible(false));
 		buttonPanel.add(cancelButton);
 		JButton exportButton = new JButton("Export");
 		exportButton.setToolTipText("Select the filename and export using these settings");
-		exportButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				export();
-			}
-		});
+		exportButton.addActionListener(arg0 -> export());
 		buttonPanel.add(exportButton);
 		add(buttonPanel, g);
 
 		pack();
 		setModal(true);
 		setLocationRelativeTo(Global.frame);
+	}
+
+	public void setExportUnapproved(boolean exportUnapproved) {
+		this.exportUnapproved = exportUnapproved;
 	}
 
 	private void export() {
@@ -117,7 +110,7 @@ public class ExportSourceToConceptMapDialog extends JDialog {
 	private void writeToCsvFile(String filename) {
 		WriteCSVFileWithHeader out = new WriteCSVFileWithHeader(filename);
 		for (CodeMapping mapping : Global.mapping)
-			if (mapping.mappingStatus == MappingStatus.APPROVED) {
+			if (exportUnapproved || mapping.mappingStatus == MappingStatus.APPROVED) {
 				List<Concept> targetConcepts;
 				if (mapping.targetConcepts.size() == 0) {
 					targetConcepts = new ArrayList<Concept>(1);
