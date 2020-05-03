@@ -32,21 +32,7 @@ import javax.swing.*;
 
 import org.ohdsi.usagi.BerkeleyDbEngine;
 import org.ohdsi.usagi.UsagiSearchEngine;
-import org.ohdsi.usagi.ui.actions.AboutAction;
-import org.ohdsi.usagi.ui.actions.ApplyPreviousMappingAction;
-import org.ohdsi.usagi.ui.actions.ApproveAction;
-import org.ohdsi.usagi.ui.actions.ApproveAllAction;
-import org.ohdsi.usagi.ui.actions.ClearAllAction;
-import org.ohdsi.usagi.ui.actions.ConceptInformationAction;
-import org.ohdsi.usagi.ui.actions.ExitAction;
-import org.ohdsi.usagi.ui.actions.ExportForReviewAction;
-import org.ohdsi.usagi.ui.actions.ExportSourceToConceptMapAction;
-import org.ohdsi.usagi.ui.actions.ImportAction;
-import org.ohdsi.usagi.ui.actions.OpenAction;
-import org.ohdsi.usagi.ui.actions.RebuildIndexAction;
-import org.ohdsi.usagi.ui.actions.SaveAction;
-import org.ohdsi.usagi.ui.actions.SaveAsAction;
-import org.ohdsi.usagi.ui.actions.ShowStatsAction;
+import org.ohdsi.usagi.ui.actions.*;
 import org.ohdsi.utilities.files.ReadTextFile;
 
 /**
@@ -99,10 +85,13 @@ public class UsagiMain implements ActionListener {
 		Global.clearAllAction.setEnabled(false);
 		Global.conceptInfoAction.setEnabled(false);
 
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				Global.dbEngine.shutdown();
-				System.exit(0);
+				if (UsagiDialogs.askBeforeExit()) {
+					Global.dbEngine.shutdown();
+					System.exit(0);
+				}
 			}
 		});
 		frame.setLayout(new BorderLayout());

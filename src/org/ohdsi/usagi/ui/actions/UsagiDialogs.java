@@ -4,7 +4,7 @@ import org.ohdsi.usagi.ui.Global;
 
 import javax.swing.*;
 
-public class ExportDialogs {
+public class UsagiDialogs {
     public static boolean askExportUnapprovedMappings() {
         String[] options = {"Only approved","Approved and Unapproved"};
         int PromptResult = JOptionPane.showOptionDialog(
@@ -28,4 +28,18 @@ public class ExportDialogs {
                 JOptionPane.WARNING_MESSAGE
         );
     }
+
+    public static boolean askBeforeExit() {
+        String[] objButtons = {"Yes","No"};
+        int PromptResult = JOptionPane.showOptionDialog(
+                Global.frame,
+                "Do you want to exit?\nPlease make sure that any work is saved",
+                "Usagi",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.WARNING_MESSAGE,
+                null, objButtons, objButtons[1]
+        );
+        return PromptResult == JOptionPane.YES_OPTION;
+    }
+
 }

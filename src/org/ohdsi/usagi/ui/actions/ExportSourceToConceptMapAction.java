@@ -39,7 +39,7 @@ public class ExportSourceToConceptMapAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		boolean exportUnapproved = ExportDialogs.askExportUnapprovedMappings();
+		boolean exportUnapproved = UsagiDialogs.askExportUnapprovedMappings();
 
 		boolean hasApprovedMappings = false;
 		for (CodeMapping mapping : Global.mapping) {
@@ -50,7 +50,7 @@ public class ExportSourceToConceptMapAction extends AbstractAction {
 		}
 
 		if (!exportUnapproved && !hasApprovedMappings) {
-			ExportDialogs.warningNothingToExport();
+			UsagiDialogs.warningNothingToExport();
 			return;
 		}
 
