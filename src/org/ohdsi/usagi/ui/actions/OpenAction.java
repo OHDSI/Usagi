@@ -51,7 +51,6 @@ public class OpenAction extends AbstractAction {
 	}
 
 	public static void open(File file) {
-		String a  = file.getName();
 		Global.frame.setTitle("Usagi - " + file.getName());
 		Global.filename = file.getAbsolutePath();
 		Global.folder = file.getParentFile().getAbsolutePath();
