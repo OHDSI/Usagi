@@ -47,6 +47,7 @@ public class SaveAsAction extends AbstractAction {
 				file = new File(file.getAbsolutePath() + ".csv");
 			Global.frame.setTitle("Usagi - " + file.getName());
 			Global.filename = file.getAbsolutePath();
+			Global.folder = file.getParentFile().getAbsolutePath();
 			Global.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			Global.mapping.saveToFile(Global.filename);
 			Global.frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

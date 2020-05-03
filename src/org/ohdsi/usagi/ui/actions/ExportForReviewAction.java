@@ -58,6 +58,7 @@ public class ExportForReviewAction extends AbstractAction {
 			fileChooser.setFileFilter(csvFilter);
 			if (fileChooser.showSaveDialog(Global.frame) == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
+				Global.folder = file.getParentFile().getAbsolutePath();
 				if (!file.getName().toLowerCase().endsWith(".csv"))
 					file = new File(file.getAbsolutePath() + ".csv");
 				Global.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
