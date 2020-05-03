@@ -4,7 +4,7 @@ import org.ohdsi.usagi.ui.Global;
 
 import javax.swing.*;
 
-public class Dialogs {
+public class ExportDialogs {
     public static boolean askExportUnapprovedMappings() {
         String[] options = {"Only approved","Approved and Unapproved"};
         int PromptResult = JOptionPane.showOptionDialog(

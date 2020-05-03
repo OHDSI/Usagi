@@ -57,7 +57,7 @@ public class ExportSourceToConceptMapDialog extends JDialog {
 
 		g.gridx = 0;
 		g.gridy = 0;
-		add(new JLabel("Source vocabulary id (max 20 alphanumerical characters):"), g);
+		add(new JLabel("Source vocabulary id:"), g);
 
 		g.gridx = 1;
 		g.gridy = 0;
@@ -125,7 +125,7 @@ public class ExportSourceToConceptMapDialog extends JDialog {
 					row.add("source_vocabulary_id", sourceVocabularyIdField.getText());
 					row.add("source_code_description", mapping.sourceCode.sourceName);
 					row.add("target_concept_id", targetConcept.conceptId);
-					row.add("target_vocabulary_id", targetConcept.vocabularyId);
+					row.add("target_vocabulary_id", targetConcept.conceptId == 0 ? "None" : targetConcept.vocabularyId );
 					row.add("valid_start_date", "1970-01-01");
 					row.add("valid_end_date", "2099-12-31");
 					row.add("invalid_reason", "");

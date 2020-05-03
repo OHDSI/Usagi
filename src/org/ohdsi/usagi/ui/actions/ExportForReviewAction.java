@@ -46,7 +46,7 @@ public class ExportForReviewAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		boolean exportUnapproved = Dialogs.askExportUnapprovedMappings();
+		boolean exportUnapproved = ExportDialogs.askExportUnapprovedMappings();
 
 		boolean hasApprovedMappings = false;
 		for (CodeMapping mapping : Global.mapping) {
@@ -57,7 +57,7 @@ public class ExportForReviewAction extends AbstractAction {
 		}
 
 		if (!exportUnapproved && !hasApprovedMappings) {
-			Dialogs.warningNothingToExport();
+			ExportDialogs.warningNothingToExport();
 			return;
 		}
 
