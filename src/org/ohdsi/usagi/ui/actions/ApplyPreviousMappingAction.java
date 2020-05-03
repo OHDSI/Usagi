@@ -75,7 +75,7 @@ public class ApplyPreviousMappingAction extends AbstractAction {
 				}
 			}
 
-			String message = "The old mapping contained " + mappingToBeApplied.size() + " approved mappings of which " + mappingsApplied
+			String message = "The applied mapping contained " + mappingToBeApplied.size() + " approved mappings of which " + mappingsApplied
 					+ " were applied to the current mapping and " + mappingsAdded + " were newly added.";
 			Global.mappingTablePanel.updateUI();
 			Global.mappingDetailPanel.updateUI();
