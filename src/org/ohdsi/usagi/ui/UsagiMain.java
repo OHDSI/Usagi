@@ -40,12 +40,14 @@ import org.ohdsi.utilities.files.ReadTextFile;
  */
 public class UsagiMain implements ActionListener {
 
+	public static String version = "1.2.9-SNAPSHOT";
+
 	public static void main(String[] args) {
 		new UsagiMain(args);
 	}
 
 	public UsagiMain(String[] args) {
-		JFrame frame = new JFrame("Usagi");
+		JFrame frame = new JFrame("Usagi v" + UsagiMain.version);
 
 		// Initialize global variables:
 		Global.mapping = new Mapping();

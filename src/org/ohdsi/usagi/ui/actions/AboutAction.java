@@ -23,13 +23,14 @@ import javax.swing.Action;
 
 import org.ohdsi.usagi.ui.AboutDialog;
 import org.ohdsi.usagi.ui.Global;
+import org.ohdsi.usagi.ui.UsagiMain;
 
 public class AboutAction extends AbstractAction {
 
 	private static final long	serialVersionUID	= -6399524936473823131L;
 
 	public AboutAction() {
-		putValue(Action.NAME, "About Usagi");
+		putValue(Action.NAME, "About Usagi v" + UsagiMain.version);
 		putValue(Action.SHORT_DESCRIPTION, "About Usagi");
 		putValue(Action.MNEMONIC_KEY, KeyEvent.VK_A);
 	}
