@@ -49,7 +49,11 @@ public class UsagiMain implements ActionListener {
 
 		// Initialize global variables:
 		Global.mapping = new Mapping();
-		Global.folder = new File("").getAbsolutePath();
+		if (args.length == 1) {
+			Global.folder = args[0];
+		} else {
+			Global.folder = new File("").getAbsolutePath();
+		}
 		Global.usagiSearchEngine = new UsagiSearchEngine(Global.folder);
 		Global.dbEngine = new BerkeleyDbEngine(Global.folder);
 		if (Global.usagiSearchEngine.mainIndexExists()) {
@@ -121,9 +125,7 @@ public class UsagiMain implements ActionListener {
 		if (!Global.usagiSearchEngine.mainIndexExists())
 			Global.rebuildIndexAction.actionPerformed(null);
 
-		if (args.length == 1) {
-			Global.folder = args[0];
-		} else if (args.length > 1 && args[0].equals("--file")) {
+		if (args.length > 1 && args[0].equals("--file")) {
 			OpenAction.open(new File(args[1]));
 		}
 	}
