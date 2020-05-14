@@ -15,10 +15,11 @@
  ******************************************************************************/
 package org.ohdsi.usagi.ui.actions;
 
+import org.ohdsi.usagi.ui.Global;
+
 import java.awt.event.ActionEvent;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
+import javax.swing.*;
 
 public class ExitAction extends AbstractAction {
 
@@ -31,7 +32,10 @@ public class ExitAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		System.exit(0);
+		if (UsagiDialogs.askBeforeExit()) {
+			Global.dbEngine.shutdown();
+			System.exit(0);
+		}
 	}
 
 }
