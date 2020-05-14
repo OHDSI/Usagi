@@ -46,30 +46,45 @@ public class ApplyPreviousMappingAction extends AbstractAction {
 		FileFilter csvFilter = new FileNameExtensionFilter("CSV files", "csv");
 		fileChooser.setFileFilter(csvFilter);
 		if (fileChooser.showOpenDialog(Global.frame) == JFileChooser.APPROVE_OPTION) {
-			int mappingsUsed = 0;
-			File file = fileChooser.getSelectedFile();
-			Mapping mapping = new Mapping();
-			mapping.loadFromFile(file.getAbsolutePath());
-			Map<String, CodeMapping> codeToOldMapping = new HashMap<String, CodeMapping>();
-			for (CodeMapping codeMapping : mapping)
-				if (codeMapping.mappingStatus.equals(CodeMapping.MappingStatus.APPROVED))
-					codeToOldMapping.put(codeMapping.sourceCode.sourceCode, codeMapping);
+			int mappingsApplied = 0;
+			int mappingsAdded = 0;
 
-			for (CodeMapping newCodeMapping : Global.mapping) {
-				CodeMapping oldCodeMapping = codeToOldMapping.get(newCodeMapping.sourceCode.sourceCode);
-				if (oldCodeMapping != null) {
-					newCodeMapping.targetConcepts = oldCodeMapping.targetConcepts;
-					newCodeMapping.mappingStatus = oldCodeMapping.mappingStatus;
-					newCodeMapping.comment = oldCodeMapping.comment;
-					mappingsUsed++;
+			// Existing code lookup
+			Map<String, CodeMapping> codeToMapping = new HashMap<>();
+			for (CodeMapping codeMapping: Global.mapping) {
+				codeToMapping.put(codeMapping.sourceCode.sourceCode, codeMapping);
+			}
+
+			// Open mapping file to be applied
+			File file = fileChooser.getSelectedFile();
+			Mapping mappingToBeApplied = new Mapping();
+			mappingToBeApplied.loadFromFile(file.getAbsolutePath());
+
+			// Apply mapping. Add mappings not currently present
+			for (CodeMapping codeMappingToBeApplied : mappingToBeApplied) {
+				CodeMapping existingMapping = codeToMapping.get(codeMappingToBeApplied.sourceCode.sourceCode);
+				if (existingMapping != null) {
+					existingMapping.sourceCode.sourceName = codeMappingToBeApplied.sourceCode.sourceName;
+					existingMapping.targetConcepts = codeMappingToBeApplied.targetConcepts;
+					existingMapping.mappingStatus = codeMappingToBeApplied.mappingStatus;
+					existingMapping.comment = codeMappingToBeApplied.comment;
+					mappingsApplied++;
+				} else {
+					Global.mapping.add(codeMappingToBeApplied);
+					mappingsAdded++;
 				}
 			}
-			String message = "The old mapping contained " + codeToOldMapping.size() + " approved mappings of which " + mappingsUsed
-					+ " were applied to the current mapping.";
+
+			String message = "The applied mapping contained " + mappingToBeApplied.size() + " mappings of which " + mappingsApplied
+					+ " were applied to the current mapping and " + mappingsAdded + " were newly added.";
 			Global.mappingTablePanel.updateUI();
 			Global.mappingDetailPanel.updateUI();
+			if (mappingsAdded > 0) {
+				Global.usagiSearchEngine.close();
+				Global.usagiSearchEngine.createDerivedIndex(Global.mapping.getSourceCodes(), Global.frame);
+				Global.mappingDetailPanel.doSearch();
+			}
 			JOptionPane.showMessageDialog(Global.frame, message);
 		}
 	}
-
 }

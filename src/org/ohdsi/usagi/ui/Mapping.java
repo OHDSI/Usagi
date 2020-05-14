@@ -32,14 +32,21 @@ public class Mapping extends ArrayList<CodeMapping> {
 
 	public void loadFromFile(String filename) {
 		clear();
-		boolean invalidTargets = false;
+		int nInvalidTargets = 0;
 		for (CodeMapping codeMapping : new ReadCodeMappingsFromFile(filename)) {
 			add(codeMapping);
-			if (codeMapping.mappingStatus == CodeMapping.MappingStatus.INVALID_TARGET)
-				invalidTargets = true;
+			if (codeMapping.mappingStatus == CodeMapping.MappingStatus.INVALID_TARGET) {
+				nInvalidTargets += 1;
+			}
 		}
-		if (invalidTargets)
-			JOptionPane.showMessageDialog(null, "Illegal target concepts found. The corresponding source codes are marked in red.", "Illegal target concepts", JOptionPane.WARNING_MESSAGE);
+		if (nInvalidTargets > 0) {
+			JOptionPane.showMessageDialog(
+					null,
+					nInvalidTargets + " illegal target concepts found. The corresponding source codes are marked in red.",
+					"Illegal target concepts",
+					JOptionPane.WARNING_MESSAGE
+			);
+		}
 		fireDataChanged(DataChangeListener.RESTRUCTURE_EVENT);
 	}
 
