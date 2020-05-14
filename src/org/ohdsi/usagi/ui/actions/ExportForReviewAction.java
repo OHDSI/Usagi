@@ -15,16 +15,14 @@
  ******************************************************************************/
 package org.ohdsi.usagi.ui.actions;
 
-import java.awt.Cursor;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -42,59 +40,67 @@ public class ExportForReviewAction extends AbstractAction {
 	public ExportForReviewAction() {
 		putValue(Action.NAME, "Export for review");
 		putValue(Action.SHORT_DESCRIPTION, "Export mapping to a human readable format for reviewing");
+		putValue(Action.MNEMONIC_KEY, KeyEvent.VK_R);
+		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
+		boolean exportUnapproved = UsagiDialogs.askExportUnapprovedMappings();
+
 		boolean hasApprovedMappings = false;
-		for (CodeMapping mapping : Global.mapping)
+		for (CodeMapping mapping : Global.mapping) {
 			if (mapping.mappingStatus == MappingStatus.APPROVED) {
 				hasApprovedMappings = true;
 				break;
 			}
-		if (hasApprovedMappings) {
-			JFileChooser fileChooser = new JFileChooser(Global.folder);
-			FileFilter csvFilter = new FileNameExtensionFilter("CSV files", "csv");
-			fileChooser.setFileFilter(csvFilter);
-			if (fileChooser.showSaveDialog(Global.frame) == JFileChooser.APPROVE_OPTION) {
-				File file = fileChooser.getSelectedFile();
-				Global.folder = file.getParentFile().getAbsolutePath();
-				if (!file.getName().toLowerCase().endsWith(".csv"))
-					file = new File(file.getAbsolutePath() + ".csv");
-				Global.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-				WriteCSVFileWithHeader out = new WriteCSVFileWithHeader(file.getAbsolutePath());
-				for (CodeMapping mapping : Global.mapping)
-					if (mapping.mappingStatus == MappingStatus.APPROVED) {
-						List<Concept> targetConcepts;
-						if (mapping.targetConcepts.size() == 0) {
-							targetConcepts = new ArrayList<Concept>(1);
-							targetConcepts.add(Concept.EMPTY_CONCEPT);
-						} else
-							targetConcepts = mapping.targetConcepts;
+		}
 
-						for (Concept targetConcept : targetConcepts) {
-							Row row = mapping.sourceCode.toRow();
-							row.add("matchScore", mapping.matchScore);
-							row.add("targetConceptId", targetConcept.conceptId);
-							row.add("targetConceptName", targetConcept.conceptName);
-							row.add("targetVocabularyId", targetConcept.vocabularyId);
-							row.add("targetDomainId", targetConcept.domainId);
-							row.add("targetStandardConcept", targetConcept.standardConcept);
-							row.add("targetChildCount", targetConcept.childCount);
-							row.add("targetParentCount", targetConcept.parentCount);
-							row.add("targetConceptClassId", targetConcept.conceptClassId);
-							row.add("targetConceptCode", targetConcept.conceptCode);
-							row.add("targetValidStartDate", targetConcept.validStartDate);
-							row.add("targetValidEndDate", targetConcept.validEndDate);
-							row.add("targetInvalidReason", targetConcept.invalidReason);
-							out.write(row);
-						}
+		if (!exportUnapproved && !hasApprovedMappings) {
+			UsagiDialogs.warningNothingToExport();
+			return;
+		}
+
+		JFileChooser fileChooser = new JFileChooser(Global.folder);
+		FileFilter csvFilter = new FileNameExtensionFilter("CSV files", "csv");
+		fileChooser.setFileFilter(csvFilter);
+		if (fileChooser.showSaveDialog(Global.frame) == JFileChooser.APPROVE_OPTION) {
+			File file = fileChooser.getSelectedFile();
+			Global.folder = file.getParentFile().getAbsolutePath();
+			if (!file.getName().toLowerCase().endsWith(".csv"))
+				file = new File(file.getAbsolutePath() + ".csv");
+			Global.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			WriteCSVFileWithHeader out = new WriteCSVFileWithHeader(file.getAbsolutePath());
+			for (CodeMapping mapping : Global.mapping)
+				if (exportUnapproved || mapping.mappingStatus == MappingStatus.APPROVED) {
+					List<Concept> targetConcepts;
+					if (mapping.targetConcepts.size() == 0) {
+						targetConcepts = new ArrayList<Concept>(1);
+						targetConcepts.add(Concept.EMPTY_CONCEPT);
+					} else
+						targetConcepts = mapping.targetConcepts;
+
+					for (Concept targetConcept : targetConcepts) {
+						Row row = mapping.sourceCode.toRow();
+						row.add("matchScore", mapping.matchScore);
+						if (exportUnapproved) row.add("mappingStatus", mapping.mappingStatus.toString());
+						row.add("targetConceptId", targetConcept.conceptId);
+						row.add("targetConceptName", targetConcept.conceptName);
+						row.add("targetVocabularyId", targetConcept.vocabularyId);
+						row.add("targetDomainId", targetConcept.domainId);
+						row.add("targetStandardConcept", targetConcept.standardConcept);
+						row.add("targetChildCount", targetConcept.childCount);
+						row.add("targetParentCount", targetConcept.parentCount);
+						row.add("targetConceptClassId", targetConcept.conceptClassId);
+						row.add("targetConceptCode", targetConcept.conceptCode);
+						row.add("targetValidStartDate", targetConcept.validStartDate);
+						row.add("targetValidEndDate", targetConcept.validEndDate);
+						row.add("targetInvalidReason", targetConcept.invalidReason);
+						out.write(row);
 					}
-				out.close();
-				Global.frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-			}
-		} else {
-			JOptionPane.showMessageDialog(Global.frame, "There are no approved mappings, so nothing to export", "Warning", JOptionPane.WARNING_MESSAGE);
+				}
+			out.close();
+			Global.frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		}
 	}
 
