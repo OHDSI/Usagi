@@ -39,6 +39,11 @@ Getting Started
 3. Click on Usagi_vx.x.x.jar to start Usagi.
 4. Usagi will prompt you to specify the location of the Vocabulary files to create the index (needs to be done only once).
 
+The creation of the vocabulary index is a computationally expensive process and can take hours to complete. 
+It has to be done only once and the resulting index files can be copied over to a new version of Usagi.
+
+If the index creation does not finish within a few hours and seems to be stuck, please try to run the Usagi jar from the command line instead of clicking the jar (`java -jar Usagi_vx.x.x.jar`). Although this solution is not thoroughly tested, users have reported that this might help ([issue #64](https://github.com/OHDSI/Usagi/issues/64)).
+
 Getting Involved
 =============
 * User guide and Help: <a href="http://www.ohdsi.org/web/wiki/doku.php?id=documentation:software:usagi">Usagi Wiki</a>
