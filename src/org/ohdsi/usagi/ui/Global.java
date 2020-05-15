@@ -44,6 +44,7 @@ public class Global {
 	public static ClearAllAction					clearAllAction;
 	public static ConceptInformationAction			conceptInfoAction;
 	public static AthenaAction						athenaAction;
+	public static GoogleSearchAction				googleSearchAction;
 	public static AboutAction						aboutAction;
 	public static ExportSourceToConceptMapAction	exportAction;
 	public static ExportForReviewAction				exportForReviewAction;

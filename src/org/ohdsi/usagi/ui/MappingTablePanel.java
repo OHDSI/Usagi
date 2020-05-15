@@ -57,8 +57,13 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 				int viewRow = table.getSelectedRow();
 				if (viewRow != -1) {
 					int modelRow = table.convertRowIndexToModel(viewRow);
-					for (CodeSelectedListener listener : listeners)
+					for (CodeSelectedListener listener : listeners) {
 						listener.codeSelected(tableModel.getCodeMapping(modelRow));
+					}
+
+					Global.googleSearchAction.setEnabled(true);
+					Global.googleSearchAction.setSourceTerm(tableModel.getCodeMapping(modelRow).sourceCode.sourceName);
+
 					Global.approveAction.setEnabled(true);
 					Global.approveAllAction.setEnabled(true);
 					Global.clearAllAction.setEnabled(true);
