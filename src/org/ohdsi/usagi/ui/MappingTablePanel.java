@@ -24,8 +24,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -36,9 +34,8 @@ import org.ohdsi.usagi.Concept;
 public class MappingTablePanel extends JPanel implements DataChangeListener {
 	private static final long					serialVersionUID	= -5862314086097240860L;
 	private UsagiTable							table;
-	private TableRowSorter<CodeMapTableModel>	sorter;
 	private CodeMapTableModel					tableModel;
-	private List<CodeSelectedListener>			listeners			= new ArrayList<CodeSelectedListener>();
+	private List<CodeSelectedListener>			listeners			= new ArrayList<>();
 	private boolean								ignoreSelection		= false;
 
 	public MappingTablePanel() {
@@ -46,9 +43,8 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
 		tableModel = new CodeMapTableModel();
-		sorter = new TableRowSorter<CodeMapTableModel>(tableModel);
 		table = new UsagiTable(tableModel);
-		table.setRowSorter(sorter);
+		table.setRowSorter(new TableRowSorter<>(tableModel));
 		table.setPreferredScrollableViewportSize(new Dimension(1200, 200));
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
@@ -57,8 +53,10 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 				int primaryViewRow = table.getSelectedRow();
 				if (primaryViewRow != -1) {
 					int primaryModelRow = table.convertRowIndexToModel(primaryViewRow);
-					for (CodeSelectedListener listener : listeners)
+					for (CodeSelectedListener listener : listeners) {
 						listener.codeSelected(tableModel.getCodeMapping(primaryModelRow));
+						listener.clearCodeMultiSelected();
+					}
 					Global.approveAction.setEnabled(true);
 					Global.approveAllAction.setEnabled(true);
 					Global.clearAllAction.setEnabled(true);
@@ -67,10 +65,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 						Global.conceptInformationDialog.setConcept(tableModel.getCodeMapping(primaryModelRow).targetConcepts.get(0));
 					}
 
-					// All other selected rows
-					for (CodeSelectedListener listener : listeners) {
-						listener.clearCodeMultiSelected();
-					}
+					// Store all other co-selected rows
 					for (int viewRow : table.getSelectedRows()) {
 						if (viewRow != -1 && viewRow != primaryViewRow) {
 							int modelRow = table.convertRowIndexToModel(viewRow);
@@ -91,8 +86,6 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		table.hideColumn("Valid start date");
 		table.hideColumn("Valid end date");
 		table.hideColumn("Invalid reason");
-		// table.hideColumn("Domain");
-		// table.hideColumn("Concept class");
 
 		JScrollPane scrollPane = new JScrollPane(table);
 		add(scrollPane);
@@ -262,6 +255,11 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 			tableModel.fireTableDataChanged();
 		} else {
 			tableModel.fireTableRowsUpdated(table.getSelectedRow(), table.getSelectedRow());
+		}
+
+		// Multi selection is lost
+		for (CodeSelectedListener listener : listeners) {
+			listener.clearCodeMultiSelected();
 		}
 	}
 
