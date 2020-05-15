@@ -52,26 +52,37 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		table.setPreferredScrollableViewportSize(new Dimension(1200, 200));
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent event) {
-				if (!ignoreSelection) {
-					int viewRow = table.getSelectedRow();
-					if (viewRow != -1) {
-						int modelRow = table.convertRowIndexToModel(viewRow);
-						for (CodeSelectedListener listener : listeners)
-							listener.codeSelected(tableModel.getCodeMapping(modelRow));
-						Global.approveAction.setEnabled(true);
-						Global.approveAllAction.setEnabled(true);
-						Global.clearAllAction.setEnabled(true);
-						if (tableModel.getCodeMapping(modelRow).targetConcepts.size() > 0) {
-							Global.conceptInfoAction.setEnabled(true);
-							Global.conceptInformationDialog.setConcept(tableModel.getCodeMapping(modelRow).targetConcepts.get(0));
-						}
-					} else {
-						Global.approveAllAction.setEnabled(false);
-						Global.approveAction.setEnabled(false);
-						Global.clearAllAction.setEnabled(false);
+		table.getSelectionModel().addListSelectionListener(event -> {
+			if (!ignoreSelection) {
+				int primaryViewRow = table.getSelectedRow();
+				if (primaryViewRow != -1) {
+					int modelRow = table.convertRowIndexToModel(primaryViewRow);
+					for (CodeSelectedListener listener : listeners)
+						listener.codeSelected(tableModel.getCodeMapping(modelRow));
+					Global.approveAction.setEnabled(true);
+					Global.approveAllAction.setEnabled(true);
+					Global.clearAllAction.setEnabled(true);
+					if (tableModel.getCodeMapping(modelRow).targetConcepts.size() > 0) {
+						Global.conceptInfoAction.setEnabled(true);
+						Global.conceptInformationDialog.setConcept(tableModel.getCodeMapping(modelRow).targetConcepts.get(0));
 					}
+
+					// All other selected rows
+					for (CodeSelectedListener listener : listeners) {
+						listener.clearCodeMultiSelected();
+					}
+					for (int viewRow : table.getSelectedRows()) {
+						if (viewRow != -1 && viewRow != primaryViewRow) {
+							int modelRow = table.convertRowIndexToModel(viewRow);
+							for (CodeSelectedListener listener : listeners) {
+								listener.addCodeMultiSelected(tableModel.getCodeMapping(modelRow));
+							}
+						}
+					}
+				} else {
+					Global.approveAllAction.setEnabled(false);
+					Global.approveAction.setEnabled(false);
+					Global.clearAllAction.setEnabled(false);
 				}
 			}
 		});
