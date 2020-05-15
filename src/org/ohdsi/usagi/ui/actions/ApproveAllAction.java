@@ -16,9 +16,10 @@
 package org.ohdsi.usagi.ui.actions;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
+import javax.swing.*;
 
 import org.ohdsi.usagi.ui.Global;
 
@@ -29,6 +30,7 @@ public class ApproveAllAction extends AbstractAction {
 	public ApproveAllAction() {
 		putValue(Action.NAME, "Approve selected");
 		putValue(Action.SHORT_DESCRIPTION, "Approve all selected mappings");
+		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.ALT_MASK | InputEvent.SHIFT_DOWN_MASK));
 	}
 
 	@Override
