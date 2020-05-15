@@ -56,15 +56,15 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 			if (!ignoreSelection) {
 				int primaryViewRow = table.getSelectedRow();
 				if (primaryViewRow != -1) {
-					int modelRow = table.convertRowIndexToModel(primaryViewRow);
+					int primaryModelRow = table.convertRowIndexToModel(primaryViewRow);
 					for (CodeSelectedListener listener : listeners)
-						listener.codeSelected(tableModel.getCodeMapping(modelRow));
+						listener.codeSelected(tableModel.getCodeMapping(primaryModelRow));
 					Global.approveAction.setEnabled(true);
 					Global.approveAllAction.setEnabled(true);
 					Global.clearAllAction.setEnabled(true);
-					if (tableModel.getCodeMapping(modelRow).targetConcepts.size() > 0) {
+					if (tableModel.getCodeMapping(primaryModelRow).targetConcepts.size() > 0) {
 						Global.conceptInfoAction.setEnabled(true);
-						Global.conceptInformationDialog.setConcept(tableModel.getCodeMapping(modelRow).targetConcepts.get(0));
+						Global.conceptInformationDialog.setConcept(tableModel.getCodeMapping(primaryModelRow).targetConcepts.get(0));
 					}
 
 					// All other selected rows
@@ -258,6 +258,8 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		} else if (event.structureChange) {
 			tableModel.restructure();
 			table.setRowSelectionInterval(0, 0);
+		} else if (event.multiUpdate) {
+			tableModel.fireTableDataChanged();
 		} else {
 			tableModel.fireTableRowsUpdated(table.getSelectedRow(), table.getSelectedRow());
 		}

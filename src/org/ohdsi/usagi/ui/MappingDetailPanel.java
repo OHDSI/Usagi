@@ -76,7 +76,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private JRadioButton						manualQueryButton;
 	private JTextField							manualQueryField;
 	private CodeMapping							codeMapping;
-	private List<CodeMapping> 					codeMappingFromMulti;
+	private List<CodeMapping> 					codeMappingsFromMulti;
 	private FilterPanel							filterPanel;
 	private Timer								timer;
 
@@ -87,7 +87,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		add(createTargetConceptsPanel());
 		add(createSearchPanel());
 		add(createApprovePanel());
-		codeMappingFromMulti = new ArrayList<>();
+		codeMappingsFromMulti = new ArrayList<>();
 	}
 
 	private Component createSearchPanel() {
@@ -377,12 +377,12 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 
 	@Override
 	public void addCodeMultiSelected(CodeMapping codeMapping) {
-		this.codeMappingFromMulti.add(codeMapping);
+		this.codeMappingsFromMulti.add(codeMapping);
 	}
 
 	@Override
 	public void clearCodeMultiSelected() {
-		this.codeMappingFromMulti = new ArrayList<>();
+		this.codeMappingsFromMulti = new ArrayList<>();
 	}
 
 	public void approve() {
@@ -410,16 +410,21 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 
 	public void addConcept(Concept concept) {
 		codeMapping.targetConcepts.add(concept);
-		for (CodeMapping codeMappingMulti : codeMappingFromMulti) {
+		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
 			codeMappingMulti.targetConcepts.add(concept);
 		}
 		targetConceptTableModel.fireTableDataChanged();
-		Global.mapping.fireDataChanged(DataChangeListener.SIMPLE_UPDATE_EVENT);
+
+		if (codeMappingsFromMulti.size() > 0) {
+			Global.mapping.fireDataChanged(DataChangeListener.MULTI_UPDATE_EVENT);
+		} else {
+			Global.mapping.fireDataChanged(DataChangeListener.SIMPLE_UPDATE_EVENT);
+		}
 	}
 
 	public void replaceConcepts(Concept concept) {
 		codeMapping.targetConcepts.clear();
-		for (CodeMapping codeMappingMulti : codeMappingFromMulti) {
+		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
 			codeMappingMulti.targetConcepts.clear();
 		}
 		addConcept(concept);
