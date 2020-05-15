@@ -74,6 +74,7 @@ public class UsagiMain implements ActionListener {
 		Global.saveAsAction = new SaveAsAction();
 		Global.approveAction = new ApproveAction();
 		Global.conceptInfoAction = new ConceptInformationAction();
+		Global.athenaAction = new AthenaAction();
 		Global.showStatsAction = new ShowStatsAction();
 		Global.aboutAction = new AboutAction();
 		Global.approveAllAction = new ApproveAllAction();
@@ -90,6 +91,7 @@ public class UsagiMain implements ActionListener {
 		Global.clearAllAction = new ClearAllAction();
 		Global.clearAllAction.setEnabled(false);
 		Global.conceptInfoAction.setEnabled(false);
+		Global.athenaAction.setEnabled(false);
 
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.addWindowListener(new WindowAdapter() {

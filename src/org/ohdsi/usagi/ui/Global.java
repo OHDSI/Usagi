@@ -19,21 +19,7 @@ import javax.swing.JFrame;
 
 import org.ohdsi.usagi.BerkeleyDbEngine;
 import org.ohdsi.usagi.UsagiSearchEngine;
-import org.ohdsi.usagi.ui.actions.AboutAction;
-import org.ohdsi.usagi.ui.actions.ApplyPreviousMappingAction;
-import org.ohdsi.usagi.ui.actions.ApproveAction;
-import org.ohdsi.usagi.ui.actions.ApproveAllAction;
-import org.ohdsi.usagi.ui.actions.ClearAllAction;
-import org.ohdsi.usagi.ui.actions.ConceptInformationAction;
-import org.ohdsi.usagi.ui.actions.ExitAction;
-import org.ohdsi.usagi.ui.actions.ExportForReviewAction;
-import org.ohdsi.usagi.ui.actions.ExportSourceToConceptMapAction;
-import org.ohdsi.usagi.ui.actions.ImportAction;
-import org.ohdsi.usagi.ui.actions.OpenAction;
-import org.ohdsi.usagi.ui.actions.RebuildIndexAction;
-import org.ohdsi.usagi.ui.actions.SaveAction;
-import org.ohdsi.usagi.ui.actions.SaveAsAction;
-import org.ohdsi.usagi.ui.actions.ShowStatsAction;
+import org.ohdsi.usagi.ui.actions.*;
 
 public class Global {
 	public static JFrame							frame;
@@ -57,6 +43,7 @@ public class Global {
 	public static ApproveAllAction					approveAllAction;
 	public static ClearAllAction					clearAllAction;
 	public static ConceptInformationAction			conceptInfoAction;
+	public static AthenaAction						athenaAction;
 	public static AboutAction						aboutAction;
 	public static ExportSourceToConceptMapAction	exportAction;
 	public static ExportForReviewAction				exportForReviewAction;

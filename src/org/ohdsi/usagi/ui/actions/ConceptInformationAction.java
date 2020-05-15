@@ -16,6 +16,7 @@
 package org.ohdsi.usagi.ui.actions;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
@@ -32,7 +33,7 @@ public class ConceptInformationAction extends AbstractAction {
 		putValue(Action.NAME, "Concept information");
 		putValue(Action.SHORT_DESCRIPTION, "Show additional concept information");
 		putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
-		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.ALT_MASK));
+		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.ALT_MASK));
 	}
 
 	@Override

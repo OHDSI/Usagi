@@ -25,7 +25,7 @@ public class UsagiMenubar extends JMenuBar {
 
 	public UsagiMenubar() {
 		JMenu fileMenu = new JMenu("File");
-		fileMenu.setMnemonic(new Integer(KeyEvent.VK_F));
+		fileMenu.setMnemonic(KeyEvent.VK_F);
 		add(fileMenu);
 
 		fileMenu.add(Global.openAction);
@@ -38,7 +38,7 @@ public class UsagiMenubar extends JMenuBar {
 		fileMenu.add(Global.exitAction);
 
 		JMenu editMenu = new JMenu("Edit");
-		editMenu.setMnemonic(new Integer(KeyEvent.VK_E));
+		editMenu.setMnemonic(KeyEvent.VK_E);
 		add(editMenu);
 
 		editMenu.add(Global.approveAction);
@@ -46,13 +46,14 @@ public class UsagiMenubar extends JMenuBar {
 		editMenu.add(Global.clearAllAction);
 
 		JMenu viewMenu = new JMenu("View");
-		viewMenu.setMnemonic(new Integer(KeyEvent.VK_V));
+		viewMenu.setMnemonic(KeyEvent.VK_V);
 		add(viewMenu);
 
 		viewMenu.add(Global.conceptInfoAction);
+		viewMenu.add(Global.athenaAction);
 
 		JMenu helpMenu = new JMenu("Help");
-		helpMenu.setMnemonic(new Integer(KeyEvent.VK_H));
+		helpMenu.setMnemonic(KeyEvent.VK_H);
 		add(helpMenu);
 
 		helpMenu.add(Global.rebuildIndexAction);
