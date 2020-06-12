@@ -39,6 +39,11 @@ public class ExportSourceToConceptMapAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
+		if (Global.mapping.size() == 0) {
+			UsagiDialogs.warningNothingToExport();
+			return;
+		}
+
 		boolean exportUnapproved = UsagiDialogs.askExportUnapprovedMappings();
 
 		boolean hasApprovedMappings = false;
@@ -50,7 +55,7 @@ public class ExportSourceToConceptMapAction extends AbstractAction {
 		}
 
 		if (!exportUnapproved && !hasApprovedMappings) {
-			UsagiDialogs.warningNothingToExport();
+			UsagiDialogs.warningNoApprovedToExport();
 			return;
 		}
 

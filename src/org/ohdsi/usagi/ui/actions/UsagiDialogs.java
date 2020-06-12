@@ -23,6 +23,15 @@ public class UsagiDialogs {
     public static void warningNothingToExport() {
         JOptionPane.showMessageDialog(
                 Global.frame,
+                "There are no mappings, so nothing to export",
+                "Nothing to export",
+                JOptionPane.WARNING_MESSAGE
+        );
+    }
+
+    public static void warningNoApprovedToExport() {
+        JOptionPane.showMessageDialog(
+                Global.frame,
                 "There are no approved mappings, so nothing to export",
                 "Nothing to export",
                 JOptionPane.WARNING_MESSAGE
