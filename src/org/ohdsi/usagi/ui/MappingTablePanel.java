@@ -52,26 +52,32 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		table.setPreferredScrollableViewportSize(new Dimension(1200, 200));
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent event) {
-				if (!ignoreSelection) {
-					int viewRow = table.getSelectedRow();
-					if (viewRow != -1) {
-						int modelRow = table.convertRowIndexToModel(viewRow);
-						for (CodeSelectedListener listener : listeners)
-							listener.codeSelected(tableModel.getCodeMapping(modelRow));
-						Global.approveAction.setEnabled(true);
-						Global.approveAllAction.setEnabled(true);
-						Global.clearAllAction.setEnabled(true);
-						if (tableModel.getCodeMapping(modelRow).targetConcepts.size() > 0) {
-							Global.conceptInfoAction.setEnabled(true);
-							Global.conceptInformationDialog.setConcept(tableModel.getCodeMapping(modelRow).targetConcepts.get(0));
-						}
-					} else {
-						Global.approveAllAction.setEnabled(false);
-						Global.approveAction.setEnabled(false);
-						Global.clearAllAction.setEnabled(false);
+		table.getSelectionModel().addListSelectionListener(event -> {
+			if (!ignoreSelection) {
+				int viewRow = table.getSelectedRow();
+				if (viewRow != -1) {
+					int modelRow = table.convertRowIndexToModel(viewRow);
+					for (CodeSelectedListener listener : listeners) {
+						listener.codeSelected(tableModel.getCodeMapping(modelRow));
 					}
+
+					Global.googleSearchAction.setEnabled(true);
+					Global.googleSearchAction.setSourceTerm(tableModel.getCodeMapping(modelRow).sourceCode.sourceName);
+
+					Global.approveAction.setEnabled(true);
+					Global.approveAllAction.setEnabled(true);
+					Global.clearAllAction.setEnabled(true);
+					if (tableModel.getCodeMapping(modelRow).targetConcepts.size() > 0) {
+						Concept firstConcept = tableModel.getCodeMapping(modelRow).targetConcepts.get(0);
+						Global.conceptInfoAction.setEnabled(true);
+						Global.conceptInformationDialog.setConcept(firstConcept);
+						Global.athenaAction.setEnabled(true);
+						Global.athenaAction.setConcept(firstConcept);
+					}
+				} else {
+					Global.approveAllAction.setEnabled(false);
+					Global.approveAction.setEnabled(false);
+					Global.clearAllAction.setEnabled(false);
 				}
 			}
 		});

@@ -15,30 +15,41 @@
  ******************************************************************************/
 package org.ohdsi.usagi.ui.actions;
 
+import org.ohdsi.usagi.Concept;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.KeyStroke;
+public class GoogleSearchAction extends AbstractAction {
 
-import org.ohdsi.usagi.ui.Global;
+	private static final long serialVersionUID = -934859464521233L;
+	private static final String GOOGLE_Q_URL = "https://www.google.com/search?q=";
+	private String sourceTerm;
 
-public class ConceptInformationAction extends AbstractAction {
-
-	private static final long	serialVersionUID	= -1846753187468184738L;
-
-	public ConceptInformationAction() {
-		putValue(Action.NAME, "Concept information");
-		putValue(Action.SHORT_DESCRIPTION, "Show additional concept information");
-		putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
-		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.ALT_MASK));
+	public GoogleSearchAction() {
+		putValue(Action.NAME, "Google (web)");
+		putValue(Action.SHORT_DESCRIPTION, "Search source term on Google");
+		putValue(Action.MNEMONIC_KEY, KeyEvent.VK_G);
+		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.ALT_MASK));
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		Global.conceptInformationDialog.setVisible(true);
+		try {
+			Desktop desktop = Desktop.getDesktop();
+			desktop.browse(new URI(GOOGLE_Q_URL + sourceTerm));
+		} catch (URISyntaxException | IOException ex) {
+
+		}
 	}
 
+	public void setSourceTerm(String sourceTerm) {
+		this.sourceTerm = sourceTerm;
+	}
 }
