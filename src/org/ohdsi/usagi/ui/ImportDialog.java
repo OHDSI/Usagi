@@ -302,7 +302,7 @@ public class ImportDialog extends JDialog {
 			}
 			if (filterPanel.getFilterByAuto() && conceptIdsOrAtc.getSelectedItem().toString().equals(ATC)) {
 				boolean atcLoaded = false;
-				for (String line : new ReadTextFile(Global.folder + "/VocabularyIds.txt"))
+				for (String line : Global.vocabularyIds)
 					if (line.equals("ATC")) {
 						atcLoaded = true;
 						break;

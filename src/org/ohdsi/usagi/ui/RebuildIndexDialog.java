@@ -172,8 +172,15 @@ public class RebuildIndexDialog extends JDialog {
 		JFileChooser fileChooser = new JFileChooser(new File(vocabFolderField.getText()));
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		int returnVal = fileChooser.showDialog(this, "Select folder");
-		if (returnVal == JFileChooser.APPROVE_OPTION)
-			vocabFolderField.setText(fileChooser.getSelectedFile().getAbsolutePath());
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File selectedDirectory = fileChooser.getSelectedFile();
+			if (!selectedDirectory.exists()) {
+				// When no directory is selected when approving, FileChooser incorrectly appends the current directory to the path.
+				// Take the opened directory instead.
+				selectedDirectory = fileChooser.getCurrentDirectory();
+			}
+			vocabFolderField.setText(selectedDirectory.getAbsolutePath());
+		}
 	}
 
 	private void pickLoincFile() {
