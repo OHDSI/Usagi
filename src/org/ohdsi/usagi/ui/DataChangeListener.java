@@ -17,22 +17,22 @@ package org.ohdsi.usagi.ui;
 
 public interface DataChangeListener {
 
-	public static DataChangeEvent	APPROVE_EVENT		= new DataChangeEvent(true, false, false);
-	public static DataChangeEvent	SIMPLE_UPDATE_EVENT	= new DataChangeEvent(false, false, false);
-	public static DataChangeEvent	MULTI_UPDATE_EVENT	= new DataChangeEvent(false, false, true);
-	public static DataChangeEvent	RESTRUCTURE_EVENT	= new DataChangeEvent(false, true, false);
+	DataChangeEvent	APPROVE_EVENT		= new DataChangeEvent(true, false, false);
+	DataChangeEvent	SIMPLE_UPDATE_EVENT	= new DataChangeEvent(false, false, false);
+	DataChangeEvent	MULTI_UPDATE_EVENT	= new DataChangeEvent(false, false, true);
+	DataChangeEvent	RESTRUCTURE_EVENT	= new DataChangeEvent(false, true, false);
 
-	public void dataChanged(DataChangeEvent event);
+	void dataChanged(DataChangeEvent event);
 
-	public static class DataChangeEvent {
+	class DataChangeEvent {
 		public DataChangeEvent(boolean approved, boolean structureChange, boolean multiUpdate) {
 			this.approved = approved;
 			this.structureChange = structureChange;
 			this.multiUpdate = multiUpdate;
 		}
 
-		public boolean	approved		= false;
-		public boolean	structureChange	= false;
+		public boolean	approved;
+		public boolean	structureChange;
 		public boolean	multiUpdate	= false;
 	}
 }

@@ -40,12 +40,14 @@ import org.ohdsi.utilities.files.ReadTextFile;
  */
 public class UsagiMain implements ActionListener {
 
+	public static String version = "1.2.9-SNAPSHOT";
+
 	public static void main(String[] args) {
 		new UsagiMain(args);
 	}
 
 	public UsagiMain(String[] args) {
-		JFrame frame = new JFrame("Usagi");
+		JFrame frame = new JFrame("Usagi v" + UsagiMain.version);
 
 		// Initialize global variables:
 		Global.mapping = new Mapping();
@@ -72,6 +74,8 @@ public class UsagiMain implements ActionListener {
 		Global.saveAsAction = new SaveAsAction();
 		Global.approveAction = new ApproveAction();
 		Global.conceptInfoAction = new ConceptInformationAction();
+		Global.athenaAction = new AthenaAction();
+		Global.googleSearchAction = new GoogleSearchAction();
 		Global.showStatsAction = new ShowStatsAction();
 		Global.aboutAction = new AboutAction();
 		Global.approveAllAction = new ApproveAllAction();
@@ -88,6 +92,8 @@ public class UsagiMain implements ActionListener {
 		Global.clearAllAction = new ClearAllAction();
 		Global.clearAllAction.setEnabled(false);
 		Global.conceptInfoAction.setEnabled(false);
+		Global.athenaAction.setEnabled(false);
+		Global.googleSearchAction.setEnabled(false);
 
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.addWindowListener(new WindowAdapter() {

@@ -28,6 +28,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.ohdsi.usagi.CodeMapping;
+import org.ohdsi.usagi.ui.DataChangeListener;
 import org.ohdsi.usagi.ui.Global;
 import org.ohdsi.usagi.ui.Mapping;
 
@@ -79,6 +80,7 @@ public class ApplyPreviousMappingAction extends AbstractAction {
 					+ " were applied to the current mapping and " + mappingsAdded + " were newly added.";
 			Global.mappingTablePanel.updateUI();
 			Global.mappingDetailPanel.updateUI();
+			Global.mapping.fireDataChanged(DataChangeListener.APPROVE_EVENT); // To update the footer
 			if (mappingsAdded > 0) {
 				Global.usagiSearchEngine.close();
 				Global.usagiSearchEngine.createDerivedIndex(Global.mapping.getSourceCodes(), Global.frame);

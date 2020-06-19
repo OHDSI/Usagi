@@ -57,12 +57,19 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 						listener.codeSelected(tableModel.getCodeMapping(primaryModelRow));
 						listener.clearCodeMultiSelected();
 					}
+
+					Global.googleSearchAction.setEnabled(true);
+					Global.googleSearchAction.setSourceTerm(tableModel.getCodeMapping(primaryModelRow).sourceCode.sourceName);
+
 					Global.approveAction.setEnabled(true);
 					Global.approveAllAction.setEnabled(true);
 					Global.clearAllAction.setEnabled(true);
 					if (tableModel.getCodeMapping(primaryModelRow).targetConcepts.size() > 0) {
+						Concept firstConcept = tableModel.getCodeMapping(primaryModelRow).targetConcepts.get(0);
 						Global.conceptInfoAction.setEnabled(true);
-						Global.conceptInformationDialog.setConcept(tableModel.getCodeMapping(primaryModelRow).targetConcepts.get(0));
+						Global.conceptInformationDialog.setConcept(firstConcept);
+						Global.athenaAction.setEnabled(true);
+						Global.athenaAction.setConcept(firstConcept);
 					}
 
 					// Store all other co-selected rows

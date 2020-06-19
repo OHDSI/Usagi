@@ -201,21 +201,21 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		searchTable.setPreferredScrollableViewportSize(new Dimension(100, 100));
 		searchTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		searchTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		searchTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent event) {
-				int viewRow = searchTable.getSelectedRow();
-				if (viewRow == -1) {
-					addButton.setEnabled(false);
-					replaceButton.setEnabled(false);
-				} else {
-					addButton.setEnabled(true);
-					replaceButton.setEnabled(true);
-					Global.conceptInfoAction.setEnabled(true);
-					int modelRow = searchTable.convertRowIndexToModel(viewRow);
-					Global.conceptInformationDialog.setConcept(searchTableModel.getConcept(modelRow));
-				}
+		searchTable.getSelectionModel().addListSelectionListener(event -> {
+			int viewRow = searchTable.getSelectedRow();
+			if (viewRow == -1) {
+				addButton.setEnabled(false);
+				replaceButton.setEnabled(false);
+			} else {
+				addButton.setEnabled(true);
+				replaceButton.setEnabled(true);
+				int modelRow = searchTable.convertRowIndexToModel(viewRow);
+				Global.conceptInfoAction.setEnabled(true);
+				Global.conceptInformationDialog.setConcept(searchTableModel.getConcept(modelRow));
+				Global.athenaAction.setEnabled(true);
+				Global.athenaAction.setConcept(searchTableModel.getConcept(modelRow));
+				Global.googleSearchAction.setEnabled(false);
 			}
-
 		});
 		// searchTable.hideColumn("Synonym");
 		searchTable.hideColumn("Valid start date");
@@ -323,19 +323,19 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		targetConceptTable.setPreferredScrollableViewportSize(new Dimension(500, 45));
 		targetConceptTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		targetConceptTable.setRowSelectionAllowed(true);
-		targetConceptTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent event) {
-				int viewRow = targetConceptTable.getSelectedRow();
-				if (viewRow == -1) {
-					removeButton.setEnabled(false);
-				} else {
-					removeButton.setEnabled(true);
-					Global.conceptInfoAction.setEnabled(true);
-					int modelRow = targetConceptTable.convertRowIndexToModel(viewRow);
-					Global.conceptInformationDialog.setConcept(targetConceptTableModel.getConcept(modelRow));
-				}
+		targetConceptTable.getSelectionModel().addListSelectionListener(event -> {
+			int viewRow = targetConceptTable.getSelectedRow();
+			if (viewRow == -1) {
+				removeButton.setEnabled(false);
+			} else {
+				removeButton.setEnabled(true);
+				int modelRow = targetConceptTable.convertRowIndexToModel(viewRow);
+				Global.conceptInfoAction.setEnabled(true);
+				Global.conceptInformationDialog.setConcept(targetConceptTableModel.getConcept(modelRow));
+				Global.athenaAction.setEnabled(true);
+				Global.athenaAction.setConcept(targetConceptTableModel.getConcept(modelRow));
+				Global.googleSearchAction.setEnabled(false);
 			}
-
 		});
 		targetConceptTable.hideColumn("Valid start date");
 		targetConceptTable.hideColumn("Valid end date");
