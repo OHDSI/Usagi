@@ -24,8 +24,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -36,9 +34,8 @@ import org.ohdsi.usagi.Concept;
 public class MappingTablePanel extends JPanel implements DataChangeListener {
 	private static final long					serialVersionUID	= -5862314086097240860L;
 	private UsagiTable							table;
-	private TableRowSorter<CodeMapTableModel>	sorter;
 	private CodeMapTableModel					tableModel;
-	private List<CodeSelectedListener>			listeners			= new ArrayList<CodeSelectedListener>();
+	private List<CodeSelectedListener>			listeners			= new ArrayList<>();
 	private boolean								ignoreSelection		= false;
 
 	public MappingTablePanel() {
@@ -46,33 +43,43 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
 		tableModel = new CodeMapTableModel();
-		sorter = new TableRowSorter<CodeMapTableModel>(tableModel);
 		table = new UsagiTable(tableModel);
-		table.setRowSorter(sorter);
+		table.setRowSorter(new TableRowSorter<>(tableModel));
 		table.setPreferredScrollableViewportSize(new Dimension(1200, 200));
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
 		table.getSelectionModel().addListSelectionListener(event -> {
 			if (!ignoreSelection) {
-				int viewRow = table.getSelectedRow();
-				if (viewRow != -1) {
-					int modelRow = table.convertRowIndexToModel(viewRow);
+				int primaryViewRow = table.getSelectedRow();
+				if (primaryViewRow != -1) {
+					int primaryModelRow = table.convertRowIndexToModel(primaryViewRow);
 					for (CodeSelectedListener listener : listeners) {
-						listener.codeSelected(tableModel.getCodeMapping(modelRow));
+						listener.codeSelected(tableModel.getCodeMapping(primaryModelRow));
+						listener.clearCodeMultiSelected();
 					}
 
 					Global.googleSearchAction.setEnabled(true);
-					Global.googleSearchAction.setSourceTerm(tableModel.getCodeMapping(modelRow).sourceCode.sourceName);
+					Global.googleSearchAction.setSourceTerm(tableModel.getCodeMapping(primaryModelRow).sourceCode.sourceName);
 
 					Global.approveAction.setEnabled(true);
 					Global.approveAllAction.setEnabled(true);
 					Global.clearAllAction.setEnabled(true);
-					if (tableModel.getCodeMapping(modelRow).targetConcepts.size() > 0) {
-						Concept firstConcept = tableModel.getCodeMapping(modelRow).targetConcepts.get(0);
+					if (tableModel.getCodeMapping(primaryModelRow).targetConcepts.size() > 0) {
+						Concept firstConcept = tableModel.getCodeMapping(primaryModelRow).targetConcepts.get(0);
 						Global.conceptInfoAction.setEnabled(true);
 						Global.conceptInformationDialog.setConcept(firstConcept);
 						Global.athenaAction.setEnabled(true);
 						Global.athenaAction.setConcept(firstConcept);
+					}
+
+					// Store all other co-selected rows
+					for (int viewRow : table.getSelectedRows()) {
+						if (viewRow != -1 && viewRow != primaryViewRow) {
+							int modelRow = table.convertRowIndexToModel(viewRow);
+							for (CodeSelectedListener listener : listeners) {
+								listener.addCodeMultiSelected(tableModel.getCodeMapping(modelRow));
+							}
+						}
 					}
 				} else {
 					Global.approveAllAction.setEnabled(false);
@@ -86,8 +93,6 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		table.hideColumn("Valid start date");
 		table.hideColumn("Valid end date");
 		table.hideColumn("Invalid reason");
-		// table.hideColumn("Domain");
-		// table.hideColumn("Concept class");
 
 		JScrollPane scrollPane = new JScrollPane(table);
 		add(scrollPane);
@@ -253,8 +258,15 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		} else if (event.structureChange) {
 			tableModel.restructure();
 			table.setRowSelectionInterval(0, 0);
+		} else if (event.multiUpdate) {
+			tableModel.fireTableDataChanged();
 		} else {
 			tableModel.fireTableRowsUpdated(table.getSelectedRow(), table.getSelectedRow());
+		}
+
+		// Multi selection is lost
+		for (CodeSelectedListener listener : listeners) {
+			listener.clearCodeMultiSelected();
 		}
 	}
 

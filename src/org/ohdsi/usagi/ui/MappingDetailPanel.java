@@ -76,6 +76,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private JRadioButton						manualQueryButton;
 	private JTextField							manualQueryField;
 	private CodeMapping							codeMapping;
+	private List<CodeMapping> 					codeMappingsFromMulti;
 	private FilterPanel							filterPanel;
 	private Timer								timer;
 
@@ -86,6 +87,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		add(createTargetConceptsPanel());
 		add(createSearchPanel());
 		add(createApprovePanel());
+		codeMappingsFromMulti = new ArrayList<>();
 	}
 
 	private Component createSearchPanel() {
@@ -373,6 +375,16 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		doSearch();
 	}
 
+	@Override
+	public void addCodeMultiSelected(CodeMapping codeMapping) {
+		this.codeMappingsFromMulti.add(codeMapping);
+	}
+
+	@Override
+	public void clearCodeMultiSelected() {
+		this.codeMappingsFromMulti = new ArrayList<>();
+	}
+
 	public void approve() {
 		if (codeMapping.mappingStatus != CodeMapping.MappingStatus.APPROVED) {
 			codeMapping.mappingStatus = CodeMapping.MappingStatus.APPROVED;
@@ -398,12 +410,23 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 
 	public void addConcept(Concept concept) {
 		codeMapping.targetConcepts.add(concept);
+		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
+			codeMappingMulti.targetConcepts.add(concept);
+		}
 		targetConceptTableModel.fireTableDataChanged();
-		Global.mapping.fireDataChanged(DataChangeListener.SIMPLE_UPDATE_EVENT);
+
+		if (codeMappingsFromMulti.size() > 0) {
+			Global.mapping.fireDataChanged(DataChangeListener.MULTI_UPDATE_EVENT);
+		} else {
+			Global.mapping.fireDataChanged(DataChangeListener.SIMPLE_UPDATE_EVENT);
+		}
 	}
 
 	public void replaceConcepts(Concept concept) {
 		codeMapping.targetConcepts.clear();
+		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
+			codeMappingMulti.targetConcepts.clear();
+		}
 		addConcept(concept);
 	}
 

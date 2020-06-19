@@ -46,6 +46,11 @@ public class ExportForReviewAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
+		if (Global.mapping.size() == 0) {
+			UsagiDialogs.warningNothingToExport();
+			return;
+		}
+
 		boolean exportUnapproved = UsagiDialogs.askExportUnapprovedMappings();
 
 		boolean hasApprovedMappings = false;
@@ -57,7 +62,7 @@ public class ExportForReviewAction extends AbstractAction {
 		}
 
 		if (!exportUnapproved && !hasApprovedMappings) {
-			UsagiDialogs.warningNothingToExport();
+			UsagiDialogs.warningNoApprovedToExport();
 			return;
 		}
 
