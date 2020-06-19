@@ -27,6 +27,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.*;
 
@@ -63,6 +64,10 @@ public class UsagiMain implements ActionListener {
 			Global.dbEngine.openForReading();
 		}
 		Global.vocabularyVersion = loadVocabularyVersion(Global.folder);
+		Global.conceptClassIds = loadVectorFromFile(Global.folder + "/ConceptClassIds.txt");
+		Global.vocabularyIds = loadVectorFromFile(Global.folder + "/VocabularyIds.txt");
+		Global.domainIds = loadVectorFromFile(Global.folder + "/DomainIds.txt");
+
 		Global.conceptInformationDialog = new ConceptInformationDialog();
 		Global.frame = frame;
 		Global.openAction = new OpenAction();
@@ -173,6 +178,16 @@ public class UsagiMain implements ActionListener {
 			e1.printStackTrace();
 		}
 		return null;
+	}
+
+	private Vector<String> loadVectorFromFile(String fileName) {
+		if (new File(fileName).exists()) {
+			Vector<String> vector = new Vector<>();
+			for (String line : new ReadTextFile(fileName))
+				vector.add(line);
+			return vector;
+		} else
+			return new Vector<>();
 	}
 
 }

@@ -21,6 +21,8 @@ import org.ohdsi.usagi.BerkeleyDbEngine;
 import org.ohdsi.usagi.UsagiSearchEngine;
 import org.ohdsi.usagi.ui.actions.*;
 
+import java.util.Vector;
+
 public class Global {
 	public static JFrame							frame;
 	public static Mapping							mapping;
@@ -51,5 +53,8 @@ public class Global {
 	public static RebuildIndexAction				rebuildIndexAction;
 	public static ExitAction						exitAction;
 	public static String							vocabularyVersion;
+	public static Vector<String> 					conceptClassIds;
+	public static Vector<String> 					vocabularyIds;
+	public static Vector<String> 					domainIds;
 	public static ShowStatsAction					showStatsAction;
 }
