@@ -24,7 +24,8 @@ import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.ReadCodeMappingsFromFile;
 import org.ohdsi.usagi.SourceCode;
 import org.ohdsi.usagi.WriteCodeMappingsToFile;
-import org.ohdsi.usagi.ui.DataChangeListener.DataChangeEvent;
+
+import static org.ohdsi.usagi.ui.DataChangeEvent.*;
 
 public class Mapping extends ArrayList<CodeMapping> {
 	private static final long			serialVersionUID	= -8560539820505747600L;
@@ -57,7 +58,7 @@ public class Mapping extends ArrayList<CodeMapping> {
 					JOptionPane.WARNING_MESSAGE
 			);
 		}
-		fireDataChanged(DataChangeListener.RESTRUCTURE_EVENT);
+		fireDataChanged(RESTRUCTURE_EVENT);
 	}
 
 	public Mapping() {

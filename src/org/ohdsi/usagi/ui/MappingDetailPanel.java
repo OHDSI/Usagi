@@ -47,8 +47,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -56,6 +54,8 @@ import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
 import org.ohdsi.usagi.Concept;
 import org.ohdsi.usagi.UsagiSearchEngine.ScoredConcept;
+
+import static org.ohdsi.usagi.ui.DataChangeEvent.*;
 
 public class MappingDetailPanel extends JPanel implements CodeSelectedListener, FilterChangeListener {
 
@@ -270,19 +270,19 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			@Override
 			public void removeUpdate(DocumentEvent arg0) {
 				codeMapping.comment = commentField.getText();
-				Global.mapping.fireDataChanged(DataChangeListener.SIMPLE_UPDATE_EVENT);
+				Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
 			}
 
 			@Override
 			public void insertUpdate(DocumentEvent arg0) {
 				codeMapping.comment = commentField.getText();
-				Global.mapping.fireDataChanged(DataChangeListener.SIMPLE_UPDATE_EVENT);
+				Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
 			}
 
 			@Override
 			public void changedUpdate(DocumentEvent arg0) {
 				codeMapping.comment = commentField.getText();
-				Global.mapping.fireDataChanged(DataChangeListener.SIMPLE_UPDATE_EVENT);
+				Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
 			}
 		});
 		commentField.setToolTipText("Comments about the code mapping can be written here");
@@ -388,10 +388,10 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	public void approve() {
 		if (codeMapping.mappingStatus != CodeMapping.MappingStatus.APPROVED) {
 			codeMapping.mappingStatus = CodeMapping.MappingStatus.APPROVED;
-			Global.mapping.fireDataChanged(DataChangeListener.APPROVE_EVENT);
+			Global.mapping.fireDataChanged(APPROVE_EVENT);
 		} else {
 			codeMapping.mappingStatus = CodeMapping.MappingStatus.UNCHECKED;
-			Global.mapping.fireDataChanged(DataChangeListener.SIMPLE_UPDATE_EVENT);
+			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
 			setApproveButton();
 		}
 	}
@@ -416,9 +416,9 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		targetConceptTableModel.fireTableDataChanged();
 
 		if (codeMappingsFromMulti.size() > 0) {
-			Global.mapping.fireDataChanged(DataChangeListener.MULTI_UPDATE_EVENT);
+			Global.mapping.fireDataChanged(MULTI_UPDATE_EVENT);
 		} else {
-			Global.mapping.fireDataChanged(DataChangeListener.SIMPLE_UPDATE_EVENT);
+			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
 		}
 	}
 
@@ -446,7 +446,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			codeMapping.targetConcepts.remove(row);
 
 		targetConceptTableModel.fireTableDataChanged();
-		Global.mapping.fireDataChanged(DataChangeListener.SIMPLE_UPDATE_EVENT);
+		Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
 	}
 
 	private class SearchTask extends TimerTask {
