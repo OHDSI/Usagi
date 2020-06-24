@@ -22,8 +22,6 @@ import org.ohdsi.usagi.ui.Global;
 import org.ohdsi.utilities.files.ReadCSVFileWithHeader;
 import org.ohdsi.utilities.files.Row;
 
-import javax.swing.*;
-
 public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 	private String filename;
 
@@ -47,17 +45,7 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 
 			if (iterator.hasNext()) {
 				row = iterator.next();
-				try {
-					readNext();
-				} catch (Exception e) {
-					JOptionPane.showMessageDialog(
-							Global.frame,
-							"Invalid File Format",
-							"Error",
-							JOptionPane.ERROR_MESSAGE
-					);
-					return;
-				}
+				readNext();
 			} else {
 				buffer = null;
 			}

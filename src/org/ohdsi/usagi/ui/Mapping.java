@@ -28,17 +28,27 @@ import org.ohdsi.usagi.ui.DataChangeListener.DataChangeEvent;
 
 public class Mapping extends ArrayList<CodeMapping> {
 	private static final long			serialVersionUID	= -8560539820505747600L;
-	private List<DataChangeListener>	listeners			= new ArrayList<DataChangeListener>();
+	private List<DataChangeListener>	listeners			= new ArrayList<>();
 
 	public void loadFromFile(String filename) {
 		clear();
 		int nInvalidTargets = 0;
-		for (CodeMapping codeMapping : new ReadCodeMappingsFromFile(filename)) {
-			add(codeMapping);
-			if (codeMapping.mappingStatus == CodeMapping.MappingStatus.INVALID_TARGET) {
-				nInvalidTargets += 1;
+		try {
+			for (CodeMapping codeMapping : new ReadCodeMappingsFromFile(filename)) {
+				add(codeMapping);
+				if (codeMapping.mappingStatus == CodeMapping.MappingStatus.INVALID_TARGET) {
+					nInvalidTargets += 1;
+				}
 			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(
+					Global.frame,
+					"Invalid File Format: '" + e.getMessage() + "'",
+					"Error",
+					JOptionPane.ERROR_MESSAGE
+			);
 		}
+
 		if (nInvalidTargets > 0) {
 			JOptionPane.showMessageDialog(
 					null,
