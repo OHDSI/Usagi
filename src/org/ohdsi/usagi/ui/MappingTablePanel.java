@@ -31,6 +31,8 @@ import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
 import org.ohdsi.usagi.Concept;
 
+import static org.ohdsi.usagi.ui.DataChangeEvent.*;
+
 public class MappingTablePanel extends JPanel implements DataChangeListener {
 	private static final long					serialVersionUID	= -5862314086097240860L;
 	private UsagiTable							table;
