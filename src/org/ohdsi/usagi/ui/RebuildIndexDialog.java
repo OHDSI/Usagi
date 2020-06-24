@@ -58,13 +58,12 @@ public class RebuildIndexDialog extends JDialog {
 	private void buildIndex() {
 		String vocabFolder = vocabFolderField.getText();
 		String loincFile = loincFileField.getText();
-		if (!(new File(vocabFolder + "/CONCEPT.csv").exists())) {
-			JOptionPane.showMessageDialog(this, "Vocabulary file CONCEPT.csv not found", "Cannot build index", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		if (!(new File(vocabFolder + "/CONCEPT_SYNONYM.csv").exists())) {
-			JOptionPane.showMessageDialog(this, "Vocabulary file CONCEPT_SYNONYM.csv not found", "Cannot build index", JOptionPane.ERROR_MESSAGE);
-			return;
+		String[] requiredVocabularyFiles = {"/CONCEPT.csv", "/CONCEPT_SYNONYM.csv", "/VOCABULARY.csv", "/CONCEPT_RELATIONSHIP.csv"};
+		for (String vocabFileName : requiredVocabularyFiles) {
+			if (!(new File(vocabFolder + vocabFileName).exists())) {
+				JOptionPane.showMessageDialog(this, "Vocabulary file " + vocabFileName + " not found", "Cannot build index", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 		}
 		if (loincCheckBox.isSelected() && !(new File(loincFile).exists())) {
 			JOptionPane.showMessageDialog(this, "LOINC file loinc.csv not found", "Cannot build index", JOptionPane.ERROR_MESSAGE);
@@ -173,8 +172,15 @@ public class RebuildIndexDialog extends JDialog {
 		JFileChooser fileChooser = new JFileChooser(new File(vocabFolderField.getText()));
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		int returnVal = fileChooser.showDialog(this, "Select folder");
-		if (returnVal == JFileChooser.APPROVE_OPTION)
-			vocabFolderField.setText(fileChooser.getSelectedFile().getAbsolutePath());
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File selectedDirectory = fileChooser.getSelectedFile();
+			if (!selectedDirectory.exists()) {
+				// When no directory is selected when approving, FileChooser incorrectly appends the current directory to the path.
+				// Take the opened directory instead.
+				selectedDirectory = fileChooser.getCurrentDirectory();
+			}
+			vocabFolderField.setText(selectedDirectory.getAbsolutePath());
+		}
 	}
 
 	private void pickLoincFile() {

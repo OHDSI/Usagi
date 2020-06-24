@@ -15,8 +15,9 @@
  ******************************************************************************/
 package org.ohdsi.usagi.ui.actions;
 
-import java.awt.Cursor;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 
@@ -36,8 +37,8 @@ public class SaveAction extends AbstractAction {
 	public SaveAction() {
 		putValue(Action.NAME, "Save");
 		putValue(Action.SHORT_DESCRIPTION, "Save mapping file");
-		putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_S));
-		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+		putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
+		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 	}
 
 	@Override
@@ -52,6 +53,7 @@ public class SaveAction extends AbstractAction {
 					file = new File(file.getAbsolutePath() + ".csv");
 				Global.frame.setTitle("Usagi - " + file.getName());
 				Global.filename = file.getAbsolutePath();
+				Global.folder = file.getParentFile().getAbsolutePath();
 			}
 		}
 		if (Global.filename != null) {

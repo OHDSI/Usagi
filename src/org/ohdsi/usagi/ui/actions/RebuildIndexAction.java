@@ -30,7 +30,7 @@ public class RebuildIndexAction extends AbstractAction {
 	public RebuildIndexAction() {
 		putValue(Action.NAME, "Rebuild index");
 		putValue(Action.SHORT_DESCRIPTION, "Rebuild the index from the vocabulary data files");
-		putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_R));
+		putValue(Action.MNEMONIC_KEY, KeyEvent.VK_R);
 	}
 
 	@Override

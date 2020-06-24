@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2019 Observational Health Data Sciences and Informatics
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,28 +27,13 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
+import javax.swing.*;
 
 import org.ohdsi.usagi.BerkeleyDbEngine;
 import org.ohdsi.usagi.UsagiSearchEngine;
-import org.ohdsi.usagi.ui.actions.AboutAction;
-import org.ohdsi.usagi.ui.actions.ApplyPreviousMappingAction;
-import org.ohdsi.usagi.ui.actions.ApproveAction;
-import org.ohdsi.usagi.ui.actions.ApproveAllAction;
-import org.ohdsi.usagi.ui.actions.ClearAllAction;
-import org.ohdsi.usagi.ui.actions.ConceptInformationAction;
-import org.ohdsi.usagi.ui.actions.ExitAction;
-import org.ohdsi.usagi.ui.actions.ExportForReviewAction;
-import org.ohdsi.usagi.ui.actions.ExportSourceToConceptMapAction;
-import org.ohdsi.usagi.ui.actions.ImportAction;
-import org.ohdsi.usagi.ui.actions.OpenAction;
-import org.ohdsi.usagi.ui.actions.RebuildIndexAction;
-import org.ohdsi.usagi.ui.actions.SaveAction;
-import org.ohdsi.usagi.ui.actions.SaveAsAction;
-import org.ohdsi.usagi.ui.actions.ShowStatsAction;
+import org.ohdsi.usagi.ui.actions.*;
 import org.ohdsi.utilities.files.ReadTextFile;
 
 /**
@@ -56,22 +41,22 @@ import org.ohdsi.utilities.files.ReadTextFile;
  */
 public class UsagiMain implements ActionListener {
 
-	private JFrame	frame;
+	public static String version = "1.3.0";
 
 	public static void main(String[] args) {
 		new UsagiMain(args);
 	}
 
 	public UsagiMain(String[] args) {
-		frame = new JFrame("Usagi");
+		JFrame frame = new JFrame("Usagi v" + UsagiMain.version);
 
 		// Initialize global variables:
 		Global.mapping = new Mapping();
-		if (args.length != 0)
+		if (args.length == 1) {
 			Global.folder = args[0];
-		else
+		} else {
 			Global.folder = new File("").getAbsolutePath();
-
+		}
 		Global.usagiSearchEngine = new UsagiSearchEngine(Global.folder);
 		Global.dbEngine = new BerkeleyDbEngine(Global.folder);
 		if (Global.usagiSearchEngine.mainIndexExists()) {
@@ -79,6 +64,10 @@ public class UsagiMain implements ActionListener {
 			Global.dbEngine.openForReading();
 		}
 		Global.vocabularyVersion = loadVocabularyVersion(Global.folder);
+		Global.conceptClassIds = loadVectorFromFile(Global.folder + "/ConceptClassIds.txt");
+		Global.vocabularyIds = loadVectorFromFile(Global.folder + "/VocabularyIds.txt");
+		Global.domainIds = loadVectorFromFile(Global.folder + "/DomainIds.txt");
+
 		Global.conceptInformationDialog = new ConceptInformationDialog();
 		Global.frame = frame;
 		Global.openAction = new OpenAction();
@@ -90,6 +79,8 @@ public class UsagiMain implements ActionListener {
 		Global.saveAsAction = new SaveAsAction();
 		Global.approveAction = new ApproveAction();
 		Global.conceptInfoAction = new ConceptInformationAction();
+		Global.athenaAction = new AthenaAction();
+		Global.googleSearchAction = new GoogleSearchAction();
 		Global.showStatsAction = new ShowStatsAction();
 		Global.aboutAction = new AboutAction();
 		Global.approveAllAction = new ApproveAllAction();
@@ -106,11 +97,16 @@ public class UsagiMain implements ActionListener {
 		Global.clearAllAction = new ClearAllAction();
 		Global.clearAllAction.setEnabled(false);
 		Global.conceptInfoAction.setEnabled(false);
+		Global.athenaAction.setEnabled(false);
+		Global.googleSearchAction.setEnabled(false);
 
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				Global.dbEngine.shutdown();
-				System.exit(0);
+				if (UsagiDialogs.askBeforeExit()) {
+					Global.dbEngine.shutdown();
+					System.exit(0);
+				}
 			}
 		});
 		frame.setLayout(new BorderLayout());
@@ -139,6 +135,10 @@ public class UsagiMain implements ActionListener {
 
 		if (!Global.usagiSearchEngine.mainIndexExists())
 			Global.rebuildIndexAction.actionPerformed(null);
+
+		if (args.length > 1 && args[0].equals("--file")) {
+			OpenAction.open(new File(args[1]));
+		}
 	}
 
 	private String loadVocabularyVersion(String folder) {
@@ -147,7 +147,7 @@ public class UsagiMain implements ActionListener {
 		if (new File(versionFileName).exists()) {
 			for (String line : new ReadTextFile(versionFileName))
 				version = line;
-		} 
+		}
 		return version;
 	}
 
@@ -178,6 +178,16 @@ public class UsagiMain implements ActionListener {
 			e1.printStackTrace();
 		}
 		return null;
+	}
+
+	private Vector<String> loadVectorFromFile(String fileName) {
+		if (new File(fileName).exists()) {
+			Vector<String> vector = new Vector<>();
+			for (String line : new ReadTextFile(fileName))
+				vector.add(line);
+			return vector;
+		} else
+			return new Vector<>();
 	}
 
 }

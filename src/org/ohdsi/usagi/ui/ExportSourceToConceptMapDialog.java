@@ -45,6 +45,7 @@ public class ExportSourceToConceptMapDialog extends JDialog {
 
 	private JTextField			sourceVocabularyIdField;
 	private static final long	serialVersionUID	= -6846083121849826818L;
+	private boolean exportUnapproved = false;
 
 	public ExportSourceToConceptMapDialog() {
 		setTitle("Export to source_to_concept_map");
@@ -73,29 +74,21 @@ public class ExportSourceToConceptMapDialog extends JDialog {
 		buttonPanel.add(Box.createHorizontalGlue());
 		JButton cancelButton = new JButton("Cancel");
 		cancelButton.setToolTipText("Cancel the export");
-		cancelButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				setVisible(false);
-			}
-		});
+		cancelButton.addActionListener(event -> setVisible(false));
 		buttonPanel.add(cancelButton);
 		JButton exportButton = new JButton("Export");
 		exportButton.setToolTipText("Select the filename and export using these settings");
-		exportButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				export();
-			}
-		});
+		exportButton.addActionListener(event -> export());
 		buttonPanel.add(exportButton);
 		add(buttonPanel, g);
 
 		pack();
 		setModal(true);
 		setLocationRelativeTo(Global.frame);
+	}
+
+	public void setExportUnapproved(boolean exportUnapproved) {
+		this.exportUnapproved = exportUnapproved;
 	}
 
 	private void export() {
@@ -105,6 +98,7 @@ public class ExportSourceToConceptMapDialog extends JDialog {
 		fileChooser.setDialogTitle("Export");
 		if (fileChooser.showSaveDialog(Global.frame) == JFileChooser.APPROVE_OPTION) {
 			File file = fileChooser.getSelectedFile();
+			Global.folder = file.getParentFile().getAbsolutePath();
 			if (!file.getName().toLowerCase().endsWith(".csv"))
 				file = new File(file.getAbsolutePath() + ".csv");
 
@@ -116,7 +110,7 @@ public class ExportSourceToConceptMapDialog extends JDialog {
 	private void writeToCsvFile(String filename) {
 		WriteCSVFileWithHeader out = new WriteCSVFileWithHeader(filename);
 		for (CodeMapping mapping : Global.mapping)
-			if (mapping.mappingStatus == MappingStatus.APPROVED) {
+			if (exportUnapproved || mapping.mappingStatus == MappingStatus.APPROVED) {
 				List<Concept> targetConcepts;
 				if (mapping.targetConcepts.size() == 0) {
 					targetConcepts = new ArrayList<Concept>(1);
@@ -131,7 +125,7 @@ public class ExportSourceToConceptMapDialog extends JDialog {
 					row.add("source_vocabulary_id", sourceVocabularyIdField.getText());
 					row.add("source_code_description", mapping.sourceCode.sourceName);
 					row.add("target_concept_id", targetConcept.conceptId);
-					row.add("target_vocabulary_id", targetConcept.vocabularyId);
+					row.add("target_vocabulary_id", targetConcept.conceptId == 0 ? "None" : targetConcept.vocabularyId );
 					row.add("valid_start_date", "1970-01-01");
 					row.add("valid_end_date", "2099-12-31");
 					row.add("invalid_reason", "");

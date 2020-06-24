@@ -42,17 +42,19 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 
 		public RowIterator() {
 			iterator = new ReadCSVFileWithHeader(filename).iterator();
+
 			if (iterator.hasNext()) {
 				row = iterator.next();
 				readNext();
-			} else
+			} else {
 				buffer = null;
+			}
 		}
 
 		private void readNext() {
-			if (row == null)
+			if (row == null) {
 				buffer = null;
-			else {
+			} else {
 				buffer = new CodeMapping(new SourceCode(row));
 				buffer.matchScore = row.getDouble("matchScore");
 				buffer.mappingStatus = MappingStatus.valueOf(row.get("mappingStatus"));
@@ -66,7 +68,8 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 					if (row.getInt("conceptId") != 0) {
 						Concept concept = Global.dbEngine.getConcept(row.getInt("conceptId"));
 						if (concept == null) {
-							buffer.mappingStatus = CodeMapping.MappingStatus.INVALID_TARGET;
+							buffer.mappingStatus = MappingStatus.INVALID_TARGET;
+							buffer.comment = "Invalid existing target: " + row.get("conceptId");
 						} else {
 							buffer.targetConcepts.add(concept);
 						}

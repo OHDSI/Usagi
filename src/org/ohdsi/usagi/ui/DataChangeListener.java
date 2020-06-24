@@ -16,20 +16,5 @@
 package org.ohdsi.usagi.ui;
 
 public interface DataChangeListener {
-
-	public static DataChangeEvent	APPROVE_EVENT		= new DataChangeEvent(true, false);
-	public static DataChangeEvent	SIMPLE_UPDATE_EVENT	= new DataChangeEvent(false, false);
-	public static DataChangeEvent	RESTRUCTURE_EVENT	= new DataChangeEvent(false, true);
-
-	public void dataChanged(DataChangeEvent event);
-
-	public static class DataChangeEvent {
-		public DataChangeEvent(boolean approved, boolean structureChange) {
-			this.approved = approved;
-			this.structureChange = structureChange;
-		}
-
-		public boolean	approved		= false;
-		public boolean	structureChange	= false;
-	}
+	void dataChanged(DataChangeEvent event);
 }

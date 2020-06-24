@@ -15,12 +15,11 @@
  ******************************************************************************/
 package org.ohdsi.usagi.ui.actions;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
@@ -34,23 +33,35 @@ public class ExportSourceToConceptMapAction extends AbstractAction {
 	public ExportSourceToConceptMapAction() {
 		putValue(Action.NAME, "Export source_to_concept_map");
 		putValue(Action.SHORT_DESCRIPTION, "Export mapping to source_to_concept_map");
-		putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_E));
+		putValue(Action.MNEMONIC_KEY, KeyEvent.VK_E);
+		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
+		if (Global.mapping.size() == 0) {
+			UsagiDialogs.warningNothingToExport();
+			return;
+		}
+
+		boolean exportUnapproved = UsagiDialogs.askExportUnapprovedMappings();
+
 		boolean hasApprovedMappings = false;
-		for (CodeMapping mapping : Global.mapping)
+		for (CodeMapping mapping : Global.mapping) {
 			if (mapping.mappingStatus == MappingStatus.APPROVED) {
 				hasApprovedMappings = true;
 				break;
 			}
-		if (hasApprovedMappings) {
-			ExportSourceToConceptMapDialog dialog = new ExportSourceToConceptMapDialog();
-			dialog.setVisible(true);
-		} else {
-			JOptionPane.showMessageDialog(Global.frame, "There are no approved mappings, so nothing to export", "Warning", JOptionPane.WARNING_MESSAGE);
 		}
+
+		if (!exportUnapproved && !hasApprovedMappings) {
+			UsagiDialogs.warningNoApprovedToExport();
+			return;
+		}
+
+		ExportSourceToConceptMapDialog exportDialog = new ExportSourceToConceptMapDialog();
+		exportDialog.setExportUnapproved(exportUnapproved);
+		exportDialog.setVisible(true);
 	}
 
 }

@@ -24,23 +24,41 @@ import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.ReadCodeMappingsFromFile;
 import org.ohdsi.usagi.SourceCode;
 import org.ohdsi.usagi.WriteCodeMappingsToFile;
-import org.ohdsi.usagi.ui.DataChangeListener.DataChangeEvent;
+
+import static org.ohdsi.usagi.ui.DataChangeEvent.*;
 
 public class Mapping extends ArrayList<CodeMapping> {
 	private static final long			serialVersionUID	= -8560539820505747600L;
-	private List<DataChangeListener>	listeners			= new ArrayList<DataChangeListener>();
+	private List<DataChangeListener>	listeners			= new ArrayList<>();
 
 	public void loadFromFile(String filename) {
 		clear();
-		boolean invalidTargets = false;
-		for (CodeMapping codeMapping : new ReadCodeMappingsFromFile(filename)) {
-			add(codeMapping);
-			if (codeMapping.mappingStatus == CodeMapping.MappingStatus.INVALID_TARGET)
-				invalidTargets = true;
+		int nInvalidTargets = 0;
+		try {
+			for (CodeMapping codeMapping : new ReadCodeMappingsFromFile(filename)) {
+				add(codeMapping);
+				if (codeMapping.mappingStatus == CodeMapping.MappingStatus.INVALID_TARGET) {
+					nInvalidTargets += 1;
+				}
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(
+					Global.frame,
+					"Invalid File Format: '" + e.getMessage() + "'",
+					"Error",
+					JOptionPane.ERROR_MESSAGE
+			);
 		}
-		if (invalidTargets)
-			JOptionPane.showMessageDialog(null, "Illegal target concepts found. The corresponding source codes are marked in red.", "Illegal target concepts", JOptionPane.WARNING_MESSAGE);
-		fireDataChanged(DataChangeListener.RESTRUCTURE_EVENT);
+
+		if (nInvalidTargets > 0) {
+			JOptionPane.showMessageDialog(
+					null,
+					nInvalidTargets + " illegal target concepts found. The corresponding source codes are marked in red.",
+					"Illegal target concepts",
+					JOptionPane.WARNING_MESSAGE
+			);
+		}
+		fireDataChanged(RESTRUCTURE_EVENT);
 	}
 
 	public Mapping() {

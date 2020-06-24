@@ -15,6 +15,7 @@
  ******************************************************************************/
 package org.ohdsi.usagi.ui.actions;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -36,8 +37,8 @@ public class ImportAction extends AbstractAction {
 	public ImportAction() {
 		putValue(Action.NAME, "Import codes");
 		putValue(Action.SHORT_DESCRIPTION, "Import a file containing codes");
-		putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_I));
-		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.CTRL_MASK));
+		putValue(Action.MNEMONIC_KEY, KeyEvent.VK_I);
+		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_I, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 	}
 
 	@Override
@@ -53,6 +54,7 @@ public class ImportAction extends AbstractAction {
 		fileChooser.setAcceptAllFileFilterUsed(false);
 		if (fileChooser.showOpenDialog(Global.frame) == JFileChooser.APPROVE_OPTION) {
 			File file = fileChooser.getSelectedFile();
+			Global.folder = file.getParentFile().getAbsolutePath();
 			new ImportDialog(file.getAbsolutePath());
 		}
 	}

@@ -18,5 +18,7 @@ package org.ohdsi.usagi.ui;
 import org.ohdsi.usagi.CodeMapping;
 
 public interface CodeSelectedListener {
-	public void codeSelected(CodeMapping codeMapping);
+	void codeSelected(CodeMapping codeMapping);
+	void addCodeMultiSelected(CodeMapping codeMapping);
+	void clearCodeMultiSelected();
 }

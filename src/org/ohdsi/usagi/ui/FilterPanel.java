@@ -17,9 +17,6 @@ package org.ohdsi.usagi.ui;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -28,21 +25,19 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
-import org.ohdsi.utilities.files.ReadTextFile;
-
 public class FilterPanel extends JPanel {
 
-	private static final long			serialVersionUID	= 1378433878412231259L;
-	private JCheckBox					filterByAutoCheckBox;
-	private JCheckBox					filterStandardCheckBox;
-	private JCheckBox					filterByConceptClassCheckBox;
-	private JCheckBox					filterByVocabularyCheckBox;
-	private JCheckBox					filterByDomainCheckBox;
-	private JCheckBox					includeSourceTermsCheckbox;
-	private CheckedComboBox				filterConceptClassComboBox;
-	private CheckedComboBox				filterVocabularyComboBox;
-	private CheckedComboBox				filterDomainComboBox;
-	private List<FilterChangeListener>	listeners			= new ArrayList<FilterChangeListener>();
+	private static final long serialVersionUID = 1378433878412231259L;
+	private JCheckBox filterByAutoCheckBox;
+	private JCheckBox filterStandardCheckBox;
+	private JCheckBox filterByConceptClassCheckBox;
+	private JCheckBox filterByVocabularyCheckBox;
+	private JCheckBox filterByDomainCheckBox;
+	private JCheckBox includeSourceTermsCheckbox;
+	private CheckedComboBox filterConceptClassComboBox;
+	private CheckedComboBox filterVocabularyComboBox;
+	private CheckedComboBox filterDomainComboBox;
+	private List<FilterChangeListener> listeners = new ArrayList<>();
 
 	public FilterPanel() {
 		setBorder(BorderFactory.createTitledBorder("Filters"));
@@ -56,14 +51,7 @@ public class FilterPanel extends JPanel {
 		c.gridwidth = 2;
 		filterByAutoCheckBox = new JCheckBox("Filter by user selected concepts / ATC code", false);
 		filterByAutoCheckBox.setToolTipText("Limit the search to those concept IDs specified in the input file");
-		filterByAutoCheckBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				notifyListeners();
-			}
-
-		});
+		filterByAutoCheckBox.addActionListener(actionEvent -> notifyListeners());
 		add(filterByAutoCheckBox, c);
 
 		c.gridx = 0;
@@ -72,13 +60,7 @@ public class FilterPanel extends JPanel {
 		c.gridwidth = 2;
 		filterStandardCheckBox = new JCheckBox("Filter standard concepts", false);
 		filterStandardCheckBox.setToolTipText("Limit the search to only standard concepts");
-		filterStandardCheckBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				notifyListeners();
-			}
-		});
+		filterStandardCheckBox.addActionListener(actionEvent -> notifyListeners());
 		filterStandardCheckBox.setSelected(true);
 		add(filterStandardCheckBox, c);
 
@@ -88,28 +70,17 @@ public class FilterPanel extends JPanel {
 		c.gridwidth = 1;
 		filterByConceptClassCheckBox = new JCheckBox("Filter by concept class:", false);
 		filterByConceptClassCheckBox.setToolTipText("Limit the search to concepts of this class");
-		filterByConceptClassCheckBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				notifyListeners();
-
-			}
-		});
+		filterByConceptClassCheckBox.addActionListener(actionEvent -> notifyListeners());
 		add(filterByConceptClassCheckBox, c);
 
 		c.gridx = 3;
 		c.gridy = 0;
 		c.weightx = 1;
 		c.gridwidth = 1;
-		filterConceptClassComboBox = new CheckedComboBox(loadVectorFromFile(Global.folder + "/ConceptClassIds.txt"));
-		filterConceptClassComboBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if (filterByConceptClassCheckBox.isSelected())
-					notifyListeners();
-			}
+		filterConceptClassComboBox = new CheckedComboBox(Global.conceptClassIds);
+		filterConceptClassComboBox.addActionListener(actionEvent -> {
+			if (filterByConceptClassCheckBox.isSelected())
+				notifyListeners();
 		});
 		add(filterConceptClassComboBox, c);
 
@@ -119,27 +90,17 @@ public class FilterPanel extends JPanel {
 		c.gridwidth = 1;
 		filterByVocabularyCheckBox = new JCheckBox("Filter by vocabulary:", false);
 		filterByVocabularyCheckBox.setToolTipText("Limit the search to concepts of this vocabulary");
-		filterByVocabularyCheckBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				notifyListeners();
-			}
-		});
+		filterByVocabularyCheckBox.addActionListener(actionEvent -> notifyListeners());
 		add(filterByVocabularyCheckBox, c);
 
 		c.gridx = 3;
 		c.gridy = 1;
 		c.weightx = 1;
 		c.gridwidth = 1;
-		filterVocabularyComboBox = new CheckedComboBox(loadVectorFromFile(Global.folder + "/VocabularyIds.txt"));
-		filterVocabularyComboBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if (filterByVocabularyCheckBox.isSelected())
-					notifyListeners();
-			}
+		filterVocabularyComboBox = new CheckedComboBox(Global.vocabularyIds);
+		filterVocabularyComboBox.addActionListener(actionEvent -> {
+			if (filterByVocabularyCheckBox.isSelected())
+				notifyListeners();
 		});
 		add(filterVocabularyComboBox, c);
 
@@ -149,27 +110,17 @@ public class FilterPanel extends JPanel {
 		c.gridwidth = 1;
 		filterByDomainCheckBox = new JCheckBox("Filter by domain:", false);
 		filterByDomainCheckBox.setToolTipText("Limit the search to concepts of this domain");
-		filterByDomainCheckBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				notifyListeners();
-			}
-		});
+		filterByDomainCheckBox.addActionListener(actionEvent -> notifyListeners());
 		add(filterByDomainCheckBox, c);
 
 		c.gridx = 3;
 		c.gridy = 2;
 		c.weightx = 1;
 		c.gridwidth = 1;
-		filterDomainComboBox = new CheckedComboBox(loadVectorFromFile(Global.folder + "/DomainIds.txt"));
-		filterDomainComboBox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if (filterByDomainCheckBox.isSelected())
-					notifyListeners();
-			}
+		filterDomainComboBox = new CheckedComboBox(Global.domainIds);
+		filterDomainComboBox.addActionListener(actionEvent -> {
+			if (filterByDomainCheckBox.isSelected())
+				notifyListeners();
 		});
 		add(filterDomainComboBox, c);
 
@@ -179,25 +130,9 @@ public class FilterPanel extends JPanel {
 		c.gridwidth = 2;
 		includeSourceTermsCheckbox = new JCheckBox("Include source terms", true);
 		includeSourceTermsCheckbox.setToolTipText("Include names of source concepts to be used to find standard concepts they map to");
-		includeSourceTermsCheckbox.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				notifyListeners();
-			}
-		});
+		includeSourceTermsCheckbox.addActionListener(actionEvent -> notifyListeners());
 		add(includeSourceTermsCheckbox, c);
 
-	}
-
-	private Vector<String> loadVectorFromFile(String fileName) {
-		if (new File(fileName).exists()) {
-			Vector<String> vector = new Vector<String>();
-			for (String line : new ReadTextFile(fileName))
-				vector.add(line);
-			return vector;
-		} else
-			return new Vector<String>();
 	}
 
 	private void notifyListeners() {

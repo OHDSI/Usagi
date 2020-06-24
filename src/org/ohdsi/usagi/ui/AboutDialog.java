@@ -40,10 +40,9 @@ import javax.swing.event.HyperlinkListener;
 public class AboutDialog extends JDialog {
 
 	private static final long	serialVersionUID	= 2028328868610404663L;
-	private JEditorPane			text;
 
 	public AboutDialog() {
-		setTitle("About Usagi");
+		setTitle("About Usagi v" + UsagiMain.version);
 		setLayout(new GridBagLayout());
 
 		GridBagConstraints g = new GridBagConstraints();
@@ -60,29 +59,22 @@ public class AboutDialog extends JDialog {
 		g.gridx = 1;
 		g.gridy = 0;
 
-		text = new JEditorPane(
+		JEditorPane text = new JEditorPane(
 				"text/html",
-				"Usagi was developed by Martijn Schuemie in <a href=\"http://ohdsi.org\">Observational Health Data Sciences and Informatics</a> (OHDSI).<br/><br/>For help, please review the <a href =\"http://www.ohdsi.org/web/wiki/doku.php?id=documentation:software:usagi\">Usagi Wiki</a>.");
+				"Usagi is maintained by The Hyve (www.thehyve.nl), and originally developed by Martijn Schuemie" +
+						"<br/>in <a href=\"http://ohdsi.org\">Observational Health Data Sciences and Informatics</a> (OHDSI)." +
+						"<br/><br/>For help, please review the <a href =\"http://www.ohdsi.org/web/wiki/doku.php?id=documentation:software:usagi\">Usagi Wiki</a>.");
 
 		text.setEditable(false);
 		text.setOpaque(false);
 
-		text.addHyperlinkListener(new HyperlinkListener() {
-
-			public void hyperlinkUpdate(HyperlinkEvent hle) {
-				if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType())) {
-					try {
-						// jep.setPage(hle.getURL());
-						try {
-							Desktop desktop = Desktop.getDesktop();
-							desktop.browse(new URI(hle.getURL().toString()));
-						} catch (URISyntaxException ex) {
-
-						}
-					} catch (IOException ex) {
-
-					}
-
+		text.addHyperlinkListener(event -> {
+			if (HyperlinkEvent.EventType.ACTIVATED.equals(event.getEventType())) {
+				try {
+					Desktop desktop = Desktop.getDesktop();
+					desktop.browse(new URI(event.getURL().toString()));
+				} catch (URISyntaxException | IOException ex) {
+					// url could not be opened
 				}
 			}
 		});

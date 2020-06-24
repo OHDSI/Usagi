@@ -56,7 +56,8 @@ import org.ohdsi.utilities.ReadXlsxFile;
 import org.ohdsi.utilities.StringUtilities;
 import org.ohdsi.utilities.collections.Pair;
 import org.ohdsi.utilities.files.ReadCSVFile;
-import org.ohdsi.utilities.files.ReadTextFile;
+
+import static org.ohdsi.usagi.ui.DataChangeEvent.*;
 
 public class ImportDialog extends JDialog {
 
@@ -302,7 +303,7 @@ public class ImportDialog extends JDialog {
 			}
 			if (filterPanel.getFilterByAuto() && conceptIdsOrAtc.getSelectedItem().toString().equals(ATC)) {
 				boolean atcLoaded = false;
-				for (String line : new ReadTextFile(Global.folder + "/VocabularyIds.txt"))
+				for (String line : Global.vocabularyIds)
 					if (line.equals("ATC")) {
 						atcLoaded = true;
 						break;
@@ -343,7 +344,7 @@ public class ImportDialog extends JDialog {
 				e.printStackTrace();
 			}
 			Global.filename = null;
-			Global.mapping.fireDataChanged(DataChangeListener.RESTRUCTURE_EVENT);
+			Global.mapping.fireDataChanged(RESTRUCTURE_EVENT);
 			setVisible(false);
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(Global.frame, StringUtilities.wordWrap(e.toString(), 80), "Error", JOptionPane.ERROR_MESSAGE);

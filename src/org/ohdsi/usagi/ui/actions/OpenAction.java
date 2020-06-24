@@ -15,6 +15,7 @@
  ******************************************************************************/
 package org.ohdsi.usagi.ui.actions;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -35,8 +36,8 @@ public class OpenAction extends AbstractAction {
 	public OpenAction() {
 		putValue(Action.NAME, "Open");
 		putValue(Action.SHORT_DESCRIPTION, "Open mapping file");
-		putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_O));
-		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+		putValue(Action.MNEMONIC_KEY, KeyEvent.VK_O);
+		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 	}
 
 	@Override
@@ -46,18 +47,23 @@ public class OpenAction extends AbstractAction {
 		fileChooser.setFileFilter(csvFilter);
 		if (fileChooser.showOpenDialog(Global.frame) == JFileChooser.APPROVE_OPTION) {
 			File file = fileChooser.getSelectedFile();
-			Global.frame.setTitle("Usagi - " + file.getName());
-			Global.filename = file.getAbsolutePath();
-			Global.mapping.loadFromFile(Global.filename);
-			Global.usagiSearchEngine.close();
-			Global.usagiSearchEngine.createDerivedIndex(Global.mapping.getSourceCodes(), Global.frame);
-			Global.mappingDetailPanel.doSearch();
-			Global.applyPreviousMappingAction.setEnabled(true);
-			Global.saveAction.setEnabled(true);
-			Global.saveAsAction.setEnabled(true);
-			Global.exportAction.setEnabled(true);
-			Global.exportForReviewAction.setEnabled(true);
+			open(file);
 		}
+	}
+
+	public static void open(File file) {
+		Global.frame.setTitle("Usagi - " + file.getName());
+		Global.filename = file.getAbsolutePath();
+		Global.folder = file.getParentFile().getAbsolutePath();
+		Global.mapping.loadFromFile(Global.filename);
+		Global.usagiSearchEngine.close();
+		Global.usagiSearchEngine.createDerivedIndex(Global.mapping.getSourceCodes(), Global.frame);
+		Global.mappingDetailPanel.doSearch();
+		Global.applyPreviousMappingAction.setEnabled(true);
+		Global.saveAction.setEnabled(true);
+		Global.saveAsAction.setEnabled(true);
+		Global.exportAction.setEnabled(true);
+		Global.exportForReviewAction.setEnabled(true);
 	}
 
 }

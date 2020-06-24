@@ -15,27 +15,41 @@
  ******************************************************************************/
 package org.ohdsi.usagi.ui.actions;
 
+import org.ohdsi.usagi.Concept;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
-import javax.swing.*;
+public class GoogleSearchAction extends AbstractAction {
 
-import org.ohdsi.usagi.ui.Global;
+	private static final long serialVersionUID = -934859464521233L;
+	private static final String GOOGLE_Q_URL = "https://www.google.com/search?q=";
+	private String sourceTerm;
 
-public class ApproveAllAction extends AbstractAction {
-
-	private static final long	serialVersionUID	= 3420357922150237898L;
-
-	public ApproveAllAction() {
-		putValue(Action.NAME, "Approve selected");
-		putValue(Action.SHORT_DESCRIPTION, "Approve all selected mappings");
-		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.ALT_MASK | InputEvent.SHIFT_DOWN_MASK));
+	public GoogleSearchAction() {
+		putValue(Action.NAME, "Google (web)");
+		putValue(Action.SHORT_DESCRIPTION, "Search source term on Google");
+		putValue(Action.MNEMONIC_KEY, KeyEvent.VK_G);
+		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.ALT_MASK));
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		Global.mappingTablePanel.approveAll();
+		try {
+			Desktop desktop = Desktop.getDesktop();
+			desktop.browse(new URI(GOOGLE_Q_URL + sourceTerm));
+		} catch (URISyntaxException | IOException ex) {
+
+		}
 	}
 
+	public void setSourceTerm(String sourceTerm) {
+		this.sourceTerm = sourceTerm;
+	}
 }

@@ -47,8 +47,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -56,6 +54,8 @@ import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
 import org.ohdsi.usagi.Concept;
 import org.ohdsi.usagi.UsagiSearchEngine.ScoredConcept;
+
+import static org.ohdsi.usagi.ui.DataChangeEvent.*;
 
 public class MappingDetailPanel extends JPanel implements CodeSelectedListener, FilterChangeListener {
 
@@ -76,6 +76,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private JRadioButton						manualQueryButton;
 	private JTextField							manualQueryField;
 	private CodeMapping							codeMapping;
+	private List<CodeMapping> 					codeMappingsFromMulti;
 	private FilterPanel							filterPanel;
 	private Timer								timer;
 
@@ -86,6 +87,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		add(createTargetConceptsPanel());
 		add(createSearchPanel());
 		add(createApprovePanel());
+		codeMappingsFromMulti = new ArrayList<>();
 	}
 
 	private Component createSearchPanel() {
@@ -199,21 +201,21 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		searchTable.setPreferredScrollableViewportSize(new Dimension(100, 100));
 		searchTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		searchTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		searchTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent event) {
-				int viewRow = searchTable.getSelectedRow();
-				if (viewRow == -1) {
-					addButton.setEnabled(false);
-					replaceButton.setEnabled(false);
-				} else {
-					addButton.setEnabled(true);
-					replaceButton.setEnabled(true);
-					Global.conceptInfoAction.setEnabled(true);
-					int modelRow = searchTable.convertRowIndexToModel(viewRow);
-					Global.conceptInformationDialog.setConcept(searchTableModel.getConcept(modelRow));
-				}
+		searchTable.getSelectionModel().addListSelectionListener(event -> {
+			int viewRow = searchTable.getSelectedRow();
+			if (viewRow == -1) {
+				addButton.setEnabled(false);
+				replaceButton.setEnabled(false);
+			} else {
+				addButton.setEnabled(true);
+				replaceButton.setEnabled(true);
+				int modelRow = searchTable.convertRowIndexToModel(viewRow);
+				Global.conceptInfoAction.setEnabled(true);
+				Global.conceptInformationDialog.setConcept(searchTableModel.getConcept(modelRow));
+				Global.athenaAction.setEnabled(true);
+				Global.athenaAction.setConcept(searchTableModel.getConcept(modelRow));
+				Global.googleSearchAction.setEnabled(false);
 			}
-
 		});
 		// searchTable.hideColumn("Synonym");
 		searchTable.hideColumn("Valid start date");
@@ -268,19 +270,19 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			@Override
 			public void removeUpdate(DocumentEvent arg0) {
 				codeMapping.comment = commentField.getText();
-				Global.mapping.fireDataChanged(DataChangeListener.SIMPLE_UPDATE_EVENT);
+				Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
 			}
 
 			@Override
 			public void insertUpdate(DocumentEvent arg0) {
 				codeMapping.comment = commentField.getText();
-				Global.mapping.fireDataChanged(DataChangeListener.SIMPLE_UPDATE_EVENT);
+				Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
 			}
 
 			@Override
 			public void changedUpdate(DocumentEvent arg0) {
 				codeMapping.comment = commentField.getText();
-				Global.mapping.fireDataChanged(DataChangeListener.SIMPLE_UPDATE_EVENT);
+				Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
 			}
 		});
 		commentField.setToolTipText("Comments about the code mapping can be written here");
@@ -321,19 +323,19 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		targetConceptTable.setPreferredScrollableViewportSize(new Dimension(500, 45));
 		targetConceptTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		targetConceptTable.setRowSelectionAllowed(true);
-		targetConceptTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent event) {
-				int viewRow = targetConceptTable.getSelectedRow();
-				if (viewRow == -1) {
-					removeButton.setEnabled(false);
-				} else {
-					removeButton.setEnabled(true);
-					Global.conceptInfoAction.setEnabled(true);
-					int modelRow = targetConceptTable.convertRowIndexToModel(viewRow);
-					Global.conceptInformationDialog.setConcept(targetConceptTableModel.getConcept(modelRow));
-				}
+		targetConceptTable.getSelectionModel().addListSelectionListener(event -> {
+			int viewRow = targetConceptTable.getSelectedRow();
+			if (viewRow == -1) {
+				removeButton.setEnabled(false);
+			} else {
+				removeButton.setEnabled(true);
+				int modelRow = targetConceptTable.convertRowIndexToModel(viewRow);
+				Global.conceptInfoAction.setEnabled(true);
+				Global.conceptInformationDialog.setConcept(targetConceptTableModel.getConcept(modelRow));
+				Global.athenaAction.setEnabled(true);
+				Global.athenaAction.setConcept(targetConceptTableModel.getConcept(modelRow));
+				Global.googleSearchAction.setEnabled(false);
 			}
-
 		});
 		targetConceptTable.hideColumn("Valid start date");
 		targetConceptTable.hideColumn("Valid end date");
@@ -373,13 +375,23 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		doSearch();
 	}
 
+	@Override
+	public void addCodeMultiSelected(CodeMapping codeMapping) {
+		this.codeMappingsFromMulti.add(codeMapping);
+	}
+
+	@Override
+	public void clearCodeMultiSelected() {
+		this.codeMappingsFromMulti = new ArrayList<>();
+	}
+
 	public void approve() {
 		if (codeMapping.mappingStatus != CodeMapping.MappingStatus.APPROVED) {
 			codeMapping.mappingStatus = CodeMapping.MappingStatus.APPROVED;
-			Global.mapping.fireDataChanged(DataChangeListener.APPROVE_EVENT);
+			Global.mapping.fireDataChanged(APPROVE_EVENT);
 		} else {
 			codeMapping.mappingStatus = CodeMapping.MappingStatus.UNCHECKED;
-			Global.mapping.fireDataChanged(DataChangeListener.SIMPLE_UPDATE_EVENT);
+			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
 			setApproveButton();
 		}
 	}
@@ -398,12 +410,23 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 
 	public void addConcept(Concept concept) {
 		codeMapping.targetConcepts.add(concept);
+		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
+			codeMappingMulti.targetConcepts.add(concept);
+		}
 		targetConceptTableModel.fireTableDataChanged();
-		Global.mapping.fireDataChanged(DataChangeListener.SIMPLE_UPDATE_EVENT);
+
+		if (codeMappingsFromMulti.size() > 0) {
+			Global.mapping.fireDataChanged(MULTI_UPDATE_EVENT);
+		} else {
+			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
+		}
 	}
 
 	public void replaceConcepts(Concept concept) {
 		codeMapping.targetConcepts.clear();
+		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
+			codeMappingMulti.targetConcepts.clear();
+		}
 		addConcept(concept);
 	}
 
@@ -423,7 +446,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			codeMapping.targetConcepts.remove(row);
 
 		targetConceptTableModel.fireTableDataChanged();
-		Global.mapping.fireDataChanged(DataChangeListener.SIMPLE_UPDATE_EVENT);
+		Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
 	}
 
 	private class SearchTask extends TimerTask {
