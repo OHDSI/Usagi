@@ -74,7 +74,7 @@ public class ExportSourceToConceptMapDialog extends JDialog {
 		buttonPanel.add(Box.createHorizontalGlue());
 		JButton cancelButton = new JButton("Cancel");
 		cancelButton.setToolTipText("Cancel the export");
-		cancelButton.addActionListener(arg0 -> setVisible(false));
+		cancelButton.addActionListener(event -> setVisible(false));
 		buttonPanel.add(cancelButton);
 		JButton exportButton = new JButton("Export");
 		exportButton.setToolTipText("Select the filename and export using these settings");
