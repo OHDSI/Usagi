@@ -42,9 +42,9 @@ public class Global {
 	public static SaveAction						saveAction;
 	public static SaveAsAction						saveAsAction;
 	public static ApproveAction						approveAction;
-	public static ApproveAllAction					approveAllAction;
+	public static ApproveSelectedAction approveSelectedAction;
 	public static IgnoreAction						ignoreAction;
-	public static IgnoreAllAction					ignoreAllAction;
+	public static IgnoreSelectedAction ignoreSelectedAction;
 	public static ClearAllAction					clearAllAction;
 	public static ConceptInformationAction			conceptInfoAction;
 	public static AthenaAction						athenaAction;

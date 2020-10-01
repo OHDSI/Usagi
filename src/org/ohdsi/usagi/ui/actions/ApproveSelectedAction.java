@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2020 Observational Health Data Sciences and Informatics & The Hyve
+ * Copyright 2019 Observational Health Data Sciences and Informatics
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,26 +15,27 @@
  ******************************************************************************/
 package org.ohdsi.usagi.ui.actions;
 
-import org.ohdsi.usagi.ui.Global;
-
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
-public class IgnoreAllAction extends AbstractAction {
+import javax.swing.*;
 
-	private static final long	serialVersionUID	= -2553283436556522929L;
+import org.ohdsi.usagi.ui.Global;
 
-	public IgnoreAllAction() {
-		putValue(Action.NAME, "Ignore selected");
-		putValue(Action.SHORT_DESCRIPTION, "Set status of all selected codes to ignore");
-		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.ALT_MASK | InputEvent.SHIFT_DOWN_MASK));
+public class ApproveSelectedAction extends AbstractAction {
+
+	private static final long	serialVersionUID	= 3420357922150237898L;
+
+	public ApproveSelectedAction() {
+		putValue(Action.NAME, "Approve selected");
+		putValue(Action.SHORT_DESCRIPTION, "Approve all selected mappings");
+		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.ALT_MASK | InputEvent.SHIFT_DOWN_MASK));
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		Global.mappingTablePanel.approveAll();
+		Global.mappingTablePanel.approveSelected();
 	}
 
 }

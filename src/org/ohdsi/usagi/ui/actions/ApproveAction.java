@@ -16,6 +16,7 @@
 package org.ohdsi.usagi.ui.actions;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
@@ -29,14 +30,23 @@ public class ApproveAction extends AbstractAction {
 	private static final long	serialVersionUID	= -6399524936473823131L;
 
 	public ApproveAction() {
-		putValue(Action.NAME, "Approve");
-		putValue(Action.SHORT_DESCRIPTION, "Approve the selected single mapping");
+		setToApprove();
 		putValue(Action.MNEMONIC_KEY, KeyEvent.VK_A);
-		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.ALT_MASK));
+		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.ALT_MASK));
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		Global.mappingDetailPanel.approve();
+	}
+
+	public void setToApprove() {
+		putValue(Action.NAME, "Approve");
+		putValue(Action.SHORT_DESCRIPTION, "Approve the selected single mapping");
+	}
+
+	public void setToUnapprove() {
+		Global.approveAction.putValue(Action.NAME, "Unapprove");
+		Global.approveAction.putValue(Action.SHORT_DESCRIPTION, "Unapprove this mapping");
 	}
 }

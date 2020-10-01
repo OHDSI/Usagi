@@ -32,7 +32,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 
-import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -374,8 +373,8 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	@Override
 	public void codeSelected(CodeMapping codeMapping) {
 		this.codeMapping = codeMapping;
-		setApproveButton();
-		setIgnoreButton();
+		toggleApproveButton();
+		toggleIgnoreButton();
 		sourceCodeTableModel.setMapping(codeMapping);
 		targetConceptTableModel.setConcepts(codeMapping.targetConcepts);
 		commentField.setText(codeMapping.comment);
@@ -399,19 +398,17 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		} else {
 			codeMapping.mappingStatus = CodeMapping.MappingStatus.UNCHECKED;
 			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
-			setApproveButton();
+			toggleApproveButton();
 		}
 	}
 
-	private void setApproveButton() {
+	private void toggleApproveButton() {
 		if (codeMapping.mappingStatus == MappingStatus.APPROVED) {
-			Global.approveAction.putValue(Action.NAME, "Unapprove");
-			Global.approveAction.putValue(Action.SHORT_DESCRIPTION, "Unapprove this mapping");
+			Global.approveAction.setToUnapprove();
 			approveButton.setBackground(new Color(220, 151, 141));
 			ignoreButton.setEnabled(false);
 		} else {
-			Global.approveAction.putValue(Action.NAME, "Approve");
-			Global.approveAction.putValue(Action.SHORT_DESCRIPTION, "Approve this mapping");
+			Global.approveAction.setToApprove();
 			approveButton.setBackground(new Color(151, 220, 141));
 			ignoreButton.setEnabled(true);
 		}
@@ -425,17 +422,17 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		} else {
 			codeMapping.mappingStatus = CodeMapping.MappingStatus.UNCHECKED;
 			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
-			setIgnoreButton();
+			toggleIgnoreButton();
 		}
 	}
 
-	private void setIgnoreButton() {
+	private void toggleIgnoreButton() {
 		if (codeMapping.mappingStatus == MappingStatus.IGNORED) {
-			Global.ignoreAction.setToIgnore();
+			Global.ignoreAction.setToUnignore();
 			ignoreButton.setBackground(new Color(220, 151, 141));
 			approveButton.setEnabled(false);
 		} else {
-			Global.ignoreAction.setToUnignore();
+			Global.ignoreAction.setToIgnore();
 			ignoreButton.setBackground(new Color(151, 220, 141));
 			approveButton.setEnabled(true);
 		}
