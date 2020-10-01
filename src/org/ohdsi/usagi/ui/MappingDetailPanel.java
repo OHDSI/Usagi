@@ -68,6 +68,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private TableRowSorter<ConceptTableModel>	sorter;
 	private ConceptTableModel					searchTableModel;
 	private JButton								approveButton;
+	private JButton								ignoreButton;
 	private JTextField							commentField;
 	private JButton								removeButton;
 	private JButton								replaceButton;
@@ -293,6 +294,18 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		approveButton = new JButton(Global.approveAction);
 		approveButton.setBackground(new Color(151, 220, 141));
 		panel.add(approveButton);
+
+		ignoreButton = new JButton("Ignore");
+		ignoreButton.setToolTipText("Do not map selected source variable");
+		ignoreButton.addActionListener(e -> {
+			// TODO: toggle button text between Ignore and Unignore
+			// TODO: If ignored, deactivate approve button. If approved, deactivate ignore button
+			// TODO: Add shortcut
+			codeMapping.mappingStatus = MappingStatus.IGNORED;
+			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
+		});
+		panel.add(ignoreButton);
+
 		return panel;
 	}
 
