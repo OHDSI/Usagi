@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -53,6 +54,7 @@ import javax.swing.table.TableRowSorter;
 import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
 import org.ohdsi.usagi.Concept;
+import org.ohdsi.usagi.MappingTarget;
 import org.ohdsi.usagi.UsagiSearchEngine.ScoredConcept;
 
 import static org.ohdsi.usagi.ui.DataChangeEvent.*;
@@ -63,7 +65,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private UsagiTable							sourceCodeTable;
 	private SourceCodeTableModel				sourceCodeTableModel;
 	private UsagiTable							targetConceptTable;
-	private ConceptTableModel					targetConceptTableModel;
+	private TargetConceptTableModel				targetConceptTableModel;
 	private UsagiTable							searchTable;
 	private TableRowSorter<ConceptTableModel>	sorter;
 	private ConceptTableModel					searchTableModel;
@@ -318,7 +320,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		JPanel panel = new JPanel();
 		panel.setBorder(BorderFactory.createTitledBorder("Target concepts"));
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-		targetConceptTableModel = new ConceptTableModel(false);
+		targetConceptTableModel = new TargetConceptTableModel();
 		targetConceptTable = new UsagiTable(targetConceptTableModel);
 		targetConceptTable.setPreferredScrollableViewportSize(new Dimension(500, 45));
 		targetConceptTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -409,9 +411,9 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	}
 
 	public void addConcept(Concept concept) {
-		codeMapping.targetConcepts.add(concept);
+		codeMapping.targetConcepts.add(new MappingTarget(concept));
 		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
-			codeMappingMulti.targetConcepts.add(concept);
+			codeMappingMulti.targetConcepts.add(new MappingTarget(concept));
 		}
 		targetConceptTableModel.fireTableDataChanged();
 

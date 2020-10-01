@@ -71,7 +71,7 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 							buffer.mappingStatus = MappingStatus.INVALID_TARGET;
 							buffer.comment = "Invalid existing target: " + row.get("conceptId");
 						} else {
-							buffer.targetConcepts.add(concept);
+							buffer.targetConcepts.add(new MappingTarget(concept));
 						}
 					}
 					if (iterator.hasNext())

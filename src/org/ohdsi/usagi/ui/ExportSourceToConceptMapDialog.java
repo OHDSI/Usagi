@@ -18,11 +18,10 @@ package org.ohdsi.usagi.ui;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -38,6 +37,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
 import org.ohdsi.usagi.Concept;
+import org.ohdsi.usagi.MappingTarget;
 import org.ohdsi.utilities.files.Row;
 import org.ohdsi.utilities.files.WriteCSVFileWithHeader;
 
@@ -115,8 +115,9 @@ public class ExportSourceToConceptMapDialog extends JDialog {
 				if (mapping.targetConcepts.size() == 0) {
 					targetConcepts = new ArrayList<Concept>(1);
 					targetConcepts.add(Concept.EMPTY_CONCEPT);
-				} else
-					targetConcepts = mapping.targetConcepts;
+				} else {
+					targetConcepts = mapping.targetConcepts.stream().map(MappingTarget::getConcept).collect(Collectors.toList());
+				}
 
 				for (Concept targetConcept : targetConcepts) {
 					Row row = new Row();
