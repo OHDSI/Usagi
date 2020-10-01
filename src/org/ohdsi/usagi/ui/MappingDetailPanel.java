@@ -203,7 +203,8 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		searchTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		searchTable.getSelectionModel().addListSelectionListener(event -> {
 			int viewRow = searchTable.getSelectedRow();
-			if (viewRow == -1) {
+			// Don't enable the buttons if no row selected or status is either approved or ignored
+			if (viewRow == -1 || codeMapping.mappingStatus == MappingStatus.APPROVED || codeMapping.mappingStatus == MappingStatus.IGNORED) {
 				addButton.setEnabled(false);
 				replaceButton.setEnabled(false);
 			} else {
@@ -330,7 +331,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		targetConceptTable.setRowSelectionAllowed(true);
 		targetConceptTable.getSelectionModel().addListSelectionListener(event -> {
 			int viewRow = targetConceptTable.getSelectedRow();
-			if (viewRow == -1) {
+			if (viewRow == -1 || codeMapping.mappingStatus == MappingStatus.APPROVED) {
 				removeButton.setEnabled(false);
 			} else {
 				removeButton.setEnabled(true);
@@ -418,7 +419,6 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		if (codeMapping.mappingStatus != CodeMapping.MappingStatus.IGNORED) {
 			codeMapping.mappingStatus = MappingStatus.IGNORED;
 			Global.mappingTablePanel.clearSelected();
-			// TODO: grey out ignored rows
 			Global.mapping.fireDataChanged(APPROVE_EVENT);
 		} else {
 			codeMapping.mappingStatus = CodeMapping.MappingStatus.UNCHECKED;

@@ -290,7 +290,9 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 	public void approveSelected() {
 		for (int viewRow : table.getSelectedRows()) {
 			int modelRow = table.convertRowIndexToModel(viewRow);
-			tableModel.getCodeMapping(modelRow).mappingStatus = MappingStatus.APPROVED;
+			if (tableModel.getCodeMapping(modelRow).mappingStatus != MappingStatus.IGNORED) {
+				tableModel.getCodeMapping(modelRow).mappingStatus = MappingStatus.APPROVED;
+			}
 		}
 		fireUpdateEventAll(APPROVE_EVENT);
 	}
@@ -298,8 +300,10 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 	public void ignoreSelected() {
 		for (int viewRow : table.getSelectedRows()) {
 			int modelRow = table.convertRowIndexToModel(viewRow);
-			tableModel.getCodeMapping(modelRow).mappingStatus = MappingStatus.IGNORED;
-			Global.mappingTablePanel.clearSelected();
+			if (tableModel.getCodeMapping(modelRow).mappingStatus != MappingStatus.APPROVED) {
+				tableModel.getCodeMapping(modelRow).mappingStatus = MappingStatus.IGNORED;
+				Global.mappingTablePanel.clearSelected();
+			}
 		}
 		fireUpdateEventAll(APPROVE_EVENT);
 	}
