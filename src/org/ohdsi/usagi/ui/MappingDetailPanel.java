@@ -32,7 +32,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 
-import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -69,6 +68,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private TableRowSorter<ConceptTableModel>	sorter;
 	private ConceptTableModel					searchTableModel;
 	private JButton								approveButton;
+	private JButton								ignoreButton;
 	private JTextField							commentField;
 	private JButton								removeButton;
 	private JButton								replaceButton;
@@ -204,7 +204,8 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		searchTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		searchTable.getSelectionModel().addListSelectionListener(event -> {
 			int viewRow = searchTable.getSelectedRow();
-			if (viewRow == -1) {
+			// Don't enable the buttons if no row selected or status is either approved or ignored
+			if (viewRow == -1 || codeMapping.mappingStatus == MappingStatus.APPROVED || codeMapping.mappingStatus == MappingStatus.IGNORED) {
 				addButtons.forEach(x -> x.setEnabled(false));
 				replaceButton.setEnabled(false);
 			} else {
@@ -302,6 +303,11 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		approveButton = new JButton(Global.approveAction);
 		approveButton.setBackground(new Color(151, 220, 141));
 		panel.add(approveButton);
+
+		ignoreButton = new JButton(Global.ignoreAction);
+		ignoreButton.setBackground(new Color(151, 220, 141));
+		panel.add(ignoreButton);
+
 		return panel;
 	}
 
@@ -334,7 +340,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		targetConceptTable.setRowSelectionAllowed(true);
 		targetConceptTable.getSelectionModel().addListSelectionListener(event -> {
 			int viewRow = targetConceptTable.getSelectedRow();
-			if (viewRow == -1) {
+			if (viewRow == -1 || codeMapping.mappingStatus == MappingStatus.APPROVED) {
 				removeButton.setEnabled(false);
 			} else {
 				removeButton.setEnabled(true);
@@ -377,7 +383,8 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	@Override
 	public void codeSelected(CodeMapping codeMapping) {
 		this.codeMapping = codeMapping;
-		setApproveButton();
+		toggleApproveButton();
+		toggleIgnoreButton();
 		sourceCodeTableModel.setMapping(codeMapping);
 		targetConceptTableModel.setConcepts(codeMapping.targetConcepts);
 		commentField.setText(codeMapping.comment);
@@ -401,19 +408,43 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		} else {
 			codeMapping.mappingStatus = CodeMapping.MappingStatus.UNCHECKED;
 			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
-			setApproveButton();
+			toggleApproveButton();
 		}
 	}
 
-	private void setApproveButton() {
+	private void toggleApproveButton() {
 		if (codeMapping.mappingStatus == MappingStatus.APPROVED) {
-			Global.approveAction.putValue(Action.NAME, "Unapprove");
-			Global.approveAction.putValue(Action.SHORT_DESCRIPTION, "Unapprove this mapping");
+			Global.approveAction.setToUnapprove();
 			approveButton.setBackground(new Color(220, 151, 141));
+			ignoreButton.setEnabled(false);
 		} else {
-			Global.approveAction.putValue(Action.NAME, "Approve");
-			Global.approveAction.putValue(Action.SHORT_DESCRIPTION, "Approve this mapping");
+			Global.approveAction.setToApprove();
 			approveButton.setBackground(new Color(151, 220, 141));
+			ignoreButton.setEnabled(true);
+		}
+	}
+
+	public void ignore() {
+		if (codeMapping.mappingStatus != CodeMapping.MappingStatus.IGNORED) {
+			codeMapping.mappingStatus = MappingStatus.IGNORED;
+			Global.mappingTablePanel.clearSelected();
+			Global.mapping.fireDataChanged(APPROVE_EVENT);
+		} else {
+			codeMapping.mappingStatus = CodeMapping.MappingStatus.UNCHECKED;
+			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
+			toggleIgnoreButton();
+		}
+	}
+
+	private void toggleIgnoreButton() {
+		if (codeMapping.mappingStatus == MappingStatus.IGNORED) {
+			Global.ignoreAction.setToUnignore();
+			ignoreButton.setBackground(new Color(220, 151, 141));
+			approveButton.setEnabled(false);
+		} else {
+			Global.ignoreAction.setToIgnore();
+			ignoreButton.setBackground(new Color(151, 220, 141));
+			approveButton.setEnabled(true);
 		}
 	}
 

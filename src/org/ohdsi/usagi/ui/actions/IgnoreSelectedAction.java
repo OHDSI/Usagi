@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2019 Observational Health Data Sciences and Informatics
+ * Copyright 2020 Observational Health Data Sciences and Informatics & The Hyve
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,25 +15,26 @@
  ******************************************************************************/
 package org.ohdsi.usagi.ui.actions;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-
 import org.ohdsi.usagi.ui.Global;
 
-public class ClearAllAction extends AbstractAction {
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 
-	private static final long	serialVersionUID	= 3420357922150237898L;
+public class IgnoreSelectedAction extends AbstractAction {
 
-	public ClearAllAction() {
-		putValue(Action.NAME, "Clear selected");
-		putValue(Action.SHORT_DESCRIPTION, "Clear all selected mappings (set target to 0)");
+	private static final long	serialVersionUID	= -2553283436556522929L;
+
+	public IgnoreSelectedAction() {
+		putValue(Action.NAME, "Ignore selected");
+		putValue(Action.SHORT_DESCRIPTION, "Set status of all selected codes to ignore");
+		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.ALT_MASK | InputEvent.SHIFT_DOWN_MASK));
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		Global.mappingTablePanel.clearAll();
+		Global.mappingTablePanel.ignoreSelected();
 	}
 
 }

@@ -64,8 +64,10 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 					Global.googleSearchAction.setSourceTerm(tableModel.getCodeMapping(primaryModelRow).sourceCode.sourceName);
 
 					Global.approveAction.setEnabled(true);
-					Global.approveAllAction.setEnabled(true);
-					Global.clearAllAction.setEnabled(true);
+					Global.approveSelectedAction.setEnabled(true);
+					Global.ignoreAction.setEnabled(true);
+					Global.ignoreSelectedAction.setEnabled(true);
+					Global.clearSelectedAction.setEnabled(true);
 					if (tableModel.getCodeMapping(primaryModelRow).targetConcepts.size() > 0) {
 						Concept firstConcept = tableModel.getCodeMapping(primaryModelRow).targetConcepts.get(0).concept;
 						Global.conceptInfoAction.setEnabled(true);
@@ -84,9 +86,11 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 						}
 					}
 				} else {
-					Global.approveAllAction.setEnabled(false);
+					Global.approveSelectedAction.setEnabled(false);
 					Global.approveAction.setEnabled(false);
-					Global.clearAllAction.setEnabled(false);
+					Global.ignoreAction.setEnabled(false);
+					Global.ignoreSelectedAction.setEnabled(false);
+					Global.clearSelectedAction.setEnabled(false);
 				}
 			}
 		});
@@ -272,33 +276,43 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		}
 	}
 
-	public void approveAll() {
-		for (int viewRow : table.getSelectedRows()) {
-			int modelRow = table.convertRowIndexToModel(viewRow);
-			tableModel.getCodeMapping(modelRow).mappingStatus = MappingStatus.APPROVED;
-
-		}
-		Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
+	private void fireUpdateEventAll(DataChangeEvent event) {
+		Global.mapping.fireDataChanged(event);
 		int viewRow = table.getSelectedRow();
 		if (viewRow != -1) {
 			int modelRow = table.convertRowIndexToModel(viewRow);
-			for (CodeSelectedListener listener : listeners)
+			for (CodeSelectedListener listener : listeners) {
 				listener.codeSelected(tableModel.getCodeMapping(modelRow));
+			}
 		}
 	}
 
-	public void clearAll() {
+	public void approveSelected() {
+		for (int viewRow : table.getSelectedRows()) {
+			int modelRow = table.convertRowIndexToModel(viewRow);
+			if (tableModel.getCodeMapping(modelRow).mappingStatus != MappingStatus.IGNORED) {
+				tableModel.getCodeMapping(modelRow).mappingStatus = MappingStatus.APPROVED;
+			}
+		}
+		fireUpdateEventAll(APPROVE_EVENT);
+	}
+
+	public void ignoreSelected() {
+		for (int viewRow : table.getSelectedRows()) {
+			int modelRow = table.convertRowIndexToModel(viewRow);
+			if (tableModel.getCodeMapping(modelRow).mappingStatus != MappingStatus.APPROVED) {
+				tableModel.getCodeMapping(modelRow).mappingStatus = MappingStatus.IGNORED;
+				Global.mappingTablePanel.clearSelected();
+			}
+		}
+		fireUpdateEventAll(APPROVE_EVENT);
+	}
+
+	public void clearSelected() {
 		for (int viewRow : table.getSelectedRows()) {
 			int modelRow = table.convertRowIndexToModel(viewRow);
 			tableModel.getCodeMapping(modelRow).targetConcepts.clear();
 		}
-		Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
-		int viewRow = table.getSelectedRow();
-		if (viewRow != -1) {
-			int modelRow = table.convertRowIndexToModel(viewRow);
-			for (CodeSelectedListener listener : listeners)
-				listener.codeSelected(tableModel.getCodeMapping(modelRow));
-		}
-
+		fireUpdateEventAll(SIMPLE_UPDATE_EVENT);
 	}
 }
