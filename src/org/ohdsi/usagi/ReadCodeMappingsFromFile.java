@@ -67,11 +67,18 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 						&& new SourceCode(row).sourceName.equals(buffer.sourceCode.sourceName)) {
 					if (row.getInt("conceptId") != 0) {
 						Concept concept = Global.dbEngine.getConcept(row.getInt("conceptId"));
+
+						// Older save files might not have a mappingType.
+						MappingTarget.MappingType mappingType = MappingTarget.MappingType.REGULAR;
+						if (row.getFieldNames().contains("mappingType")) {
+							mappingType = MappingTarget.MappingType.valueOf(row.get("mappingType"));
+						}
+
 						if (concept == null) {
 							buffer.mappingStatus = MappingStatus.INVALID_TARGET;
 							buffer.comment = "Invalid existing target: " + row.get("conceptId");
 						} else {
-							buffer.targetConcepts.add(new MappingTarget(concept));
+							buffer.targetConcepts.add(new MappingTarget(concept, mappingType));
 						}
 					}
 					if (iterator.hasNext())
