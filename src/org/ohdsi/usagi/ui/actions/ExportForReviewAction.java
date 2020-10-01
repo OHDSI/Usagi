@@ -21,6 +21,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -29,6 +30,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
 import org.ohdsi.usagi.Concept;
+import org.ohdsi.usagi.MappingTarget;
 import org.ohdsi.usagi.ui.Global;
 import org.ohdsi.utilities.files.Row;
 import org.ohdsi.utilities.files.WriteCSVFileWithHeader;
@@ -83,7 +85,7 @@ public class ExportForReviewAction extends AbstractAction {
 						targetConcepts = new ArrayList<Concept>(1);
 						targetConcepts.add(Concept.EMPTY_CONCEPT);
 					} else
-						targetConcepts = mapping.targetConcepts;
+						targetConcepts = mapping.targetConcepts.stream().map(MappingTarget::getConcept).collect(Collectors.toList());
 
 					for (Concept targetConcept : targetConcepts) {
 						Row row = mapping.sourceCode.toRow();

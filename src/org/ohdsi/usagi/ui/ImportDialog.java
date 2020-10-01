@@ -50,6 +50,7 @@ import javax.swing.table.TableModel;
 
 import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
+import org.ohdsi.usagi.MappingTarget;
 import org.ohdsi.usagi.SourceCode;
 import org.ohdsi.usagi.UsagiSearchEngine.ScoredConcept;
 import org.ohdsi.utilities.ReadXlsxFile;
@@ -441,7 +442,7 @@ public class ImportDialog extends JDialog {
 						List<ScoredConcept> concepts = Global.usagiSearchEngine.search(sourceCode.sourceName, true, filterConceptIds, filterDomainsFinal,
 								filterConceptClassesFinal, filterVocabulariesFinal, filterStandard, includeSourceConcepts);
 						if (concepts.size() > 0) {
-							codeMapping.targetConcepts.add(concepts.get(0).concept);
+							codeMapping.targetConcepts.add(new MappingTarget(concepts.get(0).concept));
 							codeMapping.matchScore = concepts.get(0).matchScore;
 						} else {
 							codeMapping.matchScore = 0;

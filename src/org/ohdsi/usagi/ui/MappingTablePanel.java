@@ -69,7 +69,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 					Global.ignoreSelectedAction.setEnabled(true);
 					Global.clearSelectedAction.setEnabled(true);
 					if (tableModel.getCodeMapping(primaryModelRow).targetConcepts.size() > 0) {
-						Concept firstConcept = tableModel.getCodeMapping(primaryModelRow).targetConcepts.get(0);
+						Concept firstConcept = tableModel.getCodeMapping(primaryModelRow).targetConcepts.get(0).concept;
 						Global.conceptInfoAction.setEnabled(true);
 						Global.conceptInformationDialog.setConcept(firstConcept);
 						Global.athenaAction.setEnabled(true);
@@ -163,7 +163,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 				}
 				Concept targetConcept;
 				if (codeMapping.targetConcepts.size() > 0)
-					targetConcept = codeMapping.targetConcepts.get(0);
+					targetConcept = codeMapping.targetConcepts.get(0).concept;
 				else
 					targetConcept = Concept.EMPTY_CONCEPT;
 				switch (col) {
