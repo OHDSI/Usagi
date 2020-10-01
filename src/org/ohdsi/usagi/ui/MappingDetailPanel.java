@@ -31,7 +31,6 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
-import java.util.stream.Collectors;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -73,7 +72,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private JTextField							commentField;
 	private JButton								removeButton;
 	private JButton								replaceButton;
-	private JButton								addButton;
+	private List<JButton> 						addButtons;
 	private JRadioButton						autoQueryButton;
 	private JRadioButton						manualQueryButton;
 	private JTextField							manualQueryField;
@@ -206,10 +205,10 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		searchTable.getSelectionModel().addListSelectionListener(event -> {
 			int viewRow = searchTable.getSelectedRow();
 			if (viewRow == -1) {
-				addButton.setEnabled(false);
+				addButtons.forEach(x -> x.setEnabled(false));
 				replaceButton.setEnabled(false);
 			} else {
-				addButton.setEnabled(true);
+				addButtons.forEach(x -> x.setEnabled(true));
 				replaceButton.setEnabled(true);
 				int modelRow = searchTable.convertRowIndexToModel(viewRow);
 				Global.conceptInfoAction.setEnabled(true);
@@ -241,18 +240,22 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		});
 		replaceButton.setEnabled(false);
 		buttonPanel.add(replaceButton);
-		addButton = new JButton("Add concept");
-		addButton.setToolTipText("Add selected concept");
-		addButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+
+		JButton button;
+		addButtons = new ArrayList<>();
+		for (MappingTarget.MappingType mappingType : MappingTarget.MappingType.values()) {
+			button = new JButton(String.format("Add %s concept", mappingType));
+			button.setToolTipText(String.format("Add selected concept as %s", mappingType));
+			button.addActionListener(e -> {
 				int viewRow = searchTable.getSelectedRow();
 				int modelRow = searchTable.convertRowIndexToModel(viewRow);
-				addConcept(searchTableModel.getConcept(modelRow));
-			}
+				addConcept(searchTableModel.getConcept(modelRow), mappingType);
+			});
+			button.setEnabled(false);
+			addButtons.add(button);
+			buttonPanel.add(button);
+		}
 
-		});
-		addButton.setEnabled(false);
-		buttonPanel.add(addButton);
 		panel.add(buttonPanel);
 
 		return panel;
@@ -414,6 +417,20 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		codeMapping.targetConcepts.add(new MappingTarget(concept));
 		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
 			codeMappingMulti.targetConcepts.add(new MappingTarget(concept));
+		}
+		targetConceptTableModel.fireTableDataChanged();
+
+		if (codeMappingsFromMulti.size() > 0) {
+			Global.mapping.fireDataChanged(MULTI_UPDATE_EVENT);
+		} else {
+			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
+		}
+	}
+
+	public void addConcept(Concept concept, MappingTarget.MappingType mappingType) {
+		codeMapping.targetConcepts.add(new MappingTarget(concept, mappingType));
+		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
+			codeMappingMulti.targetConcepts.add(new MappingTarget(concept, mappingType));
 		}
 		targetConceptTableModel.fireTableDataChanged();
 
