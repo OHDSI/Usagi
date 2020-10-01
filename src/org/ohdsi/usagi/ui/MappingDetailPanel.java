@@ -417,7 +417,8 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	public void ignore() {
 		if (codeMapping.mappingStatus != CodeMapping.MappingStatus.IGNORED) {
 			codeMapping.mappingStatus = MappingStatus.IGNORED;
-			// TODO: remove any existing mapping
+			Global.mappingTablePanel.clearSelected();
+			// TODO: grey out ignored rows
 			Global.mapping.fireDataChanged(APPROVE_EVENT);
 		} else {
 			codeMapping.mappingStatus = CodeMapping.MappingStatus.UNCHECKED;

@@ -39,7 +39,7 @@ public class IgnoreAction extends AbstractAction {
 
 	public void setToIgnore() {
 		putValue(Action.NAME, "Ignore");
-		putValue(Action.SHORT_DESCRIPTION, "Set status of selected code to ignore");
+		putValue(Action.SHORT_DESCRIPTION, "Remove mapping and set status of selected code to ignore");
 	}
 
 	public void setToUnignore() {
