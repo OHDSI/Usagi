@@ -45,7 +45,7 @@ public class UsagiMenubar extends JMenuBar {
 		editMenu.add(Global.approveSelectedAction);
 		editMenu.add(Global.ignoreAction);
 		editMenu.add(Global.ignoreSelectedAction);
-		editMenu.add(Global.clearAllAction);
+		editMenu.add(Global.clearSelectedAction);
 
 		JMenu viewMenu = new JMenu("View");
 		viewMenu.setMnemonic(KeyEvent.VK_V);

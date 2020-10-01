@@ -42,10 +42,10 @@ public class Global {
 	public static SaveAction						saveAction;
 	public static SaveAsAction						saveAsAction;
 	public static ApproveAction						approveAction;
-	public static ApproveSelectedAction approveSelectedAction;
+	public static ApproveSelectedAction 			approveSelectedAction;
 	public static IgnoreAction						ignoreAction;
-	public static IgnoreSelectedAction ignoreSelectedAction;
-	public static ClearAllAction					clearAllAction;
+	public static IgnoreSelectedAction 				ignoreSelectedAction;
+	public static ClearSelectedAction 				clearSelectedAction;
 	public static ConceptInformationAction			conceptInfoAction;
 	public static AthenaAction						athenaAction;
 	public static GoogleSearchAction				googleSearchAction;

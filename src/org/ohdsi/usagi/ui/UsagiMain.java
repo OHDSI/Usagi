@@ -98,8 +98,8 @@ public class UsagiMain implements ActionListener {
 		Global.approveSelectedAction.setEnabled(false);
 		Global.ignoreAction.setEnabled(false);
 		Global.ignoreSelectedAction.setEnabled(false);
-		Global.clearAllAction = new ClearAllAction();
-		Global.clearAllAction.setEnabled(false);
+		Global.clearSelectedAction = new ClearSelectedAction();
+		Global.clearSelectedAction.setEnabled(false);
 		Global.conceptInfoAction.setEnabled(false);
 		Global.athenaAction.setEnabled(false);
 		Global.googleSearchAction.setEnabled(false);

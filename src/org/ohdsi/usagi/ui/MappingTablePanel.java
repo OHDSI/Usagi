@@ -67,7 +67,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 					Global.approveSelectedAction.setEnabled(true);
 					Global.ignoreAction.setEnabled(true);
 					Global.ignoreSelectedAction.setEnabled(true);
-					Global.clearAllAction.setEnabled(true);
+					Global.clearSelectedAction.setEnabled(true);
 					if (tableModel.getCodeMapping(primaryModelRow).targetConcepts.size() > 0) {
 						Concept firstConcept = tableModel.getCodeMapping(primaryModelRow).targetConcepts.get(0);
 						Global.conceptInfoAction.setEnabled(true);
@@ -90,7 +90,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 					Global.approveAction.setEnabled(false);
 					Global.ignoreAction.setEnabled(false);
 					Global.ignoreSelectedAction.setEnabled(false);
-					Global.clearAllAction.setEnabled(false);
+					Global.clearSelectedAction.setEnabled(false);
 				}
 			}
 		});
@@ -303,7 +303,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		setMappingStatusSelected(MappingStatus.IGNORED);
 	}
 
-	public void clearAll() {
+	public void clearSelected() {
 		for (int viewRow : table.getSelectedRows()) {
 			int modelRow = table.convertRowIndexToModel(viewRow);
 			tableModel.getCodeMapping(modelRow).targetConcepts.clear();
