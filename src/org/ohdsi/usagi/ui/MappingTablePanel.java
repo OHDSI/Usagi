@@ -65,6 +65,8 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 
 					Global.approveAction.setEnabled(true);
 					Global.approveAllAction.setEnabled(true);
+					Global.ignoreAction.setEnabled(true);
+					Global.ignoreAllAction.setEnabled(true);
 					Global.clearAllAction.setEnabled(true);
 					if (tableModel.getCodeMapping(primaryModelRow).targetConcepts.size() > 0) {
 						Concept firstConcept = tableModel.getCodeMapping(primaryModelRow).targetConcepts.get(0);
@@ -86,6 +88,8 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 				} else {
 					Global.approveAllAction.setEnabled(false);
 					Global.approveAction.setEnabled(false);
+					Global.ignoreAction.setEnabled(false);
+					Global.ignoreAllAction.setEnabled(false);
 					Global.clearAllAction.setEnabled(false);
 				}
 			}

@@ -295,15 +295,8 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		approveButton.setBackground(new Color(151, 220, 141));
 		panel.add(approveButton);
 
-		ignoreButton = new JButton("Ignore");
-		ignoreButton.setToolTipText("Do not map selected source variable");
-		ignoreButton.addActionListener(e -> {
-			// TODO: toggle button text between Ignore and Unignore
-			// TODO: If ignored, deactivate approve button. If approved, deactivate ignore button
-			// TODO: Add shortcut
-			codeMapping.mappingStatus = MappingStatus.IGNORED;
-			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
-		});
+		ignoreButton = new JButton(Global.ignoreAction);
+		ignoreButton.setBackground(new Color(151, 220, 141));
 		panel.add(ignoreButton);
 
 		return panel;
@@ -382,6 +375,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	public void codeSelected(CodeMapping codeMapping) {
 		this.codeMapping = codeMapping;
 		setApproveButton();
+		setIgnoreButton();
 		sourceCodeTableModel.setMapping(codeMapping);
 		targetConceptTableModel.setConcepts(codeMapping.targetConcepts);
 		commentField.setText(codeMapping.comment);
@@ -414,10 +408,36 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			Global.approveAction.putValue(Action.NAME, "Unapprove");
 			Global.approveAction.putValue(Action.SHORT_DESCRIPTION, "Unapprove this mapping");
 			approveButton.setBackground(new Color(220, 151, 141));
+			ignoreButton.setEnabled(false);
 		} else {
 			Global.approveAction.putValue(Action.NAME, "Approve");
 			Global.approveAction.putValue(Action.SHORT_DESCRIPTION, "Approve this mapping");
 			approveButton.setBackground(new Color(151, 220, 141));
+			ignoreButton.setEnabled(true);
+		}
+	}
+
+	public void ignore() {
+		if (codeMapping.mappingStatus != CodeMapping.MappingStatus.IGNORED) {
+			codeMapping.mappingStatus = MappingStatus.IGNORED;
+			// TODO: remove any existing mapping
+			Global.mapping.fireDataChanged(APPROVE_EVENT);
+		} else {
+			codeMapping.mappingStatus = CodeMapping.MappingStatus.UNCHECKED;
+			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
+			setIgnoreButton();
+		}
+	}
+
+	private void setIgnoreButton() {
+		if (codeMapping.mappingStatus == MappingStatus.IGNORED) {
+			Global.ignoreAction.setToIgnore();
+			ignoreButton.setBackground(new Color(220, 151, 141));
+			approveButton.setEnabled(false);
+		} else {
+			Global.ignoreAction.setToUnignore();
+			ignoreButton.setBackground(new Color(151, 220, 141));
+			approveButton.setEnabled(true);
 		}
 	}
 
