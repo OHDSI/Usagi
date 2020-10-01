@@ -32,18 +32,19 @@ public class WriteCodeMappingsToFile {
 	}
 
 	public void write(CodeMapping codeMapping) {
-		List<Concept> targetConcepts;
+		List<MappingTarget> mappingTargets;
 		if (codeMapping.targetConcepts.size() == 0) {
-			targetConcepts = new ArrayList<Concept>(1);
-			targetConcepts.add(Concept.EMPTY_CONCEPT);
+			mappingTargets = new ArrayList<>(1);
+			mappingTargets.add(new MappingTarget(Concept.createEmptyConcept()));
 		} else
-			targetConcepts = codeMapping.targetConcepts;
-		for (Concept targetConcept : targetConcepts) {
+			mappingTargets = codeMapping.targetConcepts;
+		for (MappingTarget targetConcept : mappingTargets) {
 			Row row = codeMapping.sourceCode.toRow();
 			row.add("matchScore", codeMapping.matchScore);
 			row.add("mappingStatus", codeMapping.mappingStatus.toString());
-			row.add("conceptId", targetConcept.conceptId);
+			row.add("conceptId", targetConcept.concept.conceptId);
 			row.add("comment", codeMapping.comment);
+			row.add("mappingType", targetConcept.mappingType.toString());
 			out.write(row);
 		}
 	}

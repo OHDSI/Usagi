@@ -53,6 +53,7 @@ import javax.swing.table.TableRowSorter;
 import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
 import org.ohdsi.usagi.Concept;
+import org.ohdsi.usagi.MappingTarget;
 import org.ohdsi.usagi.UsagiSearchEngine.ScoredConcept;
 
 import static org.ohdsi.usagi.ui.DataChangeEvent.*;
@@ -63,7 +64,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private UsagiTable							sourceCodeTable;
 	private SourceCodeTableModel				sourceCodeTableModel;
 	private UsagiTable							targetConceptTable;
-	private ConceptTableModel					targetConceptTableModel;
+	private TargetConceptTableModel				targetConceptTableModel;
 	private UsagiTable							searchTable;
 	private TableRowSorter<ConceptTableModel>	sorter;
 	private ConceptTableModel					searchTableModel;
@@ -71,7 +72,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private JTextField							commentField;
 	private JButton								removeButton;
 	private JButton								replaceButton;
-	private JButton								addButton;
+	private List<JButton> 						addButtons;
 	private JRadioButton						autoQueryButton;
 	private JRadioButton						manualQueryButton;
 	private JTextField							manualQueryField;
@@ -204,10 +205,10 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		searchTable.getSelectionModel().addListSelectionListener(event -> {
 			int viewRow = searchTable.getSelectedRow();
 			if (viewRow == -1) {
-				addButton.setEnabled(false);
+				addButtons.forEach(x -> x.setEnabled(false));
 				replaceButton.setEnabled(false);
 			} else {
-				addButton.setEnabled(true);
+				addButtons.forEach(x -> x.setEnabled(true));
 				replaceButton.setEnabled(true);
 				int modelRow = searchTable.convertRowIndexToModel(viewRow);
 				Global.conceptInfoAction.setEnabled(true);
@@ -239,18 +240,26 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		});
 		replaceButton.setEnabled(false);
 		buttonPanel.add(replaceButton);
-		addButton = new JButton("Add concept");
-		addButton.setToolTipText("Add selected concept");
-		addButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+
+		JButton button;
+		addButtons = new ArrayList<>();
+		for (MappingTarget.Type mappingType : MappingTarget.Type.values()) {
+			if (mappingType.equals(MappingTarget.Type.REGULAR)) {
+				button = new JButton("Add concept");
+			} else {
+				button = new JButton(String.format("Add %s concept", mappingType));
+			}
+			button.setToolTipText(String.format("Add selected concept as %s", mappingType));
+			button.addActionListener(e -> {
 				int viewRow = searchTable.getSelectedRow();
 				int modelRow = searchTable.convertRowIndexToModel(viewRow);
-				addConcept(searchTableModel.getConcept(modelRow));
-			}
+				addConcept(searchTableModel.getConcept(modelRow), mappingType);
+			});
+			button.setEnabled(false);
+			addButtons.add(button);
+			buttonPanel.add(button);
+		}
 
-		});
-		addButton.setEnabled(false);
-		buttonPanel.add(addButton);
 		panel.add(buttonPanel);
 
 		return panel;
@@ -318,7 +327,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		JPanel panel = new JPanel();
 		panel.setBorder(BorderFactory.createTitledBorder("Target concepts"));
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-		targetConceptTableModel = new ConceptTableModel(false);
+		targetConceptTableModel = new TargetConceptTableModel();
 		targetConceptTable = new UsagiTable(targetConceptTableModel);
 		targetConceptTable.setPreferredScrollableViewportSize(new Dimension(500, 45));
 		targetConceptTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -409,9 +418,23 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	}
 
 	public void addConcept(Concept concept) {
-		codeMapping.targetConcepts.add(concept);
+		codeMapping.targetConcepts.add(new MappingTarget(concept));
 		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
-			codeMappingMulti.targetConcepts.add(concept);
+			codeMappingMulti.targetConcepts.add(new MappingTarget(concept));
+		}
+		targetConceptTableModel.fireTableDataChanged();
+
+		if (codeMappingsFromMulti.size() > 0) {
+			Global.mapping.fireDataChanged(MULTI_UPDATE_EVENT);
+		} else {
+			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
+		}
+	}
+
+	public void addConcept(Concept concept, MappingTarget.Type mappingType) {
+		codeMapping.targetConcepts.add(new MappingTarget(concept, mappingType));
+		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
+			codeMappingMulti.targetConcepts.add(new MappingTarget(concept, mappingType));
 		}
 		targetConceptTableModel.fireTableDataChanged();
 
