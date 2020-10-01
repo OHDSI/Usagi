@@ -19,19 +19,19 @@ package org.ohdsi.usagi;
  * Class for holding information about a single (target) concept in the Vocabulary
  */
 public class MappingTarget{
-	public enum MappingType {
-		REGULAR, VALUE, UNIT // Maybe OPERATOR, TYPE, etc.
+	public enum Type {
+		REGULAR, VALUE, UNIT // Maybe also OPERATOR, TYPE, etc.
 	};
 	public Concept concept;
-	public MappingType mappingType;
+	public Type mappingType;
 
-	public MappingTarget(Concept concept, MappingType mappingType) {
+	public MappingTarget(Concept concept, Type mappingType) {
 		this.concept = concept;
 		this.mappingType = mappingType;
 	}
 
 	public MappingTarget(Concept concept) {
-		this(concept, MappingType.REGULAR);
+		this(concept, Type.REGULAR);
 	}
 
 	public Concept getConcept() {
@@ -42,11 +42,11 @@ public class MappingTarget{
 		this.concept = concept;
 	}
 
-	public MappingType getMappingType() {
+	public Type getMappingType() {
 		return mappingType;
 	}
 
-	public void setMappingType(MappingType mappingType) {
+	public void setMappingType(Type mappingType) {
 		this.mappingType = mappingType;
 	}
 }

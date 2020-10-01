@@ -243,8 +243,12 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 
 		JButton button;
 		addButtons = new ArrayList<>();
-		for (MappingTarget.MappingType mappingType : MappingTarget.MappingType.values()) {
-			button = new JButton(String.format("Add %s concept", mappingType));
+		for (MappingTarget.Type mappingType : MappingTarget.Type.values()) {
+			if (mappingType.equals(MappingTarget.Type.REGULAR)) {
+				button = new JButton("Add concept");
+			} else {
+				button = new JButton(String.format("Add %s concept", mappingType));
+			}
 			button.setToolTipText(String.format("Add selected concept as %s", mappingType));
 			button.addActionListener(e -> {
 				int viewRow = searchTable.getSelectedRow();
@@ -427,7 +431,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		}
 	}
 
-	public void addConcept(Concept concept, MappingTarget.MappingType mappingType) {
+	public void addConcept(Concept concept, MappingTarget.Type mappingType) {
 		codeMapping.targetConcepts.add(new MappingTarget(concept, mappingType));
 		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
 			codeMappingMulti.targetConcepts.add(new MappingTarget(concept, mappingType));
