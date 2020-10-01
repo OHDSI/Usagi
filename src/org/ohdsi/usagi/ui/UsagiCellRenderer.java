@@ -91,15 +91,15 @@ public class UsagiCellRenderer extends DefaultTableCellRenderer {
 					component.setBackground(errorColor);
 				else
 					component.setBackground(errorOddColor);
-			} else if (aTable.getModel().getValueAt(modelRow, 0) == MappingStatus.IGNORED) {
-				component.setBackground(Color.white);
-				component.setForeground(Color.gray);
 			} else {
 				if (row % 2 == 1) {
 					component.setBackground(oddColor);
 				} else {
 					component.setBackground(evenColor);
 				}
+			}
+			if (aTable.getModel().getValueAt(modelRow, 0) == MappingStatus.IGNORED) {
+				component.setForeground(Color.gray);
 			}
 		}
 		return component;
