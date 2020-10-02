@@ -111,7 +111,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 
 		private String[]			defaultColumnNames	= { "Status", "Source code", "Source term", "Frequency", "Match score", "Concept ID", "Concept name",
 				"Domain", "Concept class", "Vocabulary", "Concept code", "Valid start date", "Valid end date", "Invalid reason", "Standard concept", "Parents",
-				"Children", "Comment", "Created by", "Created on", "Approved by", "Approved on" };
+				"Children", "Comment", "Approved/Ignored by", "Approved/Ignored on" };
 		private String[]			columnNames			= defaultColumnNames;
 		private int					addInfoColCount		= 0;
 		private int					ADD_INFO_START_COL	= 4;
@@ -204,13 +204,9 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 					case 17:
 						return codeMapping.comment;
 					case 18:
-						return codeMapping.createdBy;
+						return codeMapping.statusSetBy;
 					case 19:
-						return codeMapping.createdOn;
-					case 20:
-						return codeMapping.approvedBy;
-					case 21:
-						return codeMapping.approvedOn;
+						return codeMapping.statusSetOn;
 					default:
 						return "";
 				}

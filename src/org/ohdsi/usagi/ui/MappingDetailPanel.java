@@ -406,7 +406,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			codeMapping.approve(Global.author);
 			Global.mapping.fireDataChanged(APPROVE_EVENT);
 		} else {
-			codeMapping.unapprove();
+			codeMapping.setUnchecked();
 			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
 			toggleApproveButton();
 		}
@@ -430,7 +430,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			Global.mappingTablePanel.clearSelected();
 			Global.mapping.fireDataChanged(APPROVE_EVENT);
 		} else {
-			codeMapping.unignore();
+			codeMapping.setUnchecked();
 			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
 			toggleIgnoreButton();
 		}
