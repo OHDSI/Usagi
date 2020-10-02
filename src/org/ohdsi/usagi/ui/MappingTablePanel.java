@@ -17,6 +17,7 @@ package org.ohdsi.usagi.ui;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,7 +112,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 
 		private String[]			defaultColumnNames	= { "Status", "Source code", "Source term", "Frequency", "Match score", "Concept ID", "Concept name",
 				"Domain", "Concept class", "Vocabulary", "Concept code", "Valid start date", "Valid end date", "Invalid reason", "Standard concept", "Parents",
-				"Children", "Comment", "Approved/Ignored by", "Approved/Ignored on" };
+				"Children", "Comment", "Status Provenance"};
 		private String[]			columnNames			= defaultColumnNames;
 		private int					addInfoColCount		= 0;
 		private int					ADD_INFO_START_COL	= 4;
@@ -204,9 +205,9 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 					case 17:
 						return codeMapping.comment;
 					case 18:
-						return codeMapping.statusSetBy;
-					case 19:
-						return codeMapping.statusSetOn;
+						if (codeMapping.statusSetOn != 0L) {
+							return String.format("%s (%tF)", codeMapping.statusSetBy, codeMapping.statusSetOn);
+						}
 					default:
 						return "";
 				}
