@@ -449,9 +449,9 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	}
 
 	public void addConcept(Concept concept) {
-		codeMapping.targetConcepts.add(new MappingTarget(concept));
+		codeMapping.targetConcepts.add(new MappingTarget(concept, Global.author));
 		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
-			codeMappingMulti.targetConcepts.add(new MappingTarget(concept));
+			codeMappingMulti.targetConcepts.add(new MappingTarget(concept, Global.author));
 		}
 		targetConceptTableModel.fireTableDataChanged();
 

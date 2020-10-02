@@ -442,7 +442,7 @@ public class ImportDialog extends JDialog {
 						List<ScoredConcept> concepts = Global.usagiSearchEngine.search(sourceCode.sourceName, true, filterConceptIds, filterDomainsFinal,
 								filterConceptClassesFinal, filterVocabulariesFinal, filterStandard, includeSourceConcepts);
 						if (concepts.size() > 0) {
-							codeMapping.targetConcepts.add(new MappingTarget(concepts.get(0).concept));
+							codeMapping.targetConcepts.add(new MappingTarget(concepts.get(0).concept, "<auto>"));
 							codeMapping.matchScore = concepts.get(0).matchScore;
 						} else {
 							codeMapping.matchScore = 0;

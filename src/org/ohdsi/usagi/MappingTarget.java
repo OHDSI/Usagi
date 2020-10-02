@@ -39,6 +39,10 @@ public class MappingTarget{
 		this(concept, Type.REGULAR);
 	}
 
+	public MappingTarget(Concept concept, String createdBy) {
+		this(concept, Type.REGULAR, createdBy);
+	}
+
 	public MappingTarget(Concept concept, Type mappingType, String createdBy) {
 		this(concept, mappingType);
 		this.createdBy = createdBy;
