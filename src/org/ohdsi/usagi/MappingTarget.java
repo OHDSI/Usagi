@@ -22,16 +22,26 @@ public class MappingTarget{
 	public enum Type {
 		REGULAR, VALUE, UNIT // Maybe also OPERATOR, TYPE, etc.
 	};
+
 	public Concept concept;
 	public Type mappingType;
+	// TODO: write these to Usagi save file
+	public String createdBy;
+	public long createdOn;
 
 	public MappingTarget(Concept concept, Type mappingType) {
 		this.concept = concept;
 		this.mappingType = mappingType;
+		this.createdOn = System.currentTimeMillis();
 	}
 
 	public MappingTarget(Concept concept) {
 		this(concept, Type.REGULAR);
+	}
+
+	public MappingTarget(Concept concept, Type mappingType, String createdBy) {
+		this(concept, mappingType);
+		this.createdBy = createdBy;
 	}
 
 	public Concept getConcept() {
