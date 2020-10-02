@@ -43,8 +43,12 @@ public class WriteCodeMappingsToFile {
 			row.add("matchScore", codeMapping.matchScore);
 			row.add("mappingStatus", codeMapping.mappingStatus.toString());
 			row.add("conceptId", targetConcept.concept.conceptId);
-			row.add("comment", codeMapping.comment);
 			row.add("mappingType", targetConcept.mappingType.toString());
+			row.add("statusSetBy", codeMapping.statusSetBy);
+			row.add("statusSetOn", codeMapping.statusSetOn);
+			row.add("createdBy", targetConcept.createdBy);
+			row.add("createdOn", targetConcept.createdOn);
+			row.add("comment", codeMapping.comment);
 			out.write(row);
 		}
 	}

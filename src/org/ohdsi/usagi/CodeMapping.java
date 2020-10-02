@@ -33,7 +33,6 @@ public class CodeMapping {
     public MappingStatus mappingStatus;
     public List<MappingTarget> targetConcepts = new ArrayList<>(1);
     public String comment;
-    // TODO: write these to Usagi save file
     public String statusSetBy;
     public long statusSetOn;
 
