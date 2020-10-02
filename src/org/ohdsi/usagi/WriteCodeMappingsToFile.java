@@ -42,13 +42,13 @@ public class WriteCodeMappingsToFile {
 			Row row = codeMapping.sourceCode.toRow();
 			row.add("matchScore", codeMapping.matchScore);
 			row.add("mappingStatus", codeMapping.mappingStatus.toString());
-			row.add("conceptId", targetConcept.concept.conceptId);
-			row.add("mappingType", targetConcept.mappingType.toString());
 			row.add("statusSetBy", codeMapping.statusSetBy);
 			row.add("statusSetOn", codeMapping.statusSetOn);
+			row.add("conceptId", targetConcept.concept.conceptId);
+			row.add("mappingType", targetConcept.mappingType.toString());
+			row.add("comment", codeMapping.comment);
 			row.add("createdBy", targetConcept.createdBy);
 			row.add("createdOn", targetConcept.createdOn);
-			row.add("comment", codeMapping.comment);
 			out.write(row);
 		}
 	}
