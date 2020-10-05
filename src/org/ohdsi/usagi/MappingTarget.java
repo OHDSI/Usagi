@@ -22,16 +22,33 @@ public class MappingTarget{
 	public enum Type {
 		EVENT, VALUE, UNIT // Maybe also OPERATOR, TYPE, etc.
 	};
+
 	public Concept concept;
 	public Type mappingType;
+	public String createdBy;
+	public long createdOn;
 
 	public MappingTarget(Concept concept, Type mappingType) {
 		this.concept = concept;
 		this.mappingType = mappingType;
+		this.createdOn = System.currentTimeMillis();
 	}
 
 	public MappingTarget(Concept concept) {
 		this(concept, Type.EVENT);
+	}
+
+	public MappingTarget(Concept concept, String createdBy) {
+		this(concept, Type.REGULAR, createdBy);
+	}
+
+	public MappingTarget(Concept concept, Type mappingType, String createdBy) {
+		this(concept, mappingType);
+		this.createdBy = createdBy;
+	}
+	public MappingTarget(Concept concept, Type mappingType, String createdBy, long createdOn) {
+		this(concept, mappingType, createdBy);
+		this.createdOn = createdOn;
 	}
 
 	public Concept getConcept() {

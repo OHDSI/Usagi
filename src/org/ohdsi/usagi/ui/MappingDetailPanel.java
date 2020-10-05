@@ -57,12 +57,15 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private ConceptTableModel					searchTableModel;
 	private JButton								approveButton;
 	private JButton								ignoreButton;
+	private JButton								flagButton;
 	private JTextField							commentField;
 	private JButton								removeButton;
 	private JComboBox 							typesChooser;
 	private JButton								replaceButton;
 	private List<JButton> 						addButtons;
-	private JRadioButton						autoQueryButton;
+	private JRadioButton 						autoQueryCodeButton;
+	private JRadioButton						autoQueryValueButton;
+	private JRadioButton						autoQueryUnitButton;
 	private JRadioButton						manualQueryButton;
 	private JTextField							manualQueryField;
 	private CodeMapping							codeMapping;
@@ -117,43 +120,43 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
 		c.anchor = GridBagConstraints.WEST;
-		c.gridx = 0;
+		c.gridx = GridBagConstraints.RELATIVE;
 		c.gridy = 0;
 		c.weightx = 0.1;
 		c.gridwidth = 2;
 
-		autoQueryButton = new JRadioButton("Use source term as query", true);
-		autoQueryButton.addActionListener(new ActionListener() {
+		panel.add(new JLabel("Use:"), c);
 
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				doSearch();
-			}
-		});
-		panel.add(autoQueryButton, c);
+		autoQueryCodeButton = new JRadioButton("Term", true);
+		autoQueryCodeButton.addActionListener(x -> doSearch());
+		panel.add(autoQueryCodeButton, c);
+
+		autoQueryValueButton = new JRadioButton("Value", false);
+		autoQueryValueButton.addActionListener(x -> doSearch());
+		panel.add(autoQueryValueButton, c);
+
+		autoQueryUnitButton = new JRadioButton("Unit", false);
+		autoQueryUnitButton.addActionListener(x -> doSearch());
+		panel.add(autoQueryUnitButton, c);
 
 		c.gridx = 0;
 		c.gridy = 1;
 		c.weightx = 0.1;
 		c.gridwidth = 1;
 		manualQueryButton = new JRadioButton("Query:", false);
-		manualQueryButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				doSearch();
-			}
-		});
+		manualQueryButton.addActionListener(x -> doSearch());
 		panel.add(manualQueryButton, c);
 
 		ButtonGroup buttonGroup = new ButtonGroup();
-		buttonGroup.add(autoQueryButton);
+		buttonGroup.add(autoQueryCodeButton);
+		buttonGroup.add(autoQueryValueButton);
+		buttonGroup.add(autoQueryUnitButton);
 		buttonGroup.add(manualQueryButton);
 
 		c.gridx = 1;
 		c.gridy = 1;
 		c.weightx = 1;
-		c.gridwidth = 1;
+		c.gridwidth = GridBagConstraints.REMAINDER;
 		manualQueryField = new JTextField("");
 		// manualQueryField.setPreferredSize(new Dimension(200, 5));
 		manualQueryField.getDocument().addDocumentListener(new DocumentListener() {
@@ -258,6 +261,15 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private Component createApprovePanel() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+
+		ignoreButton = new JButton(Global.ignoreAction);
+		ignoreButton.setBackground(new Color(151, 220, 141));
+		panel.add(ignoreButton);
+
+		flagButton = new JButton(Global.flagAction);
+		flagButton.setBackground(new Color(151, 220, 141));
+		panel.add(flagButton);
+
 		panel.add(new JLabel("Comment:"));
 
 		panel.add(Box.createHorizontalStrut(5));
@@ -292,10 +304,6 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		approveButton = new JButton(Global.approveAction);
 		approveButton.setBackground(new Color(151, 220, 141));
 		panel.add(approveButton);
-
-		ignoreButton = new JButton(Global.ignoreAction);
-		ignoreButton.setBackground(new Color(151, 220, 141));
-		panel.add(ignoreButton);
 
 		return panel;
 	}
@@ -381,8 +389,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	@Override
 	public void codeSelected(CodeMapping codeMapping) {
 		this.codeMapping = codeMapping;
-		toggleApproveButton();
-		toggleIgnoreButton();
+		toggleStatusButtons();
 		sourceCodeTableModel.setMapping(codeMapping);
 		targetConceptTableModel.setConcepts(codeMapping.targetConcepts);
 		commentField.setText(codeMapping.comment);
@@ -401,55 +408,70 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 
 	public void approve() {
 		if (codeMapping.mappingStatus != CodeMapping.MappingStatus.APPROVED) {
-			codeMapping.mappingStatus = CodeMapping.MappingStatus.APPROVED;
+			codeMapping.approve(Global.author);
 			Global.mapping.fireDataChanged(APPROVE_EVENT);
 		} else {
-			codeMapping.mappingStatus = CodeMapping.MappingStatus.UNCHECKED;
+			codeMapping.setUnchecked();
 			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
-			toggleApproveButton();
-		}
-	}
-
-	private void toggleApproveButton() {
-		if (codeMapping.mappingStatus == MappingStatus.APPROVED) {
-			Global.approveAction.setToUnapprove();
-			approveButton.setBackground(new Color(220, 151, 141));
-			ignoreButton.setEnabled(false);
-		} else {
-			Global.approveAction.setToApprove();
-			approveButton.setBackground(new Color(151, 220, 141));
-			ignoreButton.setEnabled(true);
+			toggleStatusButtons();
 		}
 	}
 
 	public void ignore() {
 		if (codeMapping.mappingStatus != CodeMapping.MappingStatus.IGNORED) {
-			codeMapping.mappingStatus = MappingStatus.IGNORED;
+			codeMapping.ignore(Global.author);
 			Global.mappingTablePanel.clearSelected();
+			Global.mapping.fireDataChanged(APPROVE_EVENT);
+		} else {
+			codeMapping.setUnchecked();
+			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
+			toggleStatusButtons();
+		}
+	}
+
+	public void flag() {
+		if (codeMapping.mappingStatus != CodeMapping.MappingStatus.FLAGGED) {
+			codeMapping.mappingStatus = MappingStatus.FLAGGED;
 			Global.mapping.fireDataChanged(APPROVE_EVENT);
 		} else {
 			codeMapping.mappingStatus = CodeMapping.MappingStatus.UNCHECKED;
 			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
-			toggleIgnoreButton();
+			toggleStatusButtons();
 		}
 	}
 
-	private void toggleIgnoreButton() {
-		if (codeMapping.mappingStatus == MappingStatus.IGNORED) {
-			Global.ignoreAction.setToUnignore();
-			ignoreButton.setBackground(new Color(220, 151, 141));
-			approveButton.setEnabled(false);
-		} else {
-			Global.ignoreAction.setToIgnore();
-			ignoreButton.setBackground(new Color(151, 220, 141));
-			approveButton.setEnabled(true);
+	private void toggleStatusButtons() {
+		Global.approveAction.setToApprove();
+		Global.ignoreAction.setToIgnore();
+		Global.flagAction.setToFlag();
+		flagButton.setEnabled(false);
+		approveButton.setEnabled(false);
+		ignoreButton.setEnabled(false);
+
+		switch(codeMapping.mappingStatus) {
+			case APPROVED:
+				Global.approveAction.setToUnapprove();
+				approveButton.setEnabled(true);
+				break;
+			case IGNORED:
+				Global.ignoreAction.setToUnignore();
+				ignoreButton.setEnabled(true);
+				break;
+			case FLAGGED:
+				Global.flagAction.setToUnflag();
+				flagButton.setEnabled(true);
+				break;
+			default:
+				flagButton.setEnabled(true);
+				approveButton.setEnabled(true);
+				ignoreButton.setEnabled(true);
 		}
 	}
 
 	public void addConcept(Concept concept) {
-		codeMapping.targetConcepts.add(new MappingTarget(concept));
+		codeMapping.targetConcepts.add(new MappingTarget(concept, Global.author));
 		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
-			codeMappingMulti.targetConcepts.add(new MappingTarget(concept));
+			codeMappingMulti.targetConcepts.add(new MappingTarget(concept, Global.author));
 		}
 		targetConceptTableModel.fireTableDataChanged();
 
@@ -461,9 +483,9 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	}
 
 	public void addConcept(Concept concept, MappingTarget.Type mappingType) {
-		codeMapping.targetConcepts.add(new MappingTarget(concept, mappingType));
+		codeMapping.targetConcepts.add(new MappingTarget(concept, mappingType, Global.author));
 		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
-			codeMappingMulti.targetConcepts.add(new MappingTarget(concept, mappingType));
+			codeMappingMulti.targetConcepts.add(new MappingTarget(concept, mappingType, Global.author));
 		}
 		targetConceptTableModel.fireTableDataChanged();
 
@@ -523,9 +545,18 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			Vector<String> filterDomains = null;
 			if (filterPanel.getFilterByDomains())
 				filterDomains = filterPanel.getDomain();
-			String query = manualQueryField.getText();
-			if (autoQueryButton.isSelected())
+
+			String query;
+			if (autoQueryCodeButton.isSelected()) {
 				query = codeMapping.sourceCode.sourceName;
+			} else if (autoQueryValueButton.isSelected()) {
+				query = codeMapping.sourceCode.sourceValueName;
+			} else if (autoQueryUnitButton.isSelected()) {
+				query = codeMapping.sourceCode.sourceUnitName;
+			} else {
+				query = manualQueryField.getText();
+			}
+
 			boolean includeSourceConcepts = filterPanel.getIncludeSourceTerms();
 
 			if (Global.usagiSearchEngine.isOpenForSearching()) {
@@ -550,11 +581,11 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	class SourceCodeTableModel extends AbstractTableModel {
 		private static final long	serialVersionUID	= 169286268154988911L;
 
-		private String[]			defaultColumnNames	= { "Source code", "Source term", "Frequency" };
+		private String[]			defaultColumnNames	= { "Source code", "Source term", "Value", "Value term", "Unit term", "Frequency" };
 		private String[]			columnNames			= defaultColumnNames;
 		private CodeMapping			codeMapping;
 		private int					addInfoColCount		= 0;
-		private int					ADD_INFO_START_COL	= 3;
+		private int					ADD_INFO_START_COL	= 6;
 
 		public int getColumnCount() {
 			return columnNames.length;
@@ -595,6 +626,12 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 					case 1:
 						return codeMapping.sourceCode.sourceName;
 					case 2:
+						return codeMapping.sourceCode.sourceValueCode;
+					case 3:
+						return codeMapping.sourceCode.sourceValueName;
+					case 4:
+						return codeMapping.sourceCode.sourceUnitName;
+					case 5:
 						return codeMapping.sourceCode.sourceFrequency;
 					default:
 						return "";
