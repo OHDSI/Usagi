@@ -548,7 +548,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	class SourceCodeTableModel extends AbstractTableModel {
 		private static final long	serialVersionUID	= 169286268154988911L;
 
-		private String[]			defaultColumnNames	= { "Source code", "Source term", "Frequency", "Value", "Value term", "Unit term" };
+		private String[]			defaultColumnNames	= { "Source code", "Source term", "Value", "Value term", "Unit term", "Frequency" };
 		private String[]			columnNames			= defaultColumnNames;
 		private CodeMapping			codeMapping;
 		private int					addInfoColCount		= 0;
@@ -593,13 +593,13 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 					case 1:
 						return codeMapping.sourceCode.sourceName;
 					case 2:
-						return codeMapping.sourceCode.sourceFrequency;
-					case 3:
 						return codeMapping.sourceCode.sourceValueCode;
-					case 4:
+					case 3:
 						return codeMapping.sourceCode.sourceValueName;
-					case 5:
+					case 4:
 						return codeMapping.sourceCode.sourceUnitName;
+					case 5:
+						return codeMapping.sourceCode.sourceFrequency;
 					default:
 						return "";
 				}
