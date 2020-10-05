@@ -101,6 +101,9 @@ public class UsagiCellRenderer extends DefaultTableCellRenderer {
 			if (aTable.getModel().getValueAt(modelRow, 0) == MappingStatus.IGNORED) {
 				component.setForeground(Color.gray);
 			}
+			if (aTable.getModel().getValueAt(modelRow, 0) == MappingStatus.FLAGGED) {
+				component.setForeground(Color.red);
+			}
 		}
 		return component;
 	}
