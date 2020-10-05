@@ -130,21 +130,23 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
 		c.anchor = GridBagConstraints.WEST;
-		c.gridx = 0;
+		c.gridx = GridBagConstraints.RELATIVE;
 		c.gridy = 0;
 		c.weightx = 0.1;
 		c.gridwidth = 2;
 
-		autoQueryCodeButton = new JRadioButton("Use source term as query", true);
-		autoQueryCodeButton.addActionListener(arg0 -> doSearch());
+		panel.add(new JLabel("Use:"), c);
+
+		autoQueryCodeButton = new JRadioButton("Term", true);
+		autoQueryCodeButton.addActionListener(x -> doSearch());
 		panel.add(autoQueryCodeButton, c);
 
-		autoQueryValueButton = new JRadioButton("Value as query", true);
-		autoQueryValueButton.addActionListener(arg0 -> doSearch());
+		autoQueryValueButton = new JRadioButton("Value", false);
+		autoQueryValueButton.addActionListener(x -> doSearch());
 		panel.add(autoQueryValueButton, c);
 
-		autoQueryUnitButton = new JRadioButton("Unit as query", true);
-		autoQueryUnitButton.addActionListener(arg0 -> doSearch());
+		autoQueryUnitButton = new JRadioButton("Unit", false);
+		autoQueryUnitButton.addActionListener(x -> doSearch());
 		panel.add(autoQueryUnitButton, c);
 
 		c.gridx = 0;
@@ -152,23 +154,19 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		c.weightx = 0.1;
 		c.gridwidth = 1;
 		manualQueryButton = new JRadioButton("Query:", false);
-		manualQueryButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				doSearch();
-			}
-		});
+		manualQueryButton.addActionListener(x -> doSearch());
 		panel.add(manualQueryButton, c);
 
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(autoQueryCodeButton);
+		buttonGroup.add(autoQueryValueButton);
+		buttonGroup.add(autoQueryUnitButton);
 		buttonGroup.add(manualQueryButton);
 
 		c.gridx = 1;
 		c.gridy = 1;
 		c.weightx = 1;
-		c.gridwidth = 1;
+		c.gridwidth = GridBagConstraints.REMAINDER;
 		manualQueryField = new JTextField("");
 		// manualQueryField.setPreferredSize(new Dimension(200, 5));
 		manualQueryField.getDocument().addDocumentListener(new DocumentListener() {
