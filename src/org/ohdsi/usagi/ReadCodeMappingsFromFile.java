@@ -23,95 +23,88 @@ import org.ohdsi.utilities.files.ReadCSVFileWithHeader;
 import org.ohdsi.utilities.files.Row;
 
 public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
-    private String filename;
+	private String filename;
 
-    public ReadCodeMappingsFromFile(String filename) {
-        this.filename = filename;
-    }
+	public ReadCodeMappingsFromFile(String filename) {
+		this.filename = filename;
+	}
 
-    @Override
-    public Iterator<CodeMapping> iterator() {
-        return new RowIterator();
-    }
+	@Override
+	public Iterator<CodeMapping> iterator() {
+		return new RowIterator();
+	}
 
-    public class RowIterator implements Iterator<CodeMapping> {
+	public class RowIterator implements Iterator<CodeMapping> {
 
-        private Iterator<Row> iterator;
-        private CodeMapping buffer;
-        private Row row;
+		private Iterator<Row>	iterator;
+		private CodeMapping		buffer;
+		private Row				row;
 
-        public RowIterator() {
-            iterator = new ReadCSVFileWithHeader(filename).iterator();
+		public RowIterator() {
+			iterator = new ReadCSVFileWithHeader(filename).iterator();
 
-            if (iterator.hasNext()) {
-                row = iterator.next();
-                readNext();
-            } else {
-                buffer = null;
-            }
-        }
+			if (iterator.hasNext()) {
+				row = iterator.next();
+				readNext();
+			} else {
+				buffer = null;
+			}
+		}
 
-        private void readNext() {
-            if (row == null) {
-                buffer = null;
-            } else {
-                buffer = new CodeMapping(new SourceCode(row));
-                buffer.matchScore = row.getDouble("matchScore");
-                buffer.mappingStatus = MappingStatus.valueOf(row.get("mappingStatus"));
+		private void readNext() {
+			if (row == null) {
+				buffer = null;
+			} else {
+				buffer = new CodeMapping(new SourceCode(row));
+				buffer.matchScore = row.getDouble("matchScore");
+				buffer.mappingStatus = MappingStatus.valueOf(row.get("mappingStatus"));
+				try {
+					buffer.comment = row.get("comment");
+				} catch (Exception e) {
+					buffer.comment = "";
+				}
+				while (row != null && new SourceCode(row).sourceCode.equals(buffer.sourceCode.sourceCode)
+						&& new SourceCode(row).sourceName.equals(buffer.sourceCode.sourceName)) {
+					if (row.getInt("conceptId") != 0) {
+						Concept concept = Global.dbEngine.getConcept(row.getInt("conceptId"));
 
-                // Status provenance fields might not be available in older Usagi files
-                buffer.statusSetBy = row.get("statusSetBy", "");
-                buffer.statusSetOn = row.getLong("statusSetOn", "0");
+						// Older save files might not have a mappingType.
+						MappingTarget.Type mappingType = MappingTarget.Type.EVENT;
+						if (row.getFieldNames().contains("mappingType")) {
+							mappingType = MappingTarget.Type.valueOf(row.get("mappingType"));
+						}
 
-                try {
-                    buffer.comment = row.get("comment");
-                } catch (Exception e) {
-                    buffer.comment = "";
-                }
-                while (row != null && new SourceCode(row).sourceCode.equals(buffer.sourceCode.sourceCode)
-                        && new SourceCode(row).sourceName.equals(buffer.sourceCode.sourceName)) {
-                    if (row.getInt("conceptId") != 0) {
-                        Concept concept = Global.dbEngine.getConcept(row.getInt("conceptId"));
+						if (concept == null) {
+							buffer.mappingStatus = MappingStatus.INVALID_TARGET;
+							buffer.comment = "Invalid existing target: " + row.get("conceptId");
+						} else {
+							buffer.targetConcepts.add(new MappingTarget(concept, mappingType));
+						}
+					}
+					if (iterator.hasNext())
+						row = iterator.next();
+					else
+						row = null;
+				}
+			}
+		}
 
-                        if (concept == null) {
-                            buffer.mappingStatus = MappingStatus.INVALID_TARGET;
-                            buffer.comment = "Invalid existing target: " + row.get("conceptId");
-                        } else {
-                            // Type and provenance might not be available in older Usagi files
-                            MappingTarget mappingTarget = new MappingTarget(
-                                    concept,
-                                    MappingTarget.Type.valueOf(row.get("mappingType", "REGULAR")),
-                                    row.get("createdBy", ""),
-                                    row.getLong("createdOn", "0")
-                            );
-                            buffer.targetConcepts.add(mappingTarget);
-                        }
-                    }
-                    if (iterator.hasNext())
-                        row = iterator.next();
-                    else
-                        row = null;
-                }
-            }
-        }
+		@Override
+		public boolean hasNext() {
+			return buffer != null;
+		}
 
-        @Override
-        public boolean hasNext() {
-            return buffer != null;
-        }
+		@Override
+		public CodeMapping next() {
+			CodeMapping next = buffer;
+			readNext();
+			return next;
+		}
 
-        @Override
-        public CodeMapping next() {
-            CodeMapping next = buffer;
-            readNext();
-            return next;
-        }
+		@Override
+		public void remove() {
+			throw new RuntimeException("Remove not supported");
+		}
 
-        @Override
-        public void remove() {
-            throw new RuntimeException("Remove not supported");
-        }
-
-    }
-
+	}
 }

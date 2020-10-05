@@ -20,7 +20,7 @@ package org.ohdsi.usagi;
  */
 public class MappingTarget{
 	public enum Type {
-		REGULAR, VALUE, UNIT // Maybe also OPERATOR, TYPE, etc.
+		EVENT, VALUE, UNIT // Maybe also OPERATOR, TYPE, etc.
 	};
 
 	public Concept concept;
@@ -35,7 +35,7 @@ public class MappingTarget{
 	}
 
 	public MappingTarget(Concept concept) {
-		this(concept, Type.REGULAR);
+		this(concept, Type.EVENT);
 	}
 
 	public MappingTarget(Concept concept, String createdBy) {
