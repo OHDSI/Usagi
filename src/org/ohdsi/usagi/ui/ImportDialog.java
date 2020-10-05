@@ -70,6 +70,9 @@ public class ImportDialog extends JDialog {
 	private JComboBox<String>		sourceCodeColumn;
 	private JComboBox<String>		sourceNameColumn;
 	private JComboBox<String>		sourceFrequencyColumn;
+	private JComboBox<String>		sourceValueCodeColumn;
+	private JComboBox<String>		sourceValueNameColumn;
+	private JComboBox<String>		sourceUnitNameColumn;
 	private JComboBox<String>		autoConceptIdColumn;
 	private List<JComboBox<String>>	additionalInfoColumns	= new ArrayList<JComboBox<String>>();
 	private int						gridY;
@@ -222,6 +225,27 @@ public class ImportDialog extends JDialog {
 
 		cLabel.gridy++;
 		cBox.gridy++;
+		columnMappingPanel.add(new JLabel("Value code column"), cLabel);
+		sourceValueCodeColumn = new JComboBox<>(comboBoxOptions);
+		sourceValueCodeColumn.setToolTipText("The column containing the value code");
+		columnMappingPanel.add(sourceValueCodeColumn, cBox);
+
+		cLabel.gridy++;
+		cBox.gridy++;
+		columnMappingPanel.add(new JLabel("Value name column "), cLabel);
+		sourceValueNameColumn = new JComboBox<>(comboBoxOptions);
+		sourceValueNameColumn.setToolTipText("The column containing the value name");
+		columnMappingPanel.add(sourceValueNameColumn, cBox);
+
+		cLabel.gridy++;
+		cBox.gridy++;
+		columnMappingPanel.add(new JLabel("Unit name column"), cLabel);
+		sourceUnitNameColumn = new JComboBox<>(comboBoxOptions);
+		sourceUnitNameColumn.setToolTipText("The column containing the name of the unit");
+		columnMappingPanel.add(sourceUnitNameColumn, cBox);
+
+		cLabel.gridy++;
+		cBox.gridy++;
 		conceptIdsOrAtc = new JComboBox<>(new String[] { CONCEPT_IDS, ATC });
 		columnMappingPanel.add(conceptIdsOrAtc, cLabel);
 		autoConceptIdColumn = new JComboBox<>(comboBoxOptions);
@@ -336,6 +360,9 @@ public class ImportDialog extends JDialog {
 		int sourceCodeIndex = columnNames.indexOf(sourceCodeColumn.getSelectedItem().toString());
 		int sourceNameIndex = columnNames.indexOf(sourceNameColumn.getSelectedItem().toString());
 		int sourceFrequencyIndex = columnNames.indexOf(sourceFrequencyColumn.getSelectedItem().toString());
+		int sourceValueCodeIndex = columnNames.indexOf(sourceValueCodeColumn.getSelectedItem().toString());
+		int sourceValueNameIndex = columnNames.indexOf(sourceValueNameColumn.getSelectedItem().toString());
+		int sourceUnitNameIndex = columnNames.indexOf(sourceUnitNameColumn.getSelectedItem().toString());
 		int sourceAutoIndex = columnNames.indexOf(autoConceptIdColumn.getSelectedItem().toString());
 		List<Integer> additionalInfoIndexes = new ArrayList<Integer>();
 		for (JComboBox<String> additionalInfoColumn : additionalInfoColumns) {
@@ -357,6 +384,12 @@ public class ImportDialog extends JDialog {
 				sourceCode.sourceFrequency = Integer.parseInt(row.get(sourceFrequencyIndex));
 			else
 				sourceCode.sourceFrequency = -1;
+			if (sourceValueCodeIndex != -1)
+				sourceCode.sourceValueCode = row.get(sourceValueCodeIndex);
+			if (sourceValueNameIndex != -1)
+				sourceCode.sourceValueName = row.get(sourceValueNameIndex);
+			if (sourceUnitNameIndex != -1)
+				sourceCode.sourceUnitName = row.get(sourceUnitNameIndex);
 			if (sourceAutoIndex != -1)
 				if (conceptIdsOrAtc.getSelectedItem().toString().equals(CONCEPT_IDS)) {
 					for (String conceptId : row.get(sourceAutoIndex).split(";"))
