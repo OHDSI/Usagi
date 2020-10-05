@@ -73,7 +73,9 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private JButton								removeButton;
 	private JButton								replaceButton;
 	private List<JButton> 						addButtons;
-	private JRadioButton						autoQueryButton;
+	private JRadioButton 						autoQueryCodeButton;
+	private JRadioButton						autoQueryValueButton;
+	private JRadioButton						autoQueryUnitButton;
 	private JRadioButton						manualQueryButton;
 	private JTextField							manualQueryField;
 	private CodeMapping							codeMapping;
@@ -128,43 +130,43 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
 		c.anchor = GridBagConstraints.WEST;
-		c.gridx = 0;
+		c.gridx = GridBagConstraints.RELATIVE;
 		c.gridy = 0;
 		c.weightx = 0.1;
 		c.gridwidth = 2;
 
-		autoQueryButton = new JRadioButton("Use source term as query", true);
-		autoQueryButton.addActionListener(new ActionListener() {
+		panel.add(new JLabel("Use:"), c);
 
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				doSearch();
-			}
-		});
-		panel.add(autoQueryButton, c);
+		autoQueryCodeButton = new JRadioButton("Term", true);
+		autoQueryCodeButton.addActionListener(x -> doSearch());
+		panel.add(autoQueryCodeButton, c);
+
+		autoQueryValueButton = new JRadioButton("Value", false);
+		autoQueryValueButton.addActionListener(x -> doSearch());
+		panel.add(autoQueryValueButton, c);
+
+		autoQueryUnitButton = new JRadioButton("Unit", false);
+		autoQueryUnitButton.addActionListener(x -> doSearch());
+		panel.add(autoQueryUnitButton, c);
 
 		c.gridx = 0;
 		c.gridy = 1;
 		c.weightx = 0.1;
 		c.gridwidth = 1;
 		manualQueryButton = new JRadioButton("Query:", false);
-		manualQueryButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				doSearch();
-			}
-		});
+		manualQueryButton.addActionListener(x -> doSearch());
 		panel.add(manualQueryButton, c);
 
 		ButtonGroup buttonGroup = new ButtonGroup();
-		buttonGroup.add(autoQueryButton);
+		buttonGroup.add(autoQueryCodeButton);
+		buttonGroup.add(autoQueryValueButton);
+		buttonGroup.add(autoQueryUnitButton);
 		buttonGroup.add(manualQueryButton);
 
 		c.gridx = 1;
 		c.gridy = 1;
 		c.weightx = 1;
-		c.gridwidth = 1;
+		c.gridwidth = GridBagConstraints.REMAINDER;
 		manualQueryField = new JTextField("");
 		// manualQueryField.setPreferredSize(new Dimension(200, 5));
 		manualQueryField.getDocument().addDocumentListener(new DocumentListener() {
@@ -521,9 +523,18 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			Vector<String> filterDomains = null;
 			if (filterPanel.getFilterByDomains())
 				filterDomains = filterPanel.getDomain();
-			String query = manualQueryField.getText();
-			if (autoQueryButton.isSelected())
+
+			String query;
+			if (autoQueryCodeButton.isSelected()) {
 				query = codeMapping.sourceCode.sourceName;
+			} else if (autoQueryValueButton.isSelected()) {
+				query = codeMapping.sourceCode.sourceValueName;
+			} else if (autoQueryUnitButton.isSelected()) {
+				query = codeMapping.sourceCode.sourceUnitName;
+			} else {
+				query = manualQueryField.getText();
+			}
+
 			boolean includeSourceConcepts = filterPanel.getIncludeSourceTerms();
 
 			if (Global.usagiSearchEngine.isOpenForSearching()) {
@@ -548,11 +559,11 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	class SourceCodeTableModel extends AbstractTableModel {
 		private static final long	serialVersionUID	= 169286268154988911L;
 
-		private String[]			defaultColumnNames	= { "Source code", "Source term", "Frequency" };
+		private String[]			defaultColumnNames	= { "Source code", "Source term", "Value", "Value term", "Unit term", "Frequency" };
 		private String[]			columnNames			= defaultColumnNames;
 		private CodeMapping			codeMapping;
 		private int					addInfoColCount		= 0;
-		private int					ADD_INFO_START_COL	= 3;
+		private int					ADD_INFO_START_COL	= 6;
 
 		public int getColumnCount() {
 			return columnNames.length;
@@ -593,6 +604,12 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 					case 1:
 						return codeMapping.sourceCode.sourceName;
 					case 2:
+						return codeMapping.sourceCode.sourceValueCode;
+					case 3:
+						return codeMapping.sourceCode.sourceValueName;
+					case 4:
+						return codeMapping.sourceCode.sourceUnitName;
+					case 5:
 						return codeMapping.sourceCode.sourceFrequency;
 					default:
 						return "";

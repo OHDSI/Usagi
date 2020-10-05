@@ -110,12 +110,12 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 	class CodeMapTableModel extends AbstractTableModel {
 		private static final long	serialVersionUID	= 169286268154988911L;
 
-		private String[]			defaultColumnNames	= { "Status", "Source code", "Source term", "Frequency", "Match score", "Concept ID", "Concept name",
-				"Domain", "Concept class", "Vocabulary", "Concept code", "Valid start date", "Valid end date", "Invalid reason", "Standard concept", "Parents",
-				"Children", "Comment", "Status Provenance"};
+		private String[]			defaultColumnNames	= { "Status", "Source code", "Source term", "Frequency", "Value", "Value term", "Unit term",
+				"Match score", "Concept ID", "Concept name", "Domain", "Concept class", "Vocabulary", "Concept code",
+				"Valid start date", "Valid end date", "Invalid reason", "Standard concept", "Parents", "Children", "Comment", "Status Provenance" };
 		private String[]			columnNames			= defaultColumnNames;
 		private int					addInfoColCount		= 0;
-		private int					ADD_INFO_START_COL	= 4;
+		private int					ADD_INFO_START_COL	= 7;
 
 		public int getColumnCount() {
 			return columnNames.length;
@@ -177,34 +177,40 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 					case 3:
 						return codeMapping.sourceCode.sourceFrequency == -1 ? "" : codeMapping.sourceCode.sourceFrequency;
 					case 4:
-						return codeMapping.matchScore;
+						return codeMapping.sourceCode.sourceValueCode;
 					case 5:
-						return targetConcept.conceptId;
+						return codeMapping.sourceCode.sourceValueName;
 					case 6:
-						return targetConcept.conceptName;
+						return codeMapping.sourceCode.sourceUnitName;
 					case 7:
-						return targetConcept.domainId;
+						return codeMapping.matchScore;
 					case 8:
-						return targetConcept.conceptClassId;
+						return targetConcept.conceptId;
 					case 9:
-						return targetConcept.vocabularyId;
+						return targetConcept.conceptName;
 					case 10:
-						return targetConcept.conceptCode;
+						return targetConcept.domainId;
 					case 11:
-						return targetConcept.validStartDate;
+						return targetConcept.conceptClassId;
 					case 12:
-						return targetConcept.validEndDate;
+						return targetConcept.vocabularyId;
 					case 13:
-						return targetConcept.invalidReason;
+						return targetConcept.conceptCode;
 					case 14:
-						return targetConcept.standardConcept;
+						return targetConcept.validStartDate;
 					case 15:
-						return targetConcept.parentCount;
+						return targetConcept.validEndDate;
 					case 16:
-						return targetConcept.childCount;
+						return targetConcept.invalidReason;
 					case 17:
-						return codeMapping.comment;
+						return targetConcept.standardConcept;
 					case 18:
+						return targetConcept.parentCount;
+					case 19:
+						return targetConcept.childCount;
+					case 20:
+						return codeMapping.comment;
+					case 21:
 						if (codeMapping.statusSetOn != 0L) {
 							return String.format("%s (%tF)", codeMapping.statusSetBy, codeMapping.statusSetOn);
 						}
