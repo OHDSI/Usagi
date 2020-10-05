@@ -73,7 +73,9 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private JButton								removeButton;
 	private JButton								replaceButton;
 	private List<JButton> 						addButtons;
-	private JRadioButton						autoQueryButton;
+	private JRadioButton 						autoQueryCodeButton;
+	private JRadioButton						autoQueryValueButton;
+	private JRadioButton						autoQueryUnitButton;
 	private JRadioButton						manualQueryButton;
 	private JTextField							manualQueryField;
 	private CodeMapping							codeMapping;
@@ -133,15 +135,17 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		c.weightx = 0.1;
 		c.gridwidth = 2;
 
-		autoQueryButton = new JRadioButton("Use source term as query", true);
-		autoQueryButton.addActionListener(new ActionListener() {
+		autoQueryCodeButton = new JRadioButton("Use source term as query", true);
+		autoQueryCodeButton.addActionListener(arg0 -> doSearch());
+		panel.add(autoQueryCodeButton, c);
 
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				doSearch();
-			}
-		});
-		panel.add(autoQueryButton, c);
+		autoQueryValueButton = new JRadioButton("Value as query", true);
+		autoQueryValueButton.addActionListener(arg0 -> doSearch());
+		panel.add(autoQueryValueButton, c);
+
+		autoQueryUnitButton = new JRadioButton("Unit as query", true);
+		autoQueryUnitButton.addActionListener(arg0 -> doSearch());
+		panel.add(autoQueryUnitButton, c);
 
 		c.gridx = 0;
 		c.gridy = 1;
@@ -158,7 +162,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		panel.add(manualQueryButton, c);
 
 		ButtonGroup buttonGroup = new ButtonGroup();
-		buttonGroup.add(autoQueryButton);
+		buttonGroup.add(autoQueryCodeButton);
 		buttonGroup.add(manualQueryButton);
 
 		c.gridx = 1;
@@ -521,9 +525,18 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			Vector<String> filterDomains = null;
 			if (filterPanel.getFilterByDomains())
 				filterDomains = filterPanel.getDomain();
-			String query = manualQueryField.getText();
-			if (autoQueryButton.isSelected())
+
+			String query;
+			if (autoQueryCodeButton.isSelected()) {
 				query = codeMapping.sourceCode.sourceName;
+			} else if (autoQueryValueButton.isSelected()) {
+				query = codeMapping.sourceCode.sourceValueName;
+			} else if (autoQueryUnitButton.isSelected()) {
+				query = codeMapping.sourceCode.sourceUnitName;
+			} else {
+				query = manualQueryField.getText();
+			}
+
 			boolean includeSourceConcepts = filterPanel.getIncludeSourceTerms();
 
 			if (Global.usagiSearchEngine.isOpenForSearching()) {
