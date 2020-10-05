@@ -24,7 +24,6 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -235,7 +234,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		JButton button;
 		addButtons = new ArrayList<>();
 		for (MappingTarget.Type mappingType : MappingTarget.Type.values()) {
-			if (mappingType.equals(MappingTarget.Type.REGULAR)) {
+			if (mappingType.equals(MappingTarget.Type.EVENT)) {
 				button = new JButton("Add concept");
 			} else {
 				button = new JButton(String.format("Add %s concept", mappingType));

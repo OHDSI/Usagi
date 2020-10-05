@@ -69,7 +69,7 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 						Concept concept = Global.dbEngine.getConcept(row.getInt("conceptId"));
 
 						// Older save files might not have a mappingType.
-						MappingTarget.Type mappingType = MappingTarget.Type.REGULAR;
+						MappingTarget.Type mappingType = MappingTarget.Type.EVENT;
 						if (row.getFieldNames().contains("mappingType")) {
 							mappingType = MappingTarget.Type.valueOf(row.get("mappingType"));
 						}
