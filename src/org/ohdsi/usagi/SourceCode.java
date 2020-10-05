@@ -62,9 +62,12 @@ public class SourceCode {
 	public SourceCode(Row row) {
 		sourceCode = row.get("sourceCode");
 		sourceName = row.get("sourceName");
-		sourceValueCode = row.get("sourceValueCode");
-		sourceValueName = row.get("sourceValueName");
-		sourceUnitName = row.get("sourceUnitName");
+		if (row.getFieldNames().contains("sourceValueCode")) {
+			// Assume that if source value code exists, then other new fields as well
+			sourceValueCode = row.get("sourceValueCode");
+			sourceValueName = row.get("sourceValueName");
+			sourceUnitName = row.get("sourceUnitName");
+		}
 		sourceFrequency = row.getInt("sourceFrequency");
 		sourceAutoAssignedConceptIds = parse(row.get("sourceAutoAssignedConceptIds"));
 		for (String field : row.getFieldNames())
