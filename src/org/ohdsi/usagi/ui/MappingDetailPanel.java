@@ -69,6 +69,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private ConceptTableModel					searchTableModel;
 	private JButton								approveButton;
 	private JButton								ignoreButton;
+	private JButton								flagButton;
 	private JTextField							commentField;
 	private JButton								removeButton;
 	private JButton								replaceButton;
@@ -271,6 +272,15 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private Component createApprovePanel() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+
+		ignoreButton = new JButton(Global.ignoreAction);
+		ignoreButton.setBackground(new Color(151, 220, 141));
+		panel.add(ignoreButton);
+
+		flagButton = new JButton(Global.flagAction);
+		flagButton.setBackground(new Color(151, 220, 141));
+		panel.add(flagButton);
+
 		panel.add(new JLabel("Comment:"));
 
 		panel.add(Box.createHorizontalStrut(5));
@@ -305,10 +315,6 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		approveButton = new JButton(Global.approveAction);
 		approveButton.setBackground(new Color(151, 220, 141));
 		panel.add(approveButton);
-
-		ignoreButton = new JButton(Global.ignoreAction);
-		ignoreButton.setBackground(new Color(151, 220, 141));
-		panel.add(ignoreButton);
 
 		return panel;
 	}
@@ -385,8 +391,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	@Override
 	public void codeSelected(CodeMapping codeMapping) {
 		this.codeMapping = codeMapping;
-		toggleApproveButton();
-		toggleIgnoreButton();
+		toggleStatusButtons();
 		sourceCodeTableModel.setMapping(codeMapping);
 		targetConceptTableModel.setConcepts(codeMapping.targetConcepts);
 		commentField.setText(codeMapping.comment);
@@ -410,19 +415,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		} else {
 			codeMapping.setUnchecked();
 			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
-			toggleApproveButton();
-		}
-	}
-
-	private void toggleApproveButton() {
-		if (codeMapping.mappingStatus == MappingStatus.APPROVED) {
-			Global.approveAction.setToUnapprove();
-			approveButton.setBackground(new Color(220, 151, 141));
-			ignoreButton.setEnabled(false);
-		} else {
-			Global.approveAction.setToApprove();
-			approveButton.setBackground(new Color(151, 220, 141));
-			ignoreButton.setEnabled(true);
+			toggleStatusButtons();
 		}
 	}
 
@@ -434,19 +427,46 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		} else {
 			codeMapping.setUnchecked();
 			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
-			toggleIgnoreButton();
+			toggleStatusButtons();
 		}
 	}
 
-	private void toggleIgnoreButton() {
-		if (codeMapping.mappingStatus == MappingStatus.IGNORED) {
-			Global.ignoreAction.setToUnignore();
-			ignoreButton.setBackground(new Color(220, 151, 141));
-			approveButton.setEnabled(false);
+	public void flag() {
+		if (codeMapping.mappingStatus != CodeMapping.MappingStatus.FLAGGED) {
+			codeMapping.mappingStatus = MappingStatus.FLAGGED;
+			Global.mapping.fireDataChanged(APPROVE_EVENT);
 		} else {
-			Global.ignoreAction.setToIgnore();
-			ignoreButton.setBackground(new Color(151, 220, 141));
-			approveButton.setEnabled(true);
+			codeMapping.mappingStatus = CodeMapping.MappingStatus.UNCHECKED;
+			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
+			toggleStatusButtons();
+		}
+	}
+
+	private void toggleStatusButtons() {
+		Global.approveAction.setToApprove();
+		Global.ignoreAction.setToIgnore();
+		Global.flagAction.setToFlag();
+		flagButton.setEnabled(false);
+		approveButton.setEnabled(false);
+		ignoreButton.setEnabled(false);
+
+		switch(codeMapping.mappingStatus) {
+			case APPROVED:
+				Global.approveAction.setToUnapprove();
+				approveButton.setEnabled(true);
+				break;
+			case IGNORED:
+				Global.ignoreAction.setToUnignore();
+				ignoreButton.setEnabled(true);
+				break;
+			case FLAGGED:
+				Global.flagAction.setToUnflag();
+				flagButton.setEnabled(true);
+				break;
+			default:
+				flagButton.setEnabled(true);
+				approveButton.setEnabled(true);
+				ignoreButton.setEnabled(true);
 		}
 	}
 

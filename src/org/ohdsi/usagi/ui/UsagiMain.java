@@ -80,6 +80,7 @@ public class UsagiMain implements ActionListener {
 		Global.saveAsAction = new SaveAsAction();
 		Global.approveAction = new ApproveAction();
 		Global.ignoreAction = new IgnoreAction();
+		Global.flagAction = new FlagAction();
 		Global.conceptInfoAction = new ConceptInformationAction();
 		Global.athenaAction = new AthenaAction();
 		Global.googleSearchAction = new GoogleSearchAction();
@@ -98,6 +99,7 @@ public class UsagiMain implements ActionListener {
 		Global.approveAction.setEnabled(false);
 		Global.approveSelectedAction.setEnabled(false);
 		Global.ignoreAction.setEnabled(false);
+		Global.flagAction.setEnabled(false);
 		Global.ignoreSelectedAction.setEnabled(false);
 		Global.clearSelectedAction = new ClearSelectedAction();
 		Global.clearSelectedAction.setEnabled(false);
