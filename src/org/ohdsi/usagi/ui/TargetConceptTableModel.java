@@ -19,8 +19,12 @@ class TargetConceptTableModel extends AbstractTableModel {
     public TargetConceptTableModel() {
     }
 
+    public MappingTarget getMappingTarget(int row) {
+        return targetConcepts.get(row);
+    }
+
     public Concept getConcept(int row) {
-        return targetConcepts.get(row).concept;
+        return getMappingTarget(row).concept;
     }
 
     public int getColumnCount() {

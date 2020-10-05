@@ -32,18 +32,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.AbstractTableModel;
@@ -71,6 +60,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private JButton								ignoreButton;
 	private JTextField							commentField;
 	private JButton								removeButton;
+	private JComboBox 							typesChooser;
 	private JButton								replaceButton;
 	private List<JButton> 						addButtons;
 	private JRadioButton						autoQueryButton;
@@ -342,13 +332,17 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			int viewRow = targetConceptTable.getSelectedRow();
 			if (viewRow == -1 || codeMapping.mappingStatus == MappingStatus.APPROVED) {
 				removeButton.setEnabled(false);
+				typesChooser.setEnabled(false);
 			} else {
 				removeButton.setEnabled(true);
+				typesChooser.setEnabled(true);
 				int modelRow = targetConceptTable.convertRowIndexToModel(viewRow);
+				MappingTarget mappingTarget = targetConceptTableModel.getMappingTarget(modelRow);
+				typesChooser.setSelectedItem(mappingTarget.getMappingType());
 				Global.conceptInfoAction.setEnabled(true);
-				Global.conceptInformationDialog.setConcept(targetConceptTableModel.getConcept(modelRow));
+				Global.conceptInformationDialog.setConcept(mappingTarget.concept);
 				Global.athenaAction.setEnabled(true);
-				Global.athenaAction.setConcept(targetConceptTableModel.getConcept(modelRow));
+				Global.athenaAction.setConcept(mappingTarget.concept);
 				Global.googleSearchAction.setEnabled(false);
 			}
 		});
@@ -366,14 +360,19 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 		buttonPanel.add(Box.createHorizontalGlue());
 
+		typesChooser = new JComboBox<>(MappingTarget.Type.values());
+		typesChooser.setToolTipText("Set type of the mapping");
+		typesChooser.addActionListener(e -> {
+			if (((JComboBox)e.getSource()).hasFocus())
+				changeTargetType();
+		});
+		typesChooser.setMaximumSize(typesChooser.getPreferredSize());
+		typesChooser.setEnabled(false);
+		buttonPanel.add(typesChooser);
+
 		removeButton = new JButton("Remove concept");
 		removeButton.setToolTipText("Add selected concept");
-		removeButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				remove();
-			}
-
-		});
+		removeButton.addActionListener(e -> remove());
 		removeButton.setEnabled(false);
 		buttonPanel.add(removeButton);
 		panel.add(buttonPanel);
@@ -485,19 +484,23 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	}
 
 	private void remove() {
-		List<Integer> rows = new ArrayList<Integer>();
+		List<Integer> rows = new ArrayList<>();
 		for (int row : targetConceptTable.getSelectedRows())
 			rows.add(targetConceptTable.convertRowIndexToModel(row));
 
-		Collections.sort(rows, new Comparator<Integer>() {
-
-			@Override
-			public int compare(Integer o1, Integer o2) {
-				return o2.compareTo(o1);
-			}
-		});
+		rows.sort(Comparator.reverseOrder());
 		for (int row : rows)
 			codeMapping.targetConcepts.remove(row);
+
+		targetConceptTableModel.fireTableDataChanged();
+		Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
+	}
+
+	private void changeTargetType() {
+		for (int row : targetConceptTable.getSelectedRows()) {
+			MappingTarget mappingTarget = codeMapping.targetConcepts.get(row);
+			mappingTarget.setMappingType((MappingTarget.Type) typesChooser.getSelectedItem());
+		}
 
 		targetConceptTableModel.fireTableDataChanged();
 		Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
