@@ -13,7 +13,8 @@ class TargetConceptTableModel extends AbstractTableModel {
 
     private final String termColumnName = "Term";
     private final String[] columnNames = {"Concept ID", "Concept name", "Domain", "Concept class", "Vocabulary", "Concept code",
-            "Valid start date", "Valid end date", "Invalid reason", "Standard concept", "Parents", "Children", "Mapping Type"};
+            "Valid start date", "Valid end date", "Invalid reason", "Standard concept", "Parents", "Children", "Mapping Type",
+            "Creation Provenance"};
     private List<MappingTarget> targetConcepts = new ArrayList<>();
 
     public TargetConceptTableModel() {
@@ -72,6 +73,10 @@ class TargetConceptTableModel extends AbstractTableModel {
                 return targetConcept.concept.childCount;
             case 12:
                 return targetConcept.mappingType;
+            case 13:
+                if (targetConcept.createdOn != 0L) {
+                    return String.format("%s (%tF)", targetConcept.createdBy, targetConcept.createdOn);
+                }
             default:
                 return "";
         }
