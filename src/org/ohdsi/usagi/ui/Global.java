@@ -45,6 +45,7 @@ public class Global {
 	public static ApproveSelectedAction 			approveSelectedAction;
 	public static IgnoreAction						ignoreAction;
 	public static IgnoreSelectedAction 				ignoreSelectedAction;
+	public static FlagAction		 				flagAction;
 	public static ClearSelectedAction 				clearSelectedAction;
 	public static ConceptInformationAction			conceptInfoAction;
 	public static AthenaAction						athenaAction;

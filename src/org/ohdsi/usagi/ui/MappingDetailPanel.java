@@ -69,6 +69,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private ConceptTableModel					searchTableModel;
 	private JButton								approveButton;
 	private JButton								ignoreButton;
+	private JButton								flagButton;
 	private JTextField							commentField;
 	private JButton								removeButton;
 	private JButton								replaceButton;
@@ -269,6 +270,15 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private Component createApprovePanel() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+
+		ignoreButton = new JButton(Global.ignoreAction);
+		ignoreButton.setBackground(new Color(151, 220, 141));
+		panel.add(ignoreButton);
+
+		flagButton = new JButton(Global.flagAction);
+		flagButton.setBackground(new Color(151, 220, 141));
+		panel.add(flagButton);
+
 		panel.add(new JLabel("Comment:"));
 
 		panel.add(Box.createHorizontalStrut(5));
@@ -303,10 +313,6 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		approveButton = new JButton(Global.approveAction);
 		approveButton.setBackground(new Color(151, 220, 141));
 		panel.add(approveButton);
-
-		ignoreButton = new JButton(Global.ignoreAction);
-		ignoreButton.setBackground(new Color(151, 220, 141));
-		panel.add(ignoreButton);
 
 		return panel;
 	}
@@ -385,6 +391,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		this.codeMapping = codeMapping;
 		toggleApproveButton();
 		toggleIgnoreButton();
+		toggleFlagButton();
 		sourceCodeTableModel.setMapping(codeMapping);
 		targetConceptTableModel.setConcepts(codeMapping.targetConcepts);
 		commentField.setText(codeMapping.comment);
@@ -445,6 +452,25 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			Global.ignoreAction.setToIgnore();
 			ignoreButton.setBackground(new Color(151, 220, 141));
 			approveButton.setEnabled(true);
+		}
+	}
+
+	public void flag() {
+		if (codeMapping.mappingStatus != CodeMapping.MappingStatus.FLAGGED) {
+			codeMapping.mappingStatus = MappingStatus.FLAGGED;
+			Global.mapping.fireDataChanged(APPROVE_EVENT);
+		} else {
+			codeMapping.mappingStatus = CodeMapping.MappingStatus.UNCHECKED;
+			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
+			toggleFlagButton();
+		}
+	}
+
+	private void toggleFlagButton() {
+		if (codeMapping.mappingStatus == MappingStatus.FLAGGED) {
+			Global.flagAction.setToUnflag();
+		} else {
+			Global.flagAction.setToFlag();
 		}
 	}
 
