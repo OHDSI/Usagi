@@ -43,7 +43,7 @@ public class FlagAction extends AbstractAction {
 	}
 
 	public void setToUnflag() {
-		Global.ignoreAction.putValue(Action.NAME, "Unflag");
-		Global.ignoreAction.putValue(Action.SHORT_DESCRIPTION, "Unflag this code");
+		putValue(Action.NAME, "Unflag");
+		putValue(Action.SHORT_DESCRIPTION, "Unflag this code");
 	}
 }

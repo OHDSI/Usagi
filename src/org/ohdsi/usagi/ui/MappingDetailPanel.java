@@ -389,9 +389,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	@Override
 	public void codeSelected(CodeMapping codeMapping) {
 		this.codeMapping = codeMapping;
-		toggleApproveButton();
-		toggleIgnoreButton();
-		toggleFlagButton();
+		toggleStatusButtons();
 		sourceCodeTableModel.setMapping(codeMapping);
 		targetConceptTableModel.setConcepts(codeMapping.targetConcepts);
 		commentField.setText(codeMapping.comment);
@@ -415,19 +413,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		} else {
 			codeMapping.mappingStatus = CodeMapping.MappingStatus.UNCHECKED;
 			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
-			toggleApproveButton();
-		}
-	}
-
-	private void toggleApproveButton() {
-		if (codeMapping.mappingStatus == MappingStatus.APPROVED) {
-			Global.approveAction.setToUnapprove();
-			approveButton.setBackground(new Color(220, 151, 141));
-			ignoreButton.setEnabled(false);
-		} else {
-			Global.approveAction.setToApprove();
-			approveButton.setBackground(new Color(151, 220, 141));
-			ignoreButton.setEnabled(true);
+			toggleStatusButtons();
 		}
 	}
 
@@ -439,19 +425,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		} else {
 			codeMapping.mappingStatus = CodeMapping.MappingStatus.UNCHECKED;
 			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
-			toggleIgnoreButton();
-		}
-	}
-
-	private void toggleIgnoreButton() {
-		if (codeMapping.mappingStatus == MappingStatus.IGNORED) {
-			Global.ignoreAction.setToUnignore();
-			ignoreButton.setBackground(new Color(220, 151, 141));
-			approveButton.setEnabled(false);
-		} else {
-			Global.ignoreAction.setToIgnore();
-			ignoreButton.setBackground(new Color(151, 220, 141));
-			approveButton.setEnabled(true);
+			toggleStatusButtons();
 		}
 	}
 
@@ -462,15 +436,35 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		} else {
 			codeMapping.mappingStatus = CodeMapping.MappingStatus.UNCHECKED;
 			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
-			toggleFlagButton();
+			toggleStatusButtons();
 		}
 	}
 
-	private void toggleFlagButton() {
-		if (codeMapping.mappingStatus == MappingStatus.FLAGGED) {
-			Global.flagAction.setToUnflag();
-		} else {
-			Global.flagAction.setToFlag();
+	private void toggleStatusButtons() {
+		Global.approveAction.setToApprove();
+		Global.ignoreAction.setToIgnore();
+		Global.flagAction.setToFlag();
+		flagButton.setEnabled(false);
+		approveButton.setEnabled(false);
+		ignoreButton.setEnabled(false);
+
+		switch(codeMapping.mappingStatus) {
+			case APPROVED:
+				Global.approveAction.setToUnapprove();
+				approveButton.setEnabled(true);
+				break;
+			case IGNORED:
+				Global.ignoreAction.setToUnignore();
+				ignoreButton.setEnabled(true);
+				break;
+			case FLAGGED:
+				Global.flagAction.setToUnflag();
+				flagButton.setEnabled(true);
+				break;
+			default:
+				flagButton.setEnabled(true);
+				approveButton.setEnabled(true);
+				ignoreButton.setEnabled(true);
 		}
 	}
 
