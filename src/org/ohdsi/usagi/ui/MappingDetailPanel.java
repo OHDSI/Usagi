@@ -405,10 +405,10 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 
 	public void approve() {
 		if (codeMapping.mappingStatus != CodeMapping.MappingStatus.APPROVED) {
-			codeMapping.mappingStatus = CodeMapping.MappingStatus.APPROVED;
+			codeMapping.approve(Global.author);
 			Global.mapping.fireDataChanged(APPROVE_EVENT);
 		} else {
-			codeMapping.mappingStatus = CodeMapping.MappingStatus.UNCHECKED;
+			codeMapping.setUnchecked();
 			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
 			toggleApproveButton();
 		}
@@ -428,11 +428,11 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 
 	public void ignore() {
 		if (codeMapping.mappingStatus != CodeMapping.MappingStatus.IGNORED) {
-			codeMapping.mappingStatus = MappingStatus.IGNORED;
+			codeMapping.ignore(Global.author);
 			Global.mappingTablePanel.clearSelected();
 			Global.mapping.fireDataChanged(APPROVE_EVENT);
 		} else {
-			codeMapping.mappingStatus = CodeMapping.MappingStatus.UNCHECKED;
+			codeMapping.setUnchecked();
 			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
 			toggleIgnoreButton();
 		}
@@ -451,9 +451,9 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	}
 
 	public void addConcept(Concept concept) {
-		codeMapping.targetConcepts.add(new MappingTarget(concept));
+		codeMapping.targetConcepts.add(new MappingTarget(concept, Global.author));
 		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
-			codeMappingMulti.targetConcepts.add(new MappingTarget(concept));
+			codeMappingMulti.targetConcepts.add(new MappingTarget(concept, Global.author));
 		}
 		targetConceptTableModel.fireTableDataChanged();
 
@@ -465,9 +465,9 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	}
 
 	public void addConcept(Concept concept, MappingTarget.Type mappingType) {
-		codeMapping.targetConcepts.add(new MappingTarget(concept, mappingType));
+		codeMapping.targetConcepts.add(new MappingTarget(concept, mappingType, Global.author));
 		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
-			codeMappingMulti.targetConcepts.add(new MappingTarget(concept, mappingType));
+			codeMappingMulti.targetConcepts.add(new MappingTarget(concept, mappingType, Global.author));
 		}
 		targetConceptTableModel.fireTableDataChanged();
 

@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2019 Observational Health Data Sciences and Informatics
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,89 +23,95 @@ import org.ohdsi.utilities.files.ReadCSVFileWithHeader;
 import org.ohdsi.utilities.files.Row;
 
 public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
-	private String filename;
+    private String filename;
 
-	public ReadCodeMappingsFromFile(String filename) {
-		this.filename = filename;
-	}
+    public ReadCodeMappingsFromFile(String filename) {
+        this.filename = filename;
+    }
 
-	@Override
-	public Iterator<CodeMapping> iterator() {
-		return new RowIterator();
-	}
+    @Override
+    public Iterator<CodeMapping> iterator() {
+        return new RowIterator();
+    }
 
-	public class RowIterator implements Iterator<CodeMapping> {
+    public class RowIterator implements Iterator<CodeMapping> {
 
-		private Iterator<Row>	iterator;
-		private CodeMapping		buffer;
-		private Row				row;
+        private Iterator<Row> iterator;
+        private CodeMapping buffer;
+        private Row row;
 
-		public RowIterator() {
-			iterator = new ReadCSVFileWithHeader(filename).iterator();
+        public RowIterator() {
+            iterator = new ReadCSVFileWithHeader(filename).iterator();
 
-			if (iterator.hasNext()) {
-				row = iterator.next();
-				readNext();
-			} else {
-				buffer = null;
-			}
-		}
+            if (iterator.hasNext()) {
+                row = iterator.next();
+                readNext();
+            } else {
+                buffer = null;
+            }
+        }
 
-		private void readNext() {
-			if (row == null) {
-				buffer = null;
-			} else {
-				buffer = new CodeMapping(new SourceCode(row));
-				buffer.matchScore = row.getDouble("matchScore");
-				buffer.mappingStatus = MappingStatus.valueOf(row.get("mappingStatus"));
-				try {
-					buffer.comment = row.get("comment");
-				} catch (Exception e) {
-					buffer.comment = "";
-				}
-				while (row != null && new SourceCode(row).sourceCode.equals(buffer.sourceCode.sourceCode)
-						&& new SourceCode(row).sourceName.equals(buffer.sourceCode.sourceName)) {
-					if (row.getInt("conceptId") != 0) {
-						Concept concept = Global.dbEngine.getConcept(row.getInt("conceptId"));
+        private void readNext() {
+            if (row == null) {
+                buffer = null;
+            } else {
+                buffer = new CodeMapping(new SourceCode(row));
+                buffer.matchScore = row.getDouble("matchScore");
+                buffer.mappingStatus = MappingStatus.valueOf(row.get("mappingStatus"));
 
-						// Older save files might not have a mappingType.
-						MappingTarget.Type mappingType = MappingTarget.Type.REGULAR;
-						if (row.getFieldNames().contains("mappingType")) {
-							mappingType = MappingTarget.Type.valueOf(row.get("mappingType"));
-						}
+                // Status provenance fields might not be available in older Usagi files
+                buffer.statusSetBy = row.get("statusSetBy", "");
+                buffer.statusSetOn = row.getLong("statusSetOn", "0");
 
-						if (concept == null) {
-							buffer.mappingStatus = MappingStatus.INVALID_TARGET;
-							buffer.comment = "Invalid existing target: " + row.get("conceptId");
-						} else {
-							buffer.targetConcepts.add(new MappingTarget(concept, mappingType));
-						}
-					}
-					if (iterator.hasNext())
-						row = iterator.next();
-					else
-						row = null;
-				}
-			}
-		}
+                try {
+                    buffer.comment = row.get("comment");
+                } catch (Exception e) {
+                    buffer.comment = "";
+                }
+                while (row != null && new SourceCode(row).sourceCode.equals(buffer.sourceCode.sourceCode)
+                        && new SourceCode(row).sourceName.equals(buffer.sourceCode.sourceName)) {
+                    if (row.getInt("conceptId") != 0) {
+                        Concept concept = Global.dbEngine.getConcept(row.getInt("conceptId"));
 
-		@Override
-		public boolean hasNext() {
-			return buffer != null;
-		}
+                        if (concept == null) {
+                            buffer.mappingStatus = MappingStatus.INVALID_TARGET;
+                            buffer.comment = "Invalid existing target: " + row.get("conceptId");
+                        } else {
+                            // Type and provenance might not be available in older Usagi files
+                            MappingTarget mappingTarget = new MappingTarget(
+                                    concept,
+                                    MappingTarget.Type.valueOf(row.get("mappingType", "REGULAR")),
+                                    row.get("createdBy", ""),
+                                    row.getLong("createdOn", "0")
+                            );
+                            buffer.targetConcepts.add(mappingTarget);
+                        }
+                    }
+                    if (iterator.hasNext())
+                        row = iterator.next();
+                    else
+                        row = null;
+                }
+            }
+        }
 
-		@Override
-		public CodeMapping next() {
-			CodeMapping next = buffer;
-			readNext();
-			return next;
-		}
+        @Override
+        public boolean hasNext() {
+            return buffer != null;
+        }
 
-		@Override
-		public void remove() {
-			throw new RuntimeException("Remove not supported");
-		}
+        @Override
+        public CodeMapping next() {
+            CodeMapping next = buffer;
+            readNext();
+            return next;
+        }
 
-	}
+        @Override
+        public void remove() {
+            throw new RuntimeException("Remove not supported");
+        }
+
+    }
 
 }

@@ -63,6 +63,7 @@ public class UsagiMain implements ActionListener {
 			Global.usagiSearchEngine.openIndexForSearching(false);
 			Global.dbEngine.openForReading();
 		}
+
 		Global.vocabularyVersion = loadVocabularyVersion(Global.folder);
 		Global.conceptClassIds = loadVectorFromFile(Global.folder + "/ConceptClassIds.txt");
 		Global.vocabularyIds = loadVectorFromFile(Global.folder + "/VocabularyIds.txt");
@@ -143,6 +144,11 @@ public class UsagiMain implements ActionListener {
 		if (args.length > 1 && args[0].equals("--file")) {
 			OpenAction.open(new File(args[1]));
 		}
+
+		// TODO: save author to file and load if available
+		AuthorDialog authorDialog = new AuthorDialog();
+		authorDialog.setVisible(true);
+
 	}
 
 	private String loadVocabularyVersion(String folder) {

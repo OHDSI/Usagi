@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2019 Observational Health Data Sciences and Informatics
+ * Copyright 2020 Observational Health Data Sciences and Informatics & The Hyve
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,9 +33,30 @@ public class CodeMapping {
     public MappingStatus mappingStatus;
     public List<MappingTarget> targetConcepts = new ArrayList<>(1);
     public String comment;
+    public String statusSetBy;
+    public long statusSetOn;
 
     public CodeMapping(SourceCode sourceCode) {
         this.sourceCode = sourceCode;
     }
 
+    public void setStatus(MappingStatus mappingStatus, String author) {
+        this.mappingStatus = mappingStatus;
+        this.statusSetOn = System.currentTimeMillis();
+        this.statusSetBy = author;
+    }
+
+    public void setUnchecked() {
+        this.mappingStatus = MappingStatus.UNCHECKED;
+        this.statusSetOn = 0;
+        this.statusSetBy = "";
+    }
+
+    public void approve(String approvedBy) {
+        setStatus(MappingStatus.APPROVED, approvedBy);
+    }
+
+    public void ignore(String ignoredBy) {
+        setStatus(MappingStatus.IGNORED, ignoredBy);
+    }
 }

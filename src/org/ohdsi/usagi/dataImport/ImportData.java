@@ -74,10 +74,10 @@ public class ImportData {
 			List<ScoredConcept> concepts = usagiSearchEngine.search(sourceCode.sourceName, true, sourceCode.sourceAutoAssignedConceptIds,
 					settings.filterDomains, settings.filterConceptClasses, settings.filterVocabularies, settings.filterStandard, settings.includeSourceTerms);
 			if (concepts.size() > 0) {
-				codeMapping.targetConcepts.add(new MappingTarget(concepts.get(0).concept));
+				codeMapping.targetConcepts.add(new MappingTarget(concepts.get(0).concept, "<auto>"));
 				codeMapping.matchScore = concepts.get(0).matchScore;
 			} else {
-				codeMapping.targetConcepts.add(new MappingTarget(Concept.EMPTY_CONCEPT));
+				codeMapping.targetConcepts.add(new MappingTarget(Concept.EMPTY_CONCEPT, "<auto>"));
 				codeMapping.matchScore = 0;
 			}
 			codeMapping.mappingStatus = MappingStatus.UNCHECKED;
