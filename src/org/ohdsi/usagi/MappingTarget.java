@@ -39,7 +39,7 @@ public class MappingTarget{
 	}
 
 	public MappingTarget(Concept concept, String createdBy) {
-		this(concept, Type.REGULAR, createdBy);
+		this(concept, Type.EVENT, createdBy);
 	}
 
 	public MappingTarget(Concept concept, Type mappingType, String createdBy) {
