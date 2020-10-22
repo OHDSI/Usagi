@@ -23,7 +23,7 @@ import org.ohdsi.utilities.files.ReadCSVFileWithHeader;
 import org.ohdsi.utilities.files.Row;
 
 public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
-	private String filename;
+	private final String filename;
 
 	public ReadCodeMappingsFromFile(String filename) {
 		this.filename = filename;
@@ -36,9 +36,9 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 
 	public class RowIterator implements Iterator<CodeMapping> {
 
-		private Iterator<Row>	iterator;
-		private CodeMapping		buffer;
-		private Row				row;
+		private Iterator<Row> iterator;
+		private CodeMapping buffer;
+		private Row row;
 
 		public RowIterator() {
 			iterator = new ReadCSVFileWithHeader(filename).iterator();
@@ -58,6 +58,11 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 				buffer = new CodeMapping(new SourceCode(row));
 				buffer.matchScore = row.getDouble("matchScore");
 				buffer.mappingStatus = MappingStatus.valueOf(row.get("mappingStatus"));
+
+				// Status provenance fields might not be available in older Usagi files
+				buffer.statusSetBy = row.get("statusSetBy", "");
+				buffer.statusSetOn = row.getLong("statusSetOn", "0");
+
 				try {
 					buffer.comment = row.get("comment");
 				} catch (Exception e) {
@@ -70,17 +75,18 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 					if (row.getInt("conceptId") != 0) {
 						Concept concept = Global.dbEngine.getConcept(row.getInt("conceptId"));
 
-						// Older save files might not have a mappingType.
-						MappingTarget.Type mappingType = MappingTarget.Type.EVENT;
-						if (row.getFieldNames().contains("mappingType")) {
-							mappingType = MappingTarget.Type.valueOf(row.get("mappingType"));
-						}
-
 						if (concept == null) {
 							buffer.mappingStatus = MappingStatus.INVALID_TARGET;
 							buffer.comment = "Invalid existing target: " + row.get("conceptId");
 						} else {
-							buffer.targetConcepts.add(new MappingTarget(concept, mappingType));
+							// Type and provenance might not be available in older Usagi files
+							MappingTarget mappingTarget = new MappingTarget(
+									concept,
+									MappingTarget.Type.valueOf(row.get("mappingType", "EVENT")),
+									row.get("createdBy", ""),
+									row.getLong("createdOn", "0")
+							);
+							buffer.targetConcepts.add(mappingTarget);
 						}
 					}
 					if (iterator.hasNext())
@@ -107,6 +113,5 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 		public void remove() {
 			throw new RuntimeException("Remove not supported");
 		}
-
 	}
 }

@@ -43,11 +43,15 @@ public class MappingTarget{
 	}
 
 	public MappingTarget(Concept concept, Type mappingType, String createdBy) {
-		this(concept, mappingType);
+		this.concept = concept;
+		this.mappingType = mappingType;
 		this.createdBy = createdBy;
 	}
+
 	public MappingTarget(Concept concept, Type mappingType, String createdBy, long createdOn) {
-		this(concept, mappingType, createdBy);
+		this.concept = concept;
+		this.mappingType = mappingType;
+		this.createdBy = createdBy;
 		this.createdOn = createdOn;
 	}
 
