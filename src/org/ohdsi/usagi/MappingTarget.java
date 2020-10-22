@@ -28,14 +28,11 @@ public class MappingTarget{
 	public String createdBy;
 	public long createdOn;
 
-	public MappingTarget(Concept concept, Type mappingType) {
-		this.concept = concept;
-		this.mappingType = mappingType;
-		this.createdOn = System.currentTimeMillis();
-	}
-
-	public MappingTarget(Concept concept) {
-		this(concept, Type.EVENT);
+	public MappingTarget() {
+		this.concept = Concept.createEmptyConcept();
+		this.mappingType = Type.EVENT;
+		this.createdBy = "";
+		this.createdOn = 0;
 	}
 
 	public MappingTarget(Concept concept, String createdBy) {
@@ -46,6 +43,7 @@ public class MappingTarget{
 		this.concept = concept;
 		this.mappingType = mappingType;
 		this.createdBy = createdBy;
+		this.createdOn = System.currentTimeMillis();
 	}
 
 	public MappingTarget(Concept concept, Type mappingType, String createdBy, long createdOn) {

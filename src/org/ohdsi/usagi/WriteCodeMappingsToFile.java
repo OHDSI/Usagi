@@ -35,7 +35,7 @@ public class WriteCodeMappingsToFile {
 		List<MappingTarget> mappingTargets;
 		if (codeMapping.targetConcepts.size() == 0) {
 			mappingTargets = new ArrayList<>(1);
-			mappingTargets.add(new MappingTarget(Concept.createEmptyConcept()));
+			mappingTargets.add(new MappingTarget());
 		} else
 			mappingTargets = codeMapping.targetConcepts;
 		for (MappingTarget targetConcept : mappingTargets) {
