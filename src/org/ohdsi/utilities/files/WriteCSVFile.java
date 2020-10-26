@@ -90,7 +90,7 @@ public class WriteCSVFile {
 				boolean hasQuotes = column.contains("\"");
 				column = column.replaceAll("\\\\", "\\\\\\\\");
 				if (hasQuotes)
-					column = column.replaceAll("\"", "\\\\\"");
+					column = column.replaceAll("\"", "\"\"");
 				column = column.replaceAll("\r", "");
 				column = column.replaceAll("\n", "\\\\n");
 				if (hasQuotes || column.contains(Character.toString(delimiter)))
