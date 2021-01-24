@@ -23,11 +23,11 @@ import javax.swing.*;
 
 import org.ohdsi.usagi.ui.Global;
 
-public class ApproveAllAction extends AbstractAction {
+public class ApproveSelectedAction extends AbstractAction {
 
 	private static final long	serialVersionUID	= 3420357922150237898L;
 
-	public ApproveAllAction() {
+	public ApproveSelectedAction() {
 		putValue(Action.NAME, "Approve selected");
 		putValue(Action.SHORT_DESCRIPTION, "Approve all selected mappings");
 		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.ALT_MASK | InputEvent.SHIFT_DOWN_MASK));
@@ -35,7 +35,7 @@ public class ApproveAllAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		Global.mappingTablePanel.approveAll();
+		Global.mappingTablePanel.approveSelected();
 	}
 
 }

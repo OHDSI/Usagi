@@ -16,37 +16,24 @@
 package org.ohdsi.usagi.ui.actions;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.KeyStroke;
 
 import org.ohdsi.usagi.ui.Global;
 
-public class ApproveAction extends AbstractAction {
+public class ClearSelectedAction extends AbstractAction {
 
-	private static final long	serialVersionUID	= -6399524936473823131L;
+	private static final long	serialVersionUID	= 3420357922150237898L;
 
-	public ApproveAction() {
-		setToApprove();
-		putValue(Action.MNEMONIC_KEY, KeyEvent.VK_A);
-		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.ALT_MASK));
+	public ClearSelectedAction() {
+		putValue(Action.NAME, "Clear selected");
+		putValue(Action.SHORT_DESCRIPTION, "Clear all selected mappings (set target to 0)");
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		Global.mappingDetailPanel.approve();
+		Global.mappingTablePanel.clearSelected();
 	}
 
-	public void setToApprove() {
-		putValue(Action.NAME, "Approve");
-		putValue(Action.SHORT_DESCRIPTION, "Approve the selected single mapping");
-	}
-
-	public void setToUnapprove() {
-		Global.approveAction.putValue(Action.NAME, "Unapprove");
-		Global.approveAction.putValue(Action.SHORT_DESCRIPTION, "Unapprove this mapping");
-	}
 }

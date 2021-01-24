@@ -42,18 +42,25 @@ public class Row {
 	}
 	
 	public String get(String fieldName) {
+		return get(fieldName, null);
+	}
+
+	public String get(String fieldName, String defaultValue) {
 		int index;
-		try {
-			index = fieldName2ColumnIndex.get(fieldName);
-		} catch (NullPointerException e) {
-			throw new RuntimeException("Field \"" + fieldName + "\" not found");
+		if (!fieldName2ColumnIndex.containsKey(fieldName)) {
+			if (defaultValue == null) {
+				throw new RuntimeException("Field \"" + fieldName + "\" not found");
+			} else {
+				return defaultValue;
+			}
 		}
+		index = fieldName2ColumnIndex.get(fieldName);
 		if (cells.size() <= index)
 			return "";
 		else
 			return cells.get(index);
 	}
-	
+
 	public List<String> getFieldNames() {
 		List<String> names = new ArrayList<String>(fieldName2ColumnIndex.size());
 		for (int i = 0; i < fieldName2ColumnIndex.size(); i++)
@@ -64,15 +71,26 @@ public class Row {
 	}
 	
 	public int getInt(String fieldName) {
-		return Integer.parseInt(get(fieldName).trim());
+		return Integer.parseInt(get(fieldName, null).trim());
+	}
+
+	public int getInt(String fieldName, String defaultValue) {
+		return Integer.parseInt(get(fieldName, defaultValue).trim());
 	}
 	
 	public long getLong(String fieldName) {
-		return Long.parseLong(get(fieldName));
+		return Long.parseLong(get(fieldName, null));
+	}
+	public long getLong(String fieldName, String defaultValue) {
+		return Long.parseLong(get(fieldName, defaultValue));
 	}
 	
 	public double getDouble(String fieldName) {
-		return Double.parseDouble(get(fieldName));
+		return Double.parseDouble(get(fieldName, null));
+	}
+
+	public double getDouble(String fieldName, String defaultValue) {
+		return Double.parseDouble(get(fieldName, defaultValue));
 	}
 	
 	public void add(String fieldName, String value) {

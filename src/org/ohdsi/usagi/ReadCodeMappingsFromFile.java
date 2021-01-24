@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2019 Observational Health Data Sciences and Informatics
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,7 +23,7 @@ import org.ohdsi.utilities.files.ReadCSVFileWithHeader;
 import org.ohdsi.utilities.files.Row;
 
 public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
-	private String filename;
+	private final String filename;
 
 	public ReadCodeMappingsFromFile(String filename) {
 		this.filename = filename;
@@ -36,9 +36,9 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 
 	public class RowIterator implements Iterator<CodeMapping> {
 
-		private Iterator<Row>	iterator;
-		private CodeMapping		buffer;
-		private Row				row;
+		private Iterator<Row> iterator;
+		private CodeMapping buffer;
+		private Row row;
 
 		public RowIterator() {
 			iterator = new ReadCSVFileWithHeader(filename).iterator();
@@ -58,20 +58,35 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 				buffer = new CodeMapping(new SourceCode(row));
 				buffer.matchScore = row.getDouble("matchScore");
 				buffer.mappingStatus = MappingStatus.valueOf(row.get("mappingStatus"));
+
+				// Status provenance fields might not be available in older Usagi files
+				buffer.statusSetBy = row.get("statusSetBy", "");
+				buffer.statusSetOn = row.getLong("statusSetOn", "0");
+
 				try {
 					buffer.comment = row.get("comment");
 				} catch (Exception e) {
 					buffer.comment = "";
 				}
-				while (row != null && new SourceCode(row).sourceCode.equals(buffer.sourceCode.sourceCode)
-						&& new SourceCode(row).sourceName.equals(buffer.sourceCode.sourceName)) {
+				while (row != null
+						&& new SourceCode(row).sourceCode.equals(buffer.sourceCode.sourceCode)
+						&& new SourceCode(row).sourceName.equals(buffer.sourceCode.sourceName) // MM: is this needed?
+						&& new SourceCode(row).sourceValueCode.equals(buffer.sourceCode.sourceValueCode)) {
 					if (row.getInt("conceptId") != 0) {
 						Concept concept = Global.dbEngine.getConcept(row.getInt("conceptId"));
+
 						if (concept == null) {
 							buffer.mappingStatus = MappingStatus.INVALID_TARGET;
 							buffer.comment = "Invalid existing target: " + row.get("conceptId");
 						} else {
-							buffer.targetConcepts.add(concept);
+							// Type and provenance might not be available in older Usagi files
+							MappingTarget mappingTarget = new MappingTarget(
+									concept,
+									MappingTarget.Type.valueOf(row.get("mappingType", "EVENT")),
+									row.get("createdBy", ""),
+									row.getLong("createdOn", "0")
+							);
+							buffer.targetConcepts.add(mappingTarget);
 						}
 					}
 					if (iterator.hasNext())
@@ -98,7 +113,5 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 		public void remove() {
 			throw new RuntimeException("Remove not supported");
 		}
-
 	}
-
 }
