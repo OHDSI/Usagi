@@ -125,19 +125,21 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		c.weightx = 0.1;
 		c.gridwidth = 2;
 
-		panel.add(new JLabel("Use:"), c);
+//		panel.add(new JLabel("Use:"), c);
 
-		autoQueryCodeButton = new JRadioButton("Term", true);
+		autoQueryCodeButton = new JRadioButton("Use source term", true);
 		autoQueryCodeButton.addActionListener(x -> doSearch());
 		panel.add(autoQueryCodeButton, c);
 
 		autoQueryValueButton = new JRadioButton("Value", false);
 		autoQueryValueButton.addActionListener(x -> doSearch());
-		panel.add(autoQueryValueButton, c);
+//		Hide other types
+//		panel.add(autoQueryValueButton, c);
 
 		autoQueryUnitButton = new JRadioButton("Unit", false);
 		autoQueryUnitButton.addActionListener(x -> doSearch());
-		panel.add(autoQueryUnitButton, c);
+//		Hide other types
+//		panel.add(autoQueryUnitButton, c);
 
 		c.gridx = 0;
 		c.gridy = 1;
@@ -240,7 +242,9 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			if (mappingType.equals(MappingTarget.Type.EVENT)) {
 				button = new JButton("Add concept");
 			} else {
-				button = new JButton(String.format("Add %s concept", mappingType));
+//				Hide other (value, unit) mapping types
+//				button = new JButton(String.format("Add %s concept", mappingType));
+				continue;
 			}
 			button.setToolTipText(String.format("Add selected concept as %s", mappingType));
 			button.addActionListener(e -> {
@@ -353,6 +357,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 				Global.googleSearchAction.setEnabled(false);
 			}
 		});
+		targetConceptTable.hideColumn("Mapping Type"); // Hide mapping types
 		targetConceptTable.hideColumn("Valid start date");
 		targetConceptTable.hideColumn("Valid end date");
 		targetConceptTable.hideColumn("Invalid reason");
@@ -375,7 +380,8 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		});
 		typesChooser.setMaximumSize(typesChooser.getPreferredSize());
 		typesChooser.setEnabled(false);
-		buttonPanel.add(typesChooser);
+//		Hide type chooser, only event type
+//		buttonPanel.add(typesChooser);
 
 		removeButton = new JButton("Remove concept");
 		removeButton.setToolTipText("Add selected concept");

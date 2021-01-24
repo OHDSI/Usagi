@@ -223,26 +223,27 @@ public class ImportDialog extends JDialog {
 		sourceFrequencyColumn.setToolTipText("The column containing the frequency of the code in the source database");
 		columnMappingPanel.add(sourceFrequencyColumn, cBox);
 
-		cLabel.gridy++;
-		cBox.gridy++;
-		columnMappingPanel.add(new JLabel("Value code column"), cLabel);
-		sourceValueCodeColumn = new JComboBox<>(comboBoxOptions);
-		sourceValueCodeColumn.setToolTipText("The column containing the value code");
-		columnMappingPanel.add(sourceValueCodeColumn, cBox);
-
-		cLabel.gridy++;
-		cBox.gridy++;
-		columnMappingPanel.add(new JLabel("Value name column "), cLabel);
-		sourceValueNameColumn = new JComboBox<>(comboBoxOptions);
-		sourceValueNameColumn.setToolTipText("The column containing the value name");
-		columnMappingPanel.add(sourceValueNameColumn, cBox);
-
-		cLabel.gridy++;
-		cBox.gridy++;
-		columnMappingPanel.add(new JLabel("Unit name column"), cLabel);
-		sourceUnitNameColumn = new JComboBox<>(comboBoxOptions);
-		sourceUnitNameColumn.setToolTipText("The column containing the name of the unit");
-		columnMappingPanel.add(sourceUnitNameColumn, cBox);
+//		Hide mapping type
+//		cLabel.gridy++;
+//		cBox.gridy++;
+//		columnMappingPanel.add(new JLabel("Value code column"), cLabel);
+//		sourceValueCodeColumn = new JComboBox<>(comboBoxOptions);
+//		sourceValueCodeColumn.setToolTipText("The column containing the value code");
+//		columnMappingPanel.add(sourceValueCodeColumn, cBox);
+//
+//		cLabel.gridy++;
+//		cBox.gridy++;
+//		columnMappingPanel.add(new JLabel("Value name column "), cLabel);
+//		sourceValueNameColumn = new JComboBox<>(comboBoxOptions);
+//		sourceValueNameColumn.setToolTipText("The column containing the value name");
+//		columnMappingPanel.add(sourceValueNameColumn, cBox);
+//
+//		cLabel.gridy++;
+//		cBox.gridy++;
+//		columnMappingPanel.add(new JLabel("Unit name column"), cLabel);
+//		sourceUnitNameColumn = new JComboBox<>(comboBoxOptions);
+//		sourceUnitNameColumn.setToolTipText("The column containing the name of the unit");
+//		columnMappingPanel.add(sourceUnitNameColumn, cBox);
 
 		cLabel.gridy++;
 		cBox.gridy++;
