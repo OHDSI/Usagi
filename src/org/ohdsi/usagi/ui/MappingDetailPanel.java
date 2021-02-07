@@ -269,14 +269,6 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 
-		ignoreButton = new JButton(Global.ignoreAction);
-		ignoreButton.setBackground(new Color(151, 220, 141));
-		panel.add(ignoreButton);
-
-		flagButton = new JButton(Global.flagAction);
-		flagButton.setBackground(new Color(151, 220, 141));
-		panel.add(flagButton);
-
 		panel.add(new JLabel("Review:"));
 
 		reviewIdenticalButton = new JButton("Identical");
@@ -321,6 +313,14 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		panel.add(commentField);
 
 		panel.add(Box.createHorizontalStrut(5));
+
+		ignoreButton = new JButton(Global.ignoreAction);
+		ignoreButton.setBackground(new Color(151, 220, 141));
+//		panel.add(ignoreButton);
+
+		flagButton = new JButton(Global.flagAction);
+		flagButton.setBackground(new Color(151, 220, 141));
+		panel.add(flagButton);
 
 		approveButton = new JButton(Global.approveAction);
 		approveButton.setBackground(new Color(151, 220, 141));
