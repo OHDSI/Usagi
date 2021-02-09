@@ -344,6 +344,11 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		pane.setMinimumSize(new Dimension(500, 40));
 		pane.setPreferredSize(new Dimension(500, 40));
 		panel.add(pane);
+
+		sourceCodeTable.hideColumn("Value");
+		sourceCodeTable.hideColumn("Value term");
+		sourceCodeTable.hideColumn("Unit term");
+
 		return panel;
 	}
 
@@ -668,10 +673,6 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 				return String.class;
 			} else {
 				switch (col) {
-					case 0:
-						return String.class;
-					case 1:
-						return String.class;
 					case 2:
 						return Integer.class;
 					default:

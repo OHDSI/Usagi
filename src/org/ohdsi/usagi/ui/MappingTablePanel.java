@@ -100,6 +100,9 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		table.hideColumn("Valid start date");
 		table.hideColumn("Valid end date");
 		table.hideColumn("Invalid reason");
+		table.hideColumn("Value");
+		table.hideColumn("Value term");
+		table.hideColumn("Unit term");
 
 		JScrollPane scrollPane = new JScrollPane(table);
 		add(scrollPane);
