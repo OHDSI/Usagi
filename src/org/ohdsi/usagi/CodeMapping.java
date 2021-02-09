@@ -28,7 +28,7 @@ public class CodeMapping {
         APPROVED, UNCHECKED, AUTO_MAPPED, AUTO_MAPPED_TO_1, INVALID_TARGET, IGNORED, FLAGGED
     };
     public enum ReviewStatus {
-        IDENTICAL, UP, DOWN
+        IDENTICAL, UP, DOWN, UNREVIEWED
     };
 
     public SourceCode sourceCode;

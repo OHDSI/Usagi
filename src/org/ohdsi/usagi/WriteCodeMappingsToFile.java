@@ -36,8 +36,9 @@ public class WriteCodeMappingsToFile {
 		if (codeMapping.targetConcepts.size() == 0) {
 			mappingTargets = new ArrayList<>(1);
 			mappingTargets.add(new MappingTarget());
-		} else
+		} else {
 			mappingTargets = codeMapping.targetConcepts;
+		}
 		for (MappingTarget targetConcept : mappingTargets) {
 			Row row = codeMapping.sourceCode.toRow();
 			row.add("matchScore", codeMapping.matchScore);
@@ -49,6 +50,9 @@ public class WriteCodeMappingsToFile {
 			row.add("comment", codeMapping.comment);
 			row.add("createdBy", targetConcept.createdBy);
 			row.add("createdOn", targetConcept.createdOn);
+			row.add("reviewStatus", codeMapping.reviewStatus.toString());
+			row.add("reviewedBy", codeMapping.reviewedBy);
+			row.add("reviewedOn", codeMapping.reviewedOn);
 			out.write(row);
 		}
 	}
