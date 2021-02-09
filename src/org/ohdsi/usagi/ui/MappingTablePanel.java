@@ -20,6 +20,7 @@ import java.awt.Rectangle;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
@@ -115,7 +116,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 
 		private String[]			defaultColumnNames	= { "Status", "Source code", "Source term", "Frequency", "Value", "Value term", "Unit term",
 				"Match score", "Concept ID", "Concept name", "Domain", "Concept class", "Vocabulary", "Concept code",
-				"Valid start date", "Valid end date", "Invalid reason", "Standard concept", "Parents", "Children", "Review", "Comment", "Status Provenance" };
+				"Valid start date", "Valid end date", "Invalid reason", "Standard concept", "Parents", "Children", "Assigned To", "Review", "Comment", "Status Provenance" };
 		private String[]			columnNames			= defaultColumnNames;
 		private int					addInfoColCount		= 0;
 		private int					ADD_INFO_START_COL	= 7;
@@ -212,10 +213,16 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 					case 19:
 						return targetConcept.childCount;
 					case 20:
-						return codeMapping.reviewStatus;
+						return codeMapping.assignedReviewer;
 					case 21:
-						return codeMapping.comment;
+						if (codeMapping.reviewStatus != CodeMapping.ReviewStatus.UNREVIEWED) {
+							return codeMapping.reviewStatus;
+						} else {
+							return null;
+						}
 					case 22:
+						return codeMapping.comment;
+					case 23:
 						if (codeMapping.statusSetOn != 0L) {
 							return String.format("%s (%tF)", codeMapping.statusSetBy, codeMapping.statusSetOn);
 						}
@@ -323,12 +330,22 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		}
 		fireUpdateEventAll(APPROVE_EVENT);
 	}
-
 	public void clearSelected() {
 		for (int viewRow : table.getSelectedRows()) {
 			int modelRow = table.convertRowIndexToModel(viewRow);
 			tableModel.getCodeMapping(modelRow).targetConcepts.clear();
 		}
 		fireUpdateEventAll(SIMPLE_UPDATE_EVENT);
+	}
+
+	public void assignReviewers() {
+		String[] REVIEWERS = {"A", "B", "C", "D"};
+		Random rgen = new Random();
+		for (CodeMapping codeMapping : Global.mapping) {
+			int random = rgen.nextInt(REVIEWERS.length);
+			String reviewer = REVIEWERS[random];
+			codeMapping.assignedReviewer = reviewer;
+		}
+		fireUpdateEventAll(APPROVE_EVENT);
 	}
 }

@@ -53,6 +53,7 @@ public class WriteCodeMappingsToFile {
 			row.add("reviewStatus", codeMapping.reviewStatus.toString());
 			row.add("reviewedBy", codeMapping.reviewedBy);
 			row.add("reviewedOn", codeMapping.reviewedOn);
+			row.add("assignedReviewer", codeMapping.assignedReviewer);
 			out.write(row);
 		}
 	}

@@ -82,6 +82,7 @@ public class UsagiMain implements ActionListener {
 		Global.ignoreAction = new IgnoreAction();
 		Global.flagAction = new FlagAction();
 		Global.reviewAction = new ReviewAction();
+		Global.reviewerAssignmentAction = new ReviewerAssignmentAction();
 		Global.conceptInfoAction = new ConceptInformationAction();
 		Global.athenaAction = new AthenaAction();
 		Global.googleSearchAction = new GoogleSearchAction();

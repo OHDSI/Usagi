@@ -28,7 +28,7 @@ public class CodeMapping {
         APPROVED, UNCHECKED, AUTO_MAPPED, AUTO_MAPPED_TO_1, INVALID_TARGET, IGNORED, FLAGGED
     };
     public enum ReviewStatus {
-        IDENTICAL, UP, DOWN, UNREVIEWED
+        IDENTICAL, UP, DOWN, WRONG, UNREVIEWED
     };
 
     public SourceCode sourceCode;
@@ -41,6 +41,7 @@ public class CodeMapping {
     public long statusSetOn;
     public String reviewedBy;
     public long reviewedOn;
+    public String assignedReviewer;
 
     public CodeMapping(SourceCode sourceCode) {
         this.sourceCode = sourceCode;

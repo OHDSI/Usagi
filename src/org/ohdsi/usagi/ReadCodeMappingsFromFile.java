@@ -66,6 +66,7 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 				buffer.reviewStatus = ReviewStatus.valueOf(row.get("reviewStatus", "UNREVIEWED"));
 				buffer.reviewedBy = row.get("reviewedBy", "");
 				buffer.reviewedOn = row.getLong("reviewedOn", "0");
+				buffer.assignedReviewer = row.get("assignedReviewer", "");
 
 				try {
 					buffer.comment = row.get("comment");
