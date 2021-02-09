@@ -71,8 +71,8 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 				while (row != null
 						&& new SourceCode(row).sourceCode.equals(buffer.sourceCode.sourceCode)
 						&& new SourceCode(row).sourceName.equals(buffer.sourceCode.sourceName) // MM: is this needed?
-						&& (new SourceCode(row).sourceValueCode != null
-						    && new SourceCode(row).sourceValueCode.equals(buffer.sourceCode.sourceValueCode))) {
+						&& (new SourceCode(row).sourceValueCode == null
+						    || new SourceCode(row).sourceValueCode.equals(buffer.sourceCode.sourceValueCode))) {
 					if (row.getInt("conceptId") != 0) {
 						Concept concept = Global.dbEngine.getConcept(row.getInt("conceptId"));
 
