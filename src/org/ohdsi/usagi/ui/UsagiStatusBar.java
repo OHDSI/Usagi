@@ -32,6 +32,7 @@ public class UsagiStatusBar extends JPanel implements DataChangeListener {
 	private static final long	serialVersionUID	= 4406343348570974587L;
 	private JLabel				countLabel;
 	private JLabel				percentLabel;
+	private JLabel				reviewPercentLabel;
 	private JLabel				searchLabel;
 	private DecimalFormat		percentFormatter	= new DecimalFormat("##0.0");
 
@@ -39,25 +40,42 @@ public class UsagiStatusBar extends JPanel implements DataChangeListener {
 		super();
 		setBorder(BorderFactory.createEmptyBorder());
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+
 		JLabel description = new JLabel("Approved / total:");
 		description.setForeground(Color.gray);
 		add(description);
 		add(Box.createHorizontalStrut(5));
+
 		countLabel = new JLabel("0/0");
 		countLabel.setForeground(Color.black);
 		add(countLabel);
+
 		add(Box.createHorizontalStrut(15));
+
 		percentLabel = new JLabel("0%");
 		percentLabel.setForeground(Color.black);
 		add(percentLabel);
 		description = new JLabel(" of total frequency");
 		description.setForeground(Color.gray);
 		add(description);
+
 		add(Box.createHorizontalGlue());
+
 		searchLabel = new JLabel("Searching...");
 		searchLabel.setVisible(false);
 		add(searchLabel);
+
 		add(Box.createHorizontalGlue());
+
+		reviewPercentLabel = new JLabel("0%");
+		reviewPercentLabel.setForeground(Color.black);
+		add(reviewPercentLabel);
+		description = new JLabel(" codes reviewed");
+		description.setForeground(Color.gray);
+		add(description);
+
+		add(Box.createHorizontalStrut(15));
+
 		JLabel versionLabel = new JLabel("Vocabulary version: " + Global.vocabularyVersion);
 		add(versionLabel);
 		Global.mapping.addListener(this);
@@ -71,6 +89,7 @@ public class UsagiStatusBar extends JPanel implements DataChangeListener {
 		int approved = 0;
 		long totalFreq = 0;
 		long approvedFreq = 0;
+		long reviewedCount = 0;
 		for (CodeMapping codeMapping : Global.mapping) {
 			if (codeMapping.mappingStatus == MappingStatus.APPROVED) {
 				approved++;
@@ -79,10 +98,20 @@ public class UsagiStatusBar extends JPanel implements DataChangeListener {
 				else
 					approvedFreq += codeMapping.sourceCode.sourceFrequency;
 			}
-			if (codeMapping.sourceCode.sourceFrequency == -1)
+			if (codeMapping.sourceCode.sourceFrequency == -1) {
 				totalFreq++;
-			else
+			} else {
 				totalFreq += codeMapping.sourceCode.sourceFrequency;
+			}
+
+			switch (codeMapping.reviewStatus) {
+				case UP:
+				case DOWN:
+				case IDENTICAL:
+					reviewedCount++;
+				default:
+					break;
+			}
 		}
 		countLabel.setText(approved + " / " + Global.mapping.size());
 		countLabel.setToolTipText(approved + " of the " + Global.mapping.size() + " source codes now has an approved mapping");
@@ -90,6 +119,9 @@ public class UsagiStatusBar extends JPanel implements DataChangeListener {
 		percentLabel.setText(percent);
 		percentLabel.setToolTipText(percent + " of all entries in the source data now has an approved mapping");
 
+		String percentReviewed = percentFormatter.format(100 * reviewedCount / (double) Global.mapping.size()) + "%";
+		reviewPercentLabel.setText(percentReviewed);
+		reviewPercentLabel.setToolTipText(percentReviewed + " of all codes in the source data now has a reviewed mapping");
 	}
 
 	@Override
