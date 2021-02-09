@@ -27,12 +27,13 @@ public class ReviewAction extends AbstractAction {
 	private static final long	serialVersionUID	= 2081755360857938731L;
 
 	public ReviewAction() {
-		// TBD
+		putValue(Action.NAME, "Review");
+		putValue(Action.SHORT_DESCRIPTION, "Add a review of the mapping");
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		// TBD
+		Global.mappingDetailPanel.review();
 	}
 
 }

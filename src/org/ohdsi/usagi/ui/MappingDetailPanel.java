@@ -58,6 +58,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private JButton								approveButton;
 	private JButton								ignoreButton;
 	private JButton								flagButton;
+	private JComboBox reviewOptionChooser;
 	private JButton								reviewIdenticalButton;
 	private JButton								mapUpButton;
 	private JButton								mapDownButton;
@@ -271,17 +272,23 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 
 		panel.add(new JLabel("Review:"));
 
-		reviewIdenticalButton = new JButton("Identical");
+		reviewOptionChooser = new JComboBox<>(CodeMapping.ReviewStatus.values());
+		reviewOptionChooser.setToolTipText("Choose review type");
+		reviewOptionChooser.setMaximumSize(reviewOptionChooser.getPreferredSize());
+		reviewOptionChooser.setEnabled(true);
+		panel.add(reviewOptionChooser);
+
+		reviewIdenticalButton = new JButton(Global.reviewAction);
 		reviewIdenticalButton.setBackground(new Color(151, 220, 141));
 		panel.add(reviewIdenticalButton);
-
-		mapUpButton = new JButton("Mapped Up");
-		mapUpButton.setBackground(new Color(151, 220, 141));
-		panel.add(mapUpButton);
-
-		mapDownButton = new JButton("Mapped Down");
-		mapDownButton.setBackground(new Color(151, 220, 141));
-		panel.add(mapDownButton);
+//
+//		mapUpButton = new JButton("Mapped Up");
+//		mapUpButton.setBackground(new Color(151, 220, 141));
+//		panel.add(mapUpButton);
+//
+//		mapDownButton = new JButton("Mapped Down");
+//		mapDownButton.setBackground(new Color(151, 220, 141));
+//		panel.add(mapDownButton);
 
 		panel.add(new JLabel("Comment:"));
 
@@ -494,6 +501,12 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 				approveButton.setEnabled(true);
 				ignoreButton.setEnabled(true);
 		}
+	}
+
+	public void review() {
+		CodeMapping.ReviewStatus reviewStatusToApply = (CodeMapping.ReviewStatus) reviewOptionChooser.getSelectedItem();
+		codeMapping.setReviewStatus(reviewStatusToApply, Global.author);
+		Global.mapping.fireDataChanged(APPROVE_EVENT);
 	}
 
 	public void addConcept(Concept concept) {
