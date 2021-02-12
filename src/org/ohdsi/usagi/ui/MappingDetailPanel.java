@@ -58,7 +58,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private JButton								approveButton;
 	private JButton								ignoreButton;
 	private JButton								flagButton;
-	private JComboBox equivalenceOptionChooser;
+	private JComboBox 							equivalenceOptionChooser;
 	private JTextField							commentField;
 	private JButton								removeButton;
 	private JComboBox 							typesChooser;
@@ -309,7 +309,6 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		equivalenceOptionChooser = new JComboBox<>(CodeMapping.Equivalence.values());
 		equivalenceOptionChooser.setToolTipText("Choose mapping equivalence");
 		equivalenceOptionChooser.setMaximumSize(equivalenceOptionChooser.getPreferredSize());
-		equivalenceOptionChooser.setEnabled(true);
 		panel.add(equivalenceOptionChooser);
 
 		approveButton = new JButton(Global.approveAction);
@@ -392,7 +391,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		});
 		typesChooser.setMaximumSize(typesChooser.getPreferredSize());
 		typesChooser.setEnabled(false);
-//		Hide type chooser, only event type
+//		Hide type chooser for this version, only allow event type
 //		buttonPanel.add(typesChooser);
 
 		removeButton = new JButton("Remove concept");
@@ -466,6 +465,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		flagButton.setEnabled(false);
 		approveButton.setEnabled(false);
 		ignoreButton.setEnabled(false);
+		equivalenceOptionChooser.setEnabled(false);
 
 		switch(codeMapping.mappingStatus) {
 			case APPROVED:
@@ -480,10 +480,11 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 				Global.flagAction.setToUnflag();
 				flagButton.setEnabled(true);
 				break;
-			default:
+			default:  // unchecked, invalid or auto-mapped
 				flagButton.setEnabled(true);
 				approveButton.setEnabled(true);
 				ignoreButton.setEnabled(true);
+				equivalenceOptionChooser.setEnabled(true);
 		}
 	}
 
