@@ -15,8 +15,12 @@
  ******************************************************************************/
 package org.ohdsi.usagi;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.ohdsi.utilities.files.Row;
 import org.ohdsi.utilities.files.WriteCSVFileWithHeader;
@@ -26,6 +30,7 @@ import org.ohdsi.utilities.files.WriteCSVFileWithHeader;
  */
 public class WriteCodeMappingsToFile {
 	private WriteCSVFileWithHeader out;
+	private DecimalFormat scoreFormat = new DecimalFormat("####0.00", new DecimalFormatSymbols(Locale.US));
 
 	public WriteCodeMappingsToFile(String filename) {
 		out = new WriteCSVFileWithHeader(filename);
@@ -41,16 +46,17 @@ public class WriteCodeMappingsToFile {
 		}
 		for (MappingTarget targetConcept : mappingTargets) {
 			Row row = codeMapping.sourceCode.toRow();
-			row.add("matchScore", codeMapping.matchScore);
+			row.add("matchScore", scoreFormat.format(codeMapping.matchScore));
 			row.add("mappingStatus", codeMapping.mappingStatus.toString());
+			row.add("equivalence", codeMapping.equivalence.toString());
 			row.add("statusSetBy", codeMapping.statusSetBy);
 			row.add("statusSetOn", codeMapping.statusSetOn);
 			row.add("conceptId", targetConcept.concept.conceptId);
-			row.add("mappingType", targetConcept.mappingType.toString());
+			row.add("conceptName", targetConcept.concept.conceptName); // Never read in.
+//			row.add("mappingType", targetConcept.mappingType.toString());
 			row.add("comment", codeMapping.comment);
 			row.add("createdBy", targetConcept.createdBy);
 			row.add("createdOn", targetConcept.createdOn);
-			row.add("equivalence", codeMapping.equivalence.toString());
 			row.add("assignedReviewer", codeMapping.assignedReviewer);
 			out.write(row);
 		}

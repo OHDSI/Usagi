@@ -45,9 +45,9 @@ public class SourceCode {
 		Row row = new Row();
 		row.add("sourceCode", sourceCode);
 		row.add("sourceName", sourceName);
-		row.add("sourceValueCode", sourceValueCode);
-		row.add("sourceValueName", sourceValueName);
-		row.add("sourceUnitName", sourceUnitName);
+//		row.add("sourceValueCode", sourceValueCode);
+//		row.add("sourceValueName", sourceValueName);
+//		row.add("sourceUnitName", sourceUnitName);
 		row.add("sourceFrequency", sourceFrequency);
 		row.add("sourceAutoAssignedConceptIds", StringUtilities.join(sourceAutoAssignedConceptIds, ";"));
 		for (Pair<String, String> pair : sourceAdditionalInfo) {
