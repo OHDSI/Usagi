@@ -67,15 +67,6 @@ public class UsagiStatusBar extends JPanel implements DataChangeListener {
 
 		add(Box.createHorizontalGlue());
 
-		reviewPercentLabel = new JLabel("0%");
-		reviewPercentLabel.setForeground(Color.black);
-		add(reviewPercentLabel);
-		description = new JLabel(" codes reviewed");
-		description.setForeground(Color.gray);
-		add(description);
-
-		add(Box.createHorizontalStrut(15));
-
 		JLabel versionLabel = new JLabel("Vocabulary version: " + Global.vocabularyVersion);
 		add(versionLabel);
 		Global.mapping.addListener(this);
@@ -89,7 +80,6 @@ public class UsagiStatusBar extends JPanel implements DataChangeListener {
 		int approved = 0;
 		long totalFreq = 0;
 		long approvedFreq = 0;
-		long reviewedCount = 0;
 		for (CodeMapping codeMapping : Global.mapping) {
 			if (codeMapping.mappingStatus == MappingStatus.APPROVED) {
 				approved++;
@@ -103,25 +93,12 @@ public class UsagiStatusBar extends JPanel implements DataChangeListener {
 			} else {
 				totalFreq += codeMapping.sourceCode.sourceFrequency;
 			}
-
-			switch (codeMapping.reviewStatus) {
-				case UP:
-				case DOWN:
-				case IDENTICAL:
-					reviewedCount++;
-				default:
-					break;
-			}
 		}
 		countLabel.setText(approved + " / " + Global.mapping.size());
 		countLabel.setToolTipText(approved + " of the " + Global.mapping.size() + " source codes now has an approved mapping");
 		String percent = percentFormatter.format(100 * approvedFreq / (double) totalFreq) + "%";
 		percentLabel.setText(percent);
 		percentLabel.setToolTipText(percent + " of all entries in the source data now has an approved mapping");
-
-		String percentReviewed = percentFormatter.format(100 * reviewedCount / (double) Global.mapping.size()) + "%";
-		reviewPercentLabel.setText(percentReviewed);
-		reviewPercentLabel.setToolTipText(percentReviewed + " of all codes in the source data now has a reviewed mapping");
 	}
 
 	@Override

@@ -58,10 +58,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private JButton								approveButton;
 	private JButton								ignoreButton;
 	private JButton								flagButton;
-	private JComboBox reviewOptionChooser;
-	private JButton								reviewIdenticalButton;
-	private JButton								mapUpButton;
-	private JButton								mapDownButton;
+	private JComboBox equivalenceOptionChooser;
 	private JTextField							commentField;
 	private JButton								removeButton;
 	private JComboBox 							typesChooser;
@@ -270,26 +267,6 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 
-		panel.add(new JLabel("Review:"));
-
-		reviewOptionChooser = new JComboBox<>(CodeMapping.ReviewStatus.values());
-		reviewOptionChooser.setToolTipText("Choose review type");
-		reviewOptionChooser.setMaximumSize(reviewOptionChooser.getPreferredSize());
-		reviewOptionChooser.setEnabled(true);
-		panel.add(reviewOptionChooser);
-
-		reviewIdenticalButton = new JButton(Global.reviewAction);
-		reviewIdenticalButton.setBackground(new Color(151, 220, 141));
-		panel.add(reviewIdenticalButton);
-//
-//		mapUpButton = new JButton("Mapped Up");
-//		mapUpButton.setBackground(new Color(151, 220, 141));
-//		panel.add(mapUpButton);
-//
-//		mapDownButton = new JButton("Mapped Down");
-//		mapDownButton.setBackground(new Color(151, 220, 141));
-//		panel.add(mapDownButton);
-
 		panel.add(new JLabel("Comment:"));
 
 		panel.add(Box.createHorizontalStrut(5));
@@ -328,6 +305,12 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		flagButton = new JButton(Global.flagAction);
 		flagButton.setBackground(new Color(151, 220, 141));
 		panel.add(flagButton);
+
+		equivalenceOptionChooser = new JComboBox<>(CodeMapping.Equivalence.values());
+		equivalenceOptionChooser.setToolTipText("Choose mapping equivalence");
+		equivalenceOptionChooser.setMaximumSize(equivalenceOptionChooser.getPreferredSize());
+		equivalenceOptionChooser.setEnabled(true);
+		panel.add(equivalenceOptionChooser);
 
 		approveButton = new JButton(Global.approveAction);
 		approveButton.setBackground(new Color(151, 220, 141));
@@ -443,7 +426,8 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 
 	public void approve() {
 		if (codeMapping.mappingStatus != CodeMapping.MappingStatus.APPROVED) {
-			codeMapping.approve(Global.author);
+			CodeMapping.Equivalence equivalenceToApply = (CodeMapping.Equivalence) equivalenceOptionChooser.getSelectedItem();
+			codeMapping.approve(Global.author, equivalenceToApply);
 			Global.mapping.fireDataChanged(APPROVE_EVENT);
 		} else {
 			codeMapping.setUnchecked();
@@ -501,12 +485,6 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 				approveButton.setEnabled(true);
 				ignoreButton.setEnabled(true);
 		}
-	}
-
-	public void review() {
-		CodeMapping.ReviewStatus reviewStatusToApply = (CodeMapping.ReviewStatus) reviewOptionChooser.getSelectedItem();
-		codeMapping.setReviewStatus(reviewStatusToApply, Global.author);
-		Global.mapping.fireDataChanged(APPROVE_EVENT);
 	}
 
 	public void addConcept(Concept concept) {

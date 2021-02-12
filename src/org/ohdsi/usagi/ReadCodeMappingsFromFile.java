@@ -18,7 +18,7 @@ package org.ohdsi.usagi;
 import java.util.Iterator;
 
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
-import org.ohdsi.usagi.CodeMapping.ReviewStatus;
+import org.ohdsi.usagi.CodeMapping.Equivalence;
 import org.ohdsi.usagi.ui.Global;
 import org.ohdsi.utilities.files.ReadCSVFileWithHeader;
 import org.ohdsi.utilities.files.Row;
@@ -63,9 +63,7 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 				// Status provenance and review need a default as these fields might not be available in older Usagi files
 				buffer.statusSetBy = row.get("statusSetBy", "");
 				buffer.statusSetOn = row.getLong("statusSetOn", "0");
-				buffer.reviewStatus = ReviewStatus.valueOf(row.get("reviewStatus", "UNREVIEWED"));
-				buffer.reviewedBy = row.get("reviewedBy", "");
-				buffer.reviewedOn = row.getLong("reviewedOn", "0");
+				buffer.equivalence = Equivalence.valueOf(row.get("equivalence", "UNREVIEWED"));
 				buffer.assignedReviewer = row.get("assignedReviewer", "");
 
 				try {

@@ -46,7 +46,6 @@ public class Global {
 	public static IgnoreAction						ignoreAction;
 	public static IgnoreSelectedAction 				ignoreSelectedAction;
 	public static FlagAction		 				flagAction;
-	public static ReviewAction		 				reviewAction;
 	public static ReviewerAssignmentAction 			reviewerAssignmentAction;
 	public static ClearSelectedAction 				clearSelectedAction;
 	public static ConceptInformationAction			conceptInfoAction;

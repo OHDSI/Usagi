@@ -17,7 +17,6 @@ package org.ohdsi.usagi.ui;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -116,7 +115,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 
 		private String[]			defaultColumnNames	= { "Status", "Source code", "Source term", "Frequency", "Value", "Value term", "Unit term",
 				"Match score", "Concept ID", "Concept name", "Domain", "Concept class", "Vocabulary", "Concept code",
-				"Valid start date", "Valid end date", "Invalid reason", "Standard concept", "Parents", "Children", "Assigned To", "Review", "Comment", "Status Provenance" };
+				"Valid start date", "Valid end date", "Invalid reason", "Standard concept", "Parents", "Children", "Assigned To", "Equivalence", "Comment", "Status Provenance" };
 		private String[]			columnNames			= defaultColumnNames;
 		private int					addInfoColCount		= 0;
 		private int					ADD_INFO_START_COL	= 7;
@@ -215,8 +214,8 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 					case 20:
 						return codeMapping.assignedReviewer;
 					case 21:
-						if (codeMapping.reviewStatus != CodeMapping.ReviewStatus.UNREVIEWED) {
-							return codeMapping.reviewStatus;
+						if (codeMapping.equivalence != CodeMapping.Equivalence.UNREVIEWED) {
+							return codeMapping.equivalence;
 						} else {
 							return null;
 						}

@@ -50,9 +50,7 @@ public class WriteCodeMappingsToFile {
 			row.add("comment", codeMapping.comment);
 			row.add("createdBy", targetConcept.createdBy);
 			row.add("createdOn", targetConcept.createdOn);
-			row.add("reviewStatus", codeMapping.reviewStatus.toString());
-			row.add("reviewedBy", codeMapping.reviewedBy);
-			row.add("reviewedOn", codeMapping.reviewedOn);
+			row.add("equivalence", codeMapping.equivalence.toString());
 			row.add("assignedReviewer", codeMapping.assignedReviewer);
 			out.write(row);
 		}
