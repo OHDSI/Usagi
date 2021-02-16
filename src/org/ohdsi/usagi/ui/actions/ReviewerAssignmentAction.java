@@ -16,6 +16,8 @@
 package org.ohdsi.usagi.ui.actions;
 
 import org.ohdsi.usagi.ui.Global;
+import org.ohdsi.usagi.ui.ReviewerAssignmentDialog;
+import org.ohdsi.usagi.ui.ShowStatsDialog;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -33,7 +35,9 @@ public class ReviewerAssignmentAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		Global.mappingTablePanel.assignReviewers();
+		ReviewerAssignmentDialog dialog = new ReviewerAssignmentDialog();
+		dialog.setLocationRelativeTo(Global.frame);
+		dialog.setVisible(true);
 	}
 
 }

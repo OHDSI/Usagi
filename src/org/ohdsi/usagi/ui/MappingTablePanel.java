@@ -337,13 +337,12 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		fireUpdateEventAll(SIMPLE_UPDATE_EVENT);
 	}
 
-	public void assignReviewers() {
-		String[] REVIEWERS = {"A", "B", "C", "D"};
-		Random rgen = new Random();
+	public void assignReviewers(String[] reviewers) {
+		// Randomly assign code mappings to given reviewers
+		Random randomGenerator = new Random();
 		for (CodeMapping codeMapping : Global.mapping) {
-			int random = rgen.nextInt(REVIEWERS.length);
-			String reviewer = REVIEWERS[random];
-			codeMapping.assignedReviewer = reviewer;
+			int random = randomGenerator.nextInt(reviewers.length);
+			codeMapping.assignedReviewer = reviewers[random].trim();
 		}
 		fireUpdateEventAll(APPROVE_EVENT);
 	}
