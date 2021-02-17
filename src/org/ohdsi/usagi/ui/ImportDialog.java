@@ -361,11 +361,11 @@ public class ImportDialog extends JDialog {
 		int sourceCodeIndex = columnNames.indexOf(sourceCodeColumn.getSelectedItem().toString());
 		int sourceNameIndex = columnNames.indexOf(sourceNameColumn.getSelectedItem().toString());
 		int sourceFrequencyIndex = columnNames.indexOf(sourceFrequencyColumn.getSelectedItem().toString());
-		int sourceValueCodeIndex = columnNames.indexOf(sourceValueCodeColumn.getSelectedItem().toString());
-		int sourceValueNameIndex = columnNames.indexOf(sourceValueNameColumn.getSelectedItem().toString());
-		int sourceUnitNameIndex = columnNames.indexOf(sourceUnitNameColumn.getSelectedItem().toString());
+//		int sourceValueCodeIndex = columnNames.indexOf(sourceValueCodeColumn.getSelectedItem().toString());
+//		int sourceValueNameIndex = columnNames.indexOf(sourceValueNameColumn.getSelectedItem().toString());
+//		int sourceUnitNameIndex = columnNames.indexOf(sourceUnitNameColumn.getSelectedItem().toString());
 		int sourceAutoIndex = columnNames.indexOf(autoConceptIdColumn.getSelectedItem().toString());
-		List<Integer> additionalInfoIndexes = new ArrayList<Integer>();
+		List<Integer> additionalInfoIndexes = new ArrayList<>();
 		for (JComboBox<String> additionalInfoColumn : additionalInfoColumns) {
 			int index = columnNames.indexOf(additionalInfoColumn.getSelectedItem().toString());
 			if (index != -1)
@@ -385,12 +385,12 @@ public class ImportDialog extends JDialog {
 				sourceCode.sourceFrequency = Integer.parseInt(row.get(sourceFrequencyIndex));
 			else
 				sourceCode.sourceFrequency = -1;
-			if (sourceValueCodeIndex != -1)
-				sourceCode.sourceValueCode = row.get(sourceValueCodeIndex);
-			if (sourceValueNameIndex != -1)
-				sourceCode.sourceValueName = row.get(sourceValueNameIndex);
-			if (sourceUnitNameIndex != -1)
-				sourceCode.sourceUnitName = row.get(sourceUnitNameIndex);
+//			if (sourceValueCodeIndex != -1)
+//				sourceCode.sourceValueCode = row.get(sourceValueCodeIndex);
+//			if (sourceValueNameIndex != -1)
+//				sourceCode.sourceValueName = row.get(sourceValueNameIndex);
+//			if (sourceUnitNameIndex != -1)
+//				sourceCode.sourceUnitName = row.get(sourceUnitNameIndex);
 			if (sourceAutoIndex != -1)
 				if (conceptIdsOrAtc.getSelectedItem().toString().equals(CONCEPT_IDS)) {
 					for (String conceptId : row.get(sourceAutoIndex).split(";"))
@@ -468,6 +468,7 @@ public class ImportDialog extends JDialog {
 						} else if (sourceCode.sourceAutoAssignedConceptIds.size() > 1 && concepts.size() > 0) {
 							codeMapping.mappingStatus = MappingStatus.AUTO_MAPPED;
 						}
+						codeMapping.equivalence = CodeMapping.Equivalence.UNREVIEWED;
 						synchronized (globalMappingList) {
 							globalMappingList.add(codeMapping);
 							progressBar.setValue(Math.round(100 * globalMappingList.size() / sourceCodes.size()));
