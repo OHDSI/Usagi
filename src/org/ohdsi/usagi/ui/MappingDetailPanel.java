@@ -23,13 +23,8 @@ import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.Timer;
-import java.util.TimerTask;
-import java.util.Vector;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -345,7 +340,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		buttonPanel.add(Box.createHorizontalGlue());
 
 		removeButton = new JButton("Remove concept");
-		removeButton.setToolTipText("Add selected concept");
+		removeButton.setToolTipText("Remove selected concept");
 		removeButton.addActionListener(e -> remove());
 		removeButton.setEnabled(false);
 		buttonPanel.add(removeButton);
@@ -442,13 +437,10 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	}
 
 	private void remove() {
-		List<Integer> rows = new ArrayList<>();
-		for (int row : targetConceptTable.getSelectedRows())
-			rows.add(targetConceptTable.convertRowIndexToModel(row));
-
-		rows.sort(Comparator.reverseOrder());
-		for (int row : rows)
-			codeMapping.targetConcepts.remove(row);
+		Arrays.stream(targetConceptTable.getSelectedRows())
+				.map(r -> targetConceptTable.convertRowIndexToModel(r))
+				.boxed().sorted(Comparator.reverseOrder()).mapToInt(Integer::intValue) // sorting for array integrity, remove last first.
+				.forEach(r -> codeMapping.targetConcepts.remove(r));
 
 		targetConceptTableModel.fireTableDataChanged();
 		Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
