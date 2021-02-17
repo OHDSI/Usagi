@@ -36,7 +36,7 @@ public class AuthorDialog extends JDialog {
 
 		g.gridx = 1;
 		g.gridy = 0;
-		JTextFieldLimit authorField = new JTextFieldLimit(20);
+		JTextField authorField = new JTextField(20);
 		authorField.setToolTipText("Please enter your name");
 		authorField.setPreferredSize(new Dimension(100, 10));
 		add(authorField, g);

@@ -18,6 +18,7 @@ package org.ohdsi.usagi.ui;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -337,12 +338,27 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		fireUpdateEventAll(SIMPLE_UPDATE_EVENT);
 	}
 
-	public void assignReviewers(String[] reviewers) {
+	public void assignReviewersRandomly(String[] reviewers) {
 		// Randomly assign code mappings to given reviewers
 		Random randomGenerator = new Random();
 		for (CodeMapping codeMapping : Global.mapping) {
 			int random = randomGenerator.nextInt(reviewers.length);
-			codeMapping.assignedReviewer = reviewers[random].trim();
+			codeMapping.assignedReviewer = reviewers[random];
+		}
+		fireUpdateEventAll(APPROVE_EVENT);
+	}
+
+	public void assignReviewersEqually(String[] reviewers) {
+		// Shuffle the code mapping array, then assign reviewers one by one,
+		// dividing the code mappings equally between reviewers.
+		// If the number of code mappings is not a multiple of the number of reviewers,
+		// then the first, second, etc. reviewer get one mapping more assigned.
+		int nReviewers = reviewers.length;
+		Mapping shuffledCodeMapping = (Mapping) Global.mapping.clone();
+		Collections.shuffle(shuffledCodeMapping);
+		for (int i = 0; i < shuffledCodeMapping.size(); i++) {
+			CodeMapping codeMapping = shuffledCodeMapping.get(i);
+			codeMapping.assignedReviewer = reviewers[i % nReviewers];
 		}
 		fireUpdateEventAll(APPROVE_EVENT);
 	}

@@ -17,6 +17,7 @@ package org.ohdsi.usagi.ui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 
 public class ReviewerAssignmentDialog extends JDialog {
 
@@ -36,7 +37,7 @@ public class ReviewerAssignmentDialog extends JDialog {
 
 		g.gridx = 1;
 		g.gridy = 0;
-		JTextFieldLimit reviewersField = new JTextFieldLimit(20);
+		JTextField reviewersField = new JTextField();
 		reviewersField.setToolTipText("Please enter the reviewers as comma separated list");
 		reviewersField.setPreferredSize(new Dimension(300, 10));
 		reviewersField.setText("A,B,C,D");
@@ -51,8 +52,9 @@ public class ReviewerAssignmentDialog extends JDialog {
 		JButton saveButton = new JButton("Assign");
 		saveButton.setToolTipText("Assign reviewers");
 		saveButton.addActionListener(event -> {
-			Global.mappingTablePanel.assignReviewers(
-					reviewersField.getText().split(",")
+			String[] reviewers = Arrays.stream(reviewersField.getText().split(",")).map(String::trim).toArray(String[]::new);
+			Global.mappingTablePanel.assignReviewersEqually(
+					reviewers
 			);
 			setVisible(false);
 		});
