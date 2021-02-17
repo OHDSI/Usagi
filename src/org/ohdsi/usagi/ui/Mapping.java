@@ -37,7 +37,7 @@ public class Mapping extends ArrayList<CodeMapping> {
 		try {
 			for (CodeMapping codeMapping : new ReadCodeMappingsFromFile(filename)) {
 				add(codeMapping);
-				if (codeMapping.mappingStatus == CodeMapping.MappingStatus.INVALID_TARGET) {
+				if (codeMapping.getMappingStatus() == CodeMapping.MappingStatus.INVALID_TARGET) {
 					nInvalidTargets += 1;
 				}
 			}
@@ -85,7 +85,7 @@ public class Mapping extends ArrayList<CodeMapping> {
 	public List<SourceCode> getSourceCodes() {
 		List<SourceCode> sourceCodes = new ArrayList<SourceCode>(size());
 		for (CodeMapping codeMapping : this)
-			sourceCodes.add(codeMapping.sourceCode);
+			sourceCodes.add(codeMapping.getSourceCode());
 		return sourceCodes;
 	}
 }

@@ -65,13 +65,13 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 					}
 
 					Global.googleSearchAction.setEnabled(true);
-					Global.googleSearchAction.setSourceTerm(tableModel.getCodeMapping(primaryModelRow).sourceCode.sourceName);
+					Global.googleSearchAction.setSourceTerm(tableModel.getCodeMapping(primaryModelRow).getSourceCode().sourceName);
 
 					Global.approveAction.setEnabled(true);
 					Global.approveSelectedAction.setEnabled(true);
 					Global.clearSelectedAction.setEnabled(true);
-					if (tableModel.getCodeMapping(primaryModelRow).targetConcepts.size() > 0) {
-						Concept firstConcept = tableModel.getCodeMapping(primaryModelRow).targetConcepts.get(0).concept;
+					if (tableModel.getCodeMapping(primaryModelRow).getTargetConcepts().size() > 0) {
+						Concept firstConcept = tableModel.getCodeMapping(primaryModelRow).getTargetConcepts().get(0).getConcept();
 						Global.conceptInfoAction.setEnabled(true);
 						Global.conceptInformationDialog.setConcept(firstConcept);
 						Global.athenaAction.setEnabled(true);
@@ -130,13 +130,13 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 			addInfoColCount = 0;
 			if (Global.mapping.size() != 0) {
 				CodeMapping codeMapping = Global.mapping.get(0);
-				addInfoColCount = codeMapping.sourceCode.sourceAdditionalInfo.size();
+				addInfoColCount = codeMapping.getSourceCode().sourceAdditionalInfo.size();
 				columnNames = new String[defaultColumnNames.length + addInfoColCount];
 				for (int i = 0; i < ADD_INFO_START_COL; i++)
 					columnNames[i] = defaultColumnNames[i];
 
 				for (int i = 0; i < addInfoColCount; i++)
-					columnNames[i + ADD_INFO_START_COL] = codeMapping.sourceCode.sourceAdditionalInfo.get(i).getItem1();
+					columnNames[i + ADD_INFO_START_COL] = codeMapping.getSourceCode().sourceAdditionalInfo.get(i).getItem1();
 
 				for (int i = ADD_INFO_START_COL; i < defaultColumnNames.length; i++)
 					columnNames[i + addInfoColCount] = defaultColumnNames[i];
@@ -157,25 +157,25 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 			CodeMapping codeMapping = Global.mapping.get(row);
 
 			if (col >= ADD_INFO_START_COL && col < ADD_INFO_START_COL + addInfoColCount) {
-				return codeMapping.sourceCode.sourceAdditionalInfo.get(col - ADD_INFO_START_COL).getItem2();
+				return codeMapping.getSourceCode().sourceAdditionalInfo.get(col - ADD_INFO_START_COL).getItem2();
 			} else {
 				col = resolveColumnIndex(col);
 				Concept targetConcept;
-				if (codeMapping.targetConcepts.size() > 0)
-					targetConcept = codeMapping.targetConcepts.get(0).concept;
+				if (codeMapping.getTargetConcepts().size() > 0)
+					targetConcept = codeMapping.getTargetConcepts().get(0).getConcept();
 				else
 					targetConcept = Concept.EMPTY_CONCEPT;
 				switch (col) {
 					case 0:
-						return codeMapping.mappingStatus;
+						return codeMapping.getMappingStatus();
 					case 1:
-						return codeMapping.sourceCode.sourceCode;
+						return codeMapping.getSourceCode().sourceCode;
 					case 2:
-						return codeMapping.sourceCode.sourceName;
+						return codeMapping.getSourceCode().sourceName;
 					case 3:
-						return codeMapping.sourceCode.sourceFrequency == -1 ? "" : codeMapping.sourceCode.sourceFrequency;
+						return codeMapping.getSourceCode().sourceFrequency == -1 ? "" : codeMapping.getSourceCode().sourceFrequency;
 					case 4:
-						return codeMapping.matchScore;
+						return codeMapping.getMatchScore();
 					case 5:
 						return targetConcept.conceptId;
 					case 6:
@@ -201,18 +201,18 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 					case 16:
 						return targetConcept.childCount;
 					case ASSIGNED_REVIEWER_COL:
-						return codeMapping.assignedReviewer;
+						return codeMapping.getAssignedReviewer();
 					case 18:
-						if (codeMapping.equivalence != CodeMapping.Equivalence.UNREVIEWED) {
-							return codeMapping.equivalence;
+						if (codeMapping.getEquivalence() != CodeMapping.Equivalence.UNREVIEWED) {
+							return codeMapping.getEquivalence();
 						} else {
 							return null;
 						}
 					case 19:
-						return codeMapping.comment;
+						return codeMapping.getComment();
 					case 20:
-						if (codeMapping.statusSetOn != 0L) {
-							return String.format("%s (%tF)", codeMapping.statusSetBy, codeMapping.statusSetOn);
+						if (codeMapping.getStatusSetOn() != 0L) {
+							return String.format("%s (%tF)", codeMapping.getStatusSetBy(), codeMapping.getStatusSetOn());
 						}
 					default:
 						return "";
@@ -258,7 +258,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 			col = resolveColumnIndex(col);
 			if (col == ASSIGNED_REVIEWER_COL) {
 				CodeMapping codeMapping = Global.mapping.get(row);
-				codeMapping.assignedReviewer = (String) value;
+				codeMapping.setAssignedReviewer((String) value);
 			}
 		}
 
@@ -314,7 +314,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 	public void approveSelected() {
 		for (int viewRow : table.getSelectedRows()) {
 			int modelRow = table.convertRowIndexToModel(viewRow);
-			tableModel.getCodeMapping(modelRow).mappingStatus = MappingStatus.APPROVED;
+			tableModel.getCodeMapping(modelRow).setMappingStatus(MappingStatus.APPROVED);
 		}
 		fireUpdateEventAll(APPROVE_EVENT);
 	}
@@ -322,7 +322,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 	public void clearSelected() {
 		for (int viewRow : table.getSelectedRows()) {
 			int modelRow = table.convertRowIndexToModel(viewRow);
-			tableModel.getCodeMapping(modelRow).targetConcepts.clear();
+			tableModel.getCodeMapping(modelRow).getTargetConcepts().clear();
 		}
 		fireUpdateEventAll(SIMPLE_UPDATE_EVENT);
 	}
@@ -332,7 +332,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		ThreadLocalRandom randomGenerator = ThreadLocalRandom.current();
 		for (CodeMapping codeMapping : Global.mapping) {
 			int random = randomGenerator.nextInt(reviewers.length);
-			codeMapping.assignedReviewer = reviewers[random];
+			codeMapping.setAssignedReviewer(reviewers[random]);
 		}
 		fireUpdateEventAll(APPROVE_EVENT);
 	}
@@ -349,7 +349,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		Collections.shuffle(codeMappingIndex);
 		for (int i = 0; i < codeMappingIndex.size(); i++) {
 			CodeMapping codeMapping = Global.mapping.get(codeMappingIndex.get(i));
-			codeMapping.assignedReviewer = reviewers[i % nReviewers];
+			codeMapping.setAssignedReviewer(reviewers[i % nReviewers]);
 		}
 		fireUpdateEventAll(APPROVE_EVENT);
 	}

@@ -48,7 +48,7 @@ public class ExportSourceToConceptMapAction extends AbstractAction {
 
 		boolean hasApprovedMappings = false;
 		for (CodeMapping mapping : Global.mapping) {
-			if (mapping.mappingStatus == MappingStatus.APPROVED) {
+			if (mapping.getMappingStatus() == MappingStatus.APPROVED) {
 				hasApprovedMappings = true;
 				break;
 			}

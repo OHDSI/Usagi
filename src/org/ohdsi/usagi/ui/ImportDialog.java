@@ -422,19 +422,19 @@ public class ImportDialog extends JDialog {
 						List<ScoredConcept> concepts = Global.usagiSearchEngine.search(sourceCode.sourceName, true, filterConceptIds, filterDomainsFinal,
 								filterConceptClassesFinal, filterVocabulariesFinal, filterStandard, includeSourceConcepts);
 						if (concepts.size() > 0) {
-							codeMapping.targetConcepts.add(new MappingTarget(concepts.get(0).concept, "<auto>"));
-							codeMapping.matchScore = concepts.get(0).matchScore;
+							codeMapping.getTargetConcepts().add(new MappingTarget(concepts.get(0).concept, "<auto>"));
+							codeMapping.setMatchScore(concepts.get(0).matchScore);
 						} else {
-							codeMapping.matchScore = 0;
+							codeMapping.setMatchScore(0);
 						}
-						codeMapping.comment = "";
-						codeMapping.mappingStatus = MappingStatus.UNCHECKED;
+						codeMapping.setComment("");
+						codeMapping.setMappingStatus(MappingStatus.UNCHECKED);
 						if (sourceCode.sourceAutoAssignedConceptIds.size() == 1 && concepts.size() > 0) {
-							codeMapping.mappingStatus = MappingStatus.AUTO_MAPPED_TO_1;
+							codeMapping.setMappingStatus(MappingStatus.AUTO_MAPPED_TO_1);
 						} else if (sourceCode.sourceAutoAssignedConceptIds.size() > 1 && concepts.size() > 0) {
-							codeMapping.mappingStatus = MappingStatus.AUTO_MAPPED;
+							codeMapping.setMappingStatus(MappingStatus.AUTO_MAPPED);
 						}
-						codeMapping.equivalence = CodeMapping.Equivalence.UNREVIEWED;
+						codeMapping.setEquivalence(CodeMapping.Equivalence.UNREVIEWED);
 						synchronized (globalMappingList) {
 							globalMappingList.add(codeMapping);
 							progressBar.setValue(Math.round(100 * globalMappingList.size() / sourceCodes.size()));

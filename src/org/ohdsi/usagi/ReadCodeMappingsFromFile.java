@@ -57,25 +57,25 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 				buffer = null;
 			} else {
 				buffer = new CodeMapping(new SourceCode(row));
-				buffer.matchScore = row.getDouble("matchScore");
-				buffer.mappingStatus = MappingStatus.valueOf(row.get("mappingStatus"));
+				buffer.setMatchScore(row.getDouble("matchScore"));
+				buffer.setMappingStatus(MappingStatus.valueOf(row.get("mappingStatus")));
 
 				// Status provenance and review need a default as these fields might not be available in older Usagi files
-				buffer.statusSetBy = row.get("statusSetBy", "");
-				buffer.statusSetOn = row.getLong("statusSetOn", "0");
-				buffer.equivalence = Equivalence.valueOf(row.get("equivalence", "UNREVIEWED"));
-				buffer.assignedReviewer = row.get("assignedReviewer", "");
-				buffer.comment = row.get("comment", "");
+				buffer.setStatusSetBy(row.get("statusSetBy", ""));
+				buffer.setStatusSetOn(row.getLong("statusSetOn", "0"));
+				buffer.setEquivalence(Equivalence.valueOf(row.get("equivalence", "UNREVIEWED")));
+				buffer.setAssignedReviewer(row.get("assignedReviewer", ""));
+				buffer.setComment(row.get("comment", ""));
 
 				while (row != null
-						&& new SourceCode(row).sourceCode.equals(buffer.sourceCode.sourceCode)
-						&& new SourceCode(row).sourceName.equals(buffer.sourceCode.sourceName)) {
+						&& new SourceCode(row).sourceCode.equals(buffer.getSourceCode().sourceCode)
+						&& new SourceCode(row).sourceName.equals(buffer.getSourceCode().sourceName)) {
 					if (row.getInt("conceptId") != 0) {
 						Concept concept = Global.dbEngine.getConcept(row.getInt("conceptId"));
 
 						if (concept == null) {
-							buffer.mappingStatus = MappingStatus.INVALID_TARGET;
-							buffer.comment = "Invalid existing target: " + row.get("conceptId");
+							buffer.setMappingStatus(MappingStatus.INVALID_TARGET);
+							buffer.setComment("Invalid existing target: " + row.get("conceptId"));
 						} else {
 							// Provenance might not be available in older Usagi files
 							MappingTarget mappingTarget = new MappingTarget(
@@ -83,7 +83,7 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 									row.get("createdBy", ""),
 									row.getLong("createdOn", "0")
 							);
-							buffer.targetConcepts.add(mappingTarget);
+							buffer.getTargetConcepts().add(mappingTarget);
 						}
 					}
 					if (iterator.hasNext())

@@ -57,7 +57,7 @@ public class ExportForReviewAction extends AbstractAction {
 
 		boolean hasApprovedMappings = false;
 		for (CodeMapping mapping : Global.mapping) {
-			if (mapping.mappingStatus == MappingStatus.APPROVED) {
+			if (mapping.getMappingStatus() == MappingStatus.APPROVED) {
 				hasApprovedMappings = true;
 				break;
 			}
@@ -79,20 +79,20 @@ public class ExportForReviewAction extends AbstractAction {
 			Global.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			WriteCSVFileWithHeader out = new WriteCSVFileWithHeader(file.getAbsolutePath());
 			for (CodeMapping mapping : Global.mapping)
-				if (exportUnapproved || mapping.mappingStatus == MappingStatus.APPROVED) {
+				if (exportUnapproved || mapping.getMappingStatus() == MappingStatus.APPROVED) {
 					List<Concept> targetConcepts;
-					if (mapping.targetConcepts.size() == 0) {
+					if (mapping.getTargetConcepts().size() == 0) {
 						targetConcepts = new ArrayList<Concept>(1);
 						targetConcepts.add(Concept.EMPTY_CONCEPT);
 					} else
-						targetConcepts = mapping.targetConcepts.stream()
+						targetConcepts = mapping.getTargetConcepts().stream()
 								.map(MappingTarget::getConcept)
 								.collect(Collectors.toList());
 
 					for (Concept targetConcept : targetConcepts) {
-						Row row = mapping.sourceCode.toRow();
-						row.add("matchScore", mapping.matchScore);
-						if (exportUnapproved) row.add("mappingStatus", mapping.mappingStatus.toString());
+						Row row = mapping.getSourceCode().toRow();
+						row.add("matchScore", mapping.getMatchScore());
+						if (exportUnapproved) row.add("mappingStatus", mapping.getMappingStatus().toString());
 						row.add("targetConceptId", targetConcept.conceptId);
 						row.add("targetConceptName", targetConcept.conceptName);
 						row.add("targetVocabularyId", targetConcept.vocabularyId);

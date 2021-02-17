@@ -74,19 +74,19 @@ public class ImportData {
 			List<ScoredConcept> concepts = usagiSearchEngine.search(sourceCode.sourceName, true, sourceCode.sourceAutoAssignedConceptIds,
 					settings.filterDomains, settings.filterConceptClasses, settings.filterVocabularies, settings.filterStandard, settings.includeSourceTerms);
 			if (concepts.size() > 0) {
-				codeMapping.targetConcepts.add(new MappingTarget(concepts.get(0).concept, "<auto>"));
-				codeMapping.matchScore = concepts.get(0).matchScore;
+				codeMapping.getTargetConcepts().add(new MappingTarget(concepts.get(0).concept, "<auto>"));
+				codeMapping.setMatchScore(concepts.get(0).matchScore);
 			} else {
-				codeMapping.targetConcepts.add(new MappingTarget(Concept.EMPTY_CONCEPT, "<auto>"));
-				codeMapping.matchScore = 0;
+				codeMapping.getTargetConcepts().add(new MappingTarget(Concept.EMPTY_CONCEPT, "<auto>"));
+				codeMapping.setMatchScore(0);
 			}
-			codeMapping.mappingStatus = MappingStatus.UNCHECKED;
+			codeMapping.setMappingStatus(MappingStatus.UNCHECKED);
 			if (sourceCode.sourceAutoAssignedConceptIds.size() == 1 && concepts.size() > 0) {
-				codeMapping.mappingStatus = MappingStatus.AUTO_MAPPED_TO_1;
+				codeMapping.setMappingStatus(MappingStatus.AUTO_MAPPED_TO_1);
 			} else if (sourceCode.sourceAutoAssignedConceptIds.size() > 1 && concepts.size() > 0) {
-				codeMapping.mappingStatus = MappingStatus.AUTO_MAPPED;
+				codeMapping.setMappingStatus(MappingStatus.AUTO_MAPPED);
 			}
-			codeMapping.equivalence = CodeMapping.Equivalence.UNREVIEWED;
+			codeMapping.setEquivalence(CodeMapping.Equivalence.UNREVIEWED);
 			out.write(codeMapping);
 		}
 		out.close();

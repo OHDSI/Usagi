@@ -81,17 +81,17 @@ public class UsagiStatusBar extends JPanel implements DataChangeListener {
 		long totalFreq = 0;
 		long approvedFreq = 0;
 		for (CodeMapping codeMapping : Global.mapping) {
-			if (codeMapping.mappingStatus == MappingStatus.APPROVED) {
+			if (codeMapping.getMappingStatus() == MappingStatus.APPROVED) {
 				approved++;
-				if (codeMapping.sourceCode.sourceFrequency == -1)
+				if (codeMapping.getSourceCode().sourceFrequency == -1)
 					approvedFreq++;
 				else
-					approvedFreq += codeMapping.sourceCode.sourceFrequency;
+					approvedFreq += codeMapping.getSourceCode().sourceFrequency;
 			}
-			if (codeMapping.sourceCode.sourceFrequency == -1) {
+			if (codeMapping.getSourceCode().sourceFrequency == -1) {
 				totalFreq++;
 			} else {
-				totalFreq += codeMapping.sourceCode.sourceFrequency;
+				totalFreq += codeMapping.getSourceCode().sourceFrequency;
 			}
 		}
 		countLabel.setText(approved + " / " + Global.mapping.size());

@@ -177,7 +177,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		searchTable.getSelectionModel().addListSelectionListener(event -> {
 			int viewRow = searchTable.getSelectedRow();
 			// Don't enable the buttons if no row selected or status is approved
-			if (viewRow == -1 || codeMapping.mappingStatus == MappingStatus.APPROVED) {
+			if (viewRow == -1 || codeMapping.getMappingStatus() == MappingStatus.APPROVED) {
 				addButton.setEnabled(false);
 				replaceButton.setEnabled(false);
 			} else {
@@ -245,19 +245,19 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 
 			@Override
 			public void removeUpdate(DocumentEvent arg0) {
-				codeMapping.comment = commentField.getText();
+				codeMapping.setComment(commentField.getText());
 				Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
 			}
 
 			@Override
 			public void insertUpdate(DocumentEvent arg0) {
-				codeMapping.comment = commentField.getText();
+				codeMapping.setComment(commentField.getText());
 				Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
 			}
 
 			@Override
 			public void changedUpdate(DocumentEvent arg0) {
-				codeMapping.comment = commentField.getText();
+				codeMapping.setComment(commentField.getText());
 				Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
 			}
 		});
@@ -312,16 +312,16 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		targetConceptTable.setRowSelectionAllowed(true);
 		targetConceptTable.getSelectionModel().addListSelectionListener(event -> {
 			int viewRow = targetConceptTable.getSelectedRow();
-			if (viewRow == -1 || codeMapping.mappingStatus == MappingStatus.APPROVED) {
+			if (viewRow == -1 || codeMapping.getMappingStatus() == MappingStatus.APPROVED) {
 				removeButton.setEnabled(false);
 			} else {
 				removeButton.setEnabled(true);
 				int modelRow = targetConceptTable.convertRowIndexToModel(viewRow);
 				MappingTarget mappingTarget = targetConceptTableModel.getMappingTarget(modelRow);
 				Global.conceptInfoAction.setEnabled(true);
-				Global.conceptInformationDialog.setConcept(mappingTarget.concept);
+				Global.conceptInformationDialog.setConcept(mappingTarget.getConcept());
 				Global.athenaAction.setEnabled(true);
-				Global.athenaAction.setConcept(mappingTarget.concept);
+				Global.athenaAction.setConcept(mappingTarget.getConcept());
 				Global.googleSearchAction.setEnabled(false);
 			}
 		});
@@ -353,8 +353,8 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		this.codeMapping = codeMapping;
 		toggleStatusButtons();
 		sourceCodeTableModel.setMapping(codeMapping);
-		targetConceptTableModel.setConcepts(codeMapping.targetConcepts);
-		commentField.setText(codeMapping.comment);
+		targetConceptTableModel.setConcepts(codeMapping.getTargetConcepts());
+		commentField.setText(codeMapping.getComment());
 		doSearch();
 	}
 
@@ -369,7 +369,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	}
 
 	public void approve() {
-		if (codeMapping.mappingStatus != CodeMapping.MappingStatus.APPROVED) {
+		if (codeMapping.getMappingStatus() != CodeMapping.MappingStatus.APPROVED) {
 			CodeMapping.Equivalence equivalenceToApply = (CodeMapping.Equivalence) equivalenceOptionChooser.getSelectedItem();
 			codeMapping.approve(Global.author, equivalenceToApply);
 			Global.mapping.fireDataChanged(APPROVE_EVENT);
@@ -381,11 +381,11 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	}
 
 	public void flag() {
-		if (codeMapping.mappingStatus != CodeMapping.MappingStatus.FLAGGED) {
-			codeMapping.mappingStatus = MappingStatus.FLAGGED;
+		if (codeMapping.getMappingStatus() != CodeMapping.MappingStatus.FLAGGED) {
+			codeMapping.setMappingStatus(MappingStatus.FLAGGED);
 			Global.mapping.fireDataChanged(APPROVE_EVENT);
 		} else {
-			codeMapping.mappingStatus = CodeMapping.MappingStatus.UNCHECKED;
+			codeMapping.setMappingStatus(MappingStatus.UNCHECKED);
 			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
 			toggleStatusButtons();
 		}
@@ -398,7 +398,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		approveButton.setEnabled(false);
 		equivalenceOptionChooser.setEnabled(false);
 
-		switch(codeMapping.mappingStatus) {
+		switch(codeMapping.getMappingStatus()) {
 			case APPROVED:
 				Global.approveAction.setToUnapprove();
 				approveButton.setEnabled(true);
@@ -415,9 +415,9 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	}
 
 	public void addConcept(Concept concept) {
-		codeMapping.targetConcepts.add(new MappingTarget(concept, Global.author));
+		codeMapping.getTargetConcepts().add(new MappingTarget(concept, Global.author));
 		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
-			codeMappingMulti.targetConcepts.add(new MappingTarget(concept, Global.author));
+			codeMappingMulti.getTargetConcepts().add(new MappingTarget(concept, Global.author));
 		}
 		targetConceptTableModel.fireTableDataChanged();
 
@@ -429,9 +429,9 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	}
 
 	public void replaceConcepts(Concept concept) {
-		codeMapping.targetConcepts.clear();
+		codeMapping.getTargetConcepts().clear();
 		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
-			codeMappingMulti.targetConcepts.clear();
+			codeMappingMulti.getTargetConcepts().clear();
 		}
 		addConcept(concept);
 	}
@@ -440,7 +440,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		Arrays.stream(targetConceptTable.getSelectedRows())
 				.map(r -> targetConceptTable.convertRowIndexToModel(r))
 				.boxed().sorted(Comparator.reverseOrder()).mapToInt(Integer::intValue) // sorting for array integrity, remove last first.
-				.forEach(r -> codeMapping.targetConcepts.remove(r));
+				.forEach(r -> codeMapping.getTargetConcepts().remove(r));
 
 		targetConceptTableModel.fireTableDataChanged();
 		Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
@@ -452,7 +452,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		public void run() {
 			Set<Integer> filterConceptIds = null;
 			if (filterPanel.getFilterByAuto())
-				filterConceptIds = codeMapping.sourceCode.sourceAutoAssignedConceptIds;
+				filterConceptIds = codeMapping.getSourceCode().sourceAutoAssignedConceptIds;
 
 			boolean filterStandard = filterPanel.getFilterStandard();
 			Vector<String> filterConceptClasses = null;
@@ -467,7 +467,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 
 			String query;
 			if (autoQueryCodeButton.isSelected()) {
-				query = codeMapping.sourceCode.sourceName;
+				query = codeMapping.getSourceCode().sourceName;
 			} else {
 				query = manualQueryField.getText();
 			}
@@ -510,13 +510,13 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			this.codeMapping = codeMapping;
 
 			columnNames = defaultColumnNames;
-			addInfoColCount = codeMapping.sourceCode.sourceAdditionalInfo.size();
+			addInfoColCount = codeMapping.getSourceCode().sourceAdditionalInfo.size();
 			columnNames = new String[defaultColumnNames.length + addInfoColCount];
 			for (int i = 0; i < ADD_INFO_START_COL; i++)
 				columnNames[i] = defaultColumnNames[i];
 
 			for (int i = 0; i < addInfoColCount; i++)
-				columnNames[i + ADD_INFO_START_COL] = codeMapping.sourceCode.sourceAdditionalInfo.get(i).getItem1();
+				columnNames[i + ADD_INFO_START_COL] = codeMapping.getSourceCode().sourceAdditionalInfo.get(i).getItem1();
 
 			fireTableStructureChanged();
 		}
@@ -533,15 +533,15 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			if (codeMapping == null)
 				return "";
 			if (col >= ADD_INFO_START_COL) {
-				return codeMapping.sourceCode.sourceAdditionalInfo.get(col - ADD_INFO_START_COL).getItem2();
+				return codeMapping.getSourceCode().sourceAdditionalInfo.get(col - ADD_INFO_START_COL).getItem2();
 			} else {
 				switch (col) {
 					case 0:
-						return codeMapping.sourceCode.sourceCode;
+						return codeMapping.getSourceCode().sourceCode;
 					case 1:
-						return codeMapping.sourceCode.sourceName;
+						return codeMapping.getSourceCode().sourceName;
 					case 2:
-						return codeMapping.sourceCode.sourceFrequency;
+						return codeMapping.getSourceCode().sourceFrequency;
 					default:
 						return "";
 				}
