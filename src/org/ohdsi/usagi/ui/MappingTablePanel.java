@@ -107,9 +107,9 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 	class CodeMapTableModel extends AbstractTableModel {
 		private static final long	serialVersionUID	= 169286268154988911L;
 
-		private String[]			defaultColumnNames	= { "Status", "Source code", "Source term", "Frequency",
-				"Match score", "Concept ID", "Concept name", "Domain", "Concept class", "Vocabulary", "Concept code",
-				"Valid start date", "Valid end date", "Invalid reason", "Standard concept", "Parents", "Children", "Assigned To", "Equivalence", "Comment", "Status Provenance" };
+		private String[]			defaultColumnNames	= { "Status", "Source code", "Source term", "Frequency", "Match score", "Concept ID", "Concept name",
+				"Domain", "Concept class", "Vocabulary", "Concept code", "Valid start date", "Valid end date", "Invalid reason", "Standard concept", "Parents",
+				"Children", "Assigned To", "Equivalence", "Comment", "Status Provenance" };
 		private String[]			columnNames			= defaultColumnNames;
 		private int					addInfoColCount		= 0;
 		private final int			ADD_INFO_START_COL	= 7;

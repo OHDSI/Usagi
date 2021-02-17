@@ -144,10 +144,8 @@ public class UsagiMain implements ActionListener {
 			OpenAction.open(new File(args[1]));
 		}
 
-		// TODO: save author to file and load if available
 		AuthorDialog authorDialog = new AuthorDialog();
 		authorDialog.setVisible(true);
-
 	}
 
 	private String loadVocabularyVersion(String folder) {
