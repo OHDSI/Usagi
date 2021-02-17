@@ -42,6 +42,7 @@ public class Mapping extends ArrayList<CodeMapping> {
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(
 					Global.frame,
 					"Invalid File Format: '" + e.getMessage() + "'",

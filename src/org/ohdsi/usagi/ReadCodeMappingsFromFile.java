@@ -65,12 +65,8 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 				buffer.statusSetOn = row.getLong("statusSetOn", "0");
 				buffer.equivalence = Equivalence.valueOf(row.get("equivalence", "UNREVIEWED"));
 				buffer.assignedReviewer = row.get("assignedReviewer", "");
+				buffer.comment = row.get("comment", "");
 
-				try {
-					buffer.comment = row.get("comment");
-				} catch (Exception e) {
-					buffer.comment = "";
-				}
 				while (row != null
 						&& new SourceCode(row).sourceCode.equals(buffer.sourceCode.sourceCode)
 						&& new SourceCode(row).sourceName.equals(buffer.sourceCode.sourceName)) {

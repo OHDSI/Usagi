@@ -54,11 +54,17 @@ public class Row {
 				return defaultValue;
 			}
 		}
+
 		index = fieldName2ColumnIndex.get(fieldName);
-		if (cells.size() <= index)
+		if (cells.size() <= index) {
 			return "";
-		else
-			return cells.get(index);
+		}
+
+		String value = cells.get(index);
+		if (value.isEmpty() && defaultValue != null) {
+			return defaultValue;
+		}
+		return value;
 	}
 
 	public List<String> getFieldNames() {
