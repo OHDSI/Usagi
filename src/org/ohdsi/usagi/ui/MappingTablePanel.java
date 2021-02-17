@@ -327,7 +327,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 
 	public void assignReviewersRandomly(String[] reviewers) {
 		// Randomly assign code mappings to given reviewers
-		Random randomGenerator = new Random();
+		Random randomGenerator = ThreadLocalRandom.current();
 		for (CodeMapping codeMapping : Global.mapping) {
 			int random = randomGenerator.nextInt(reviewers.length);
 			codeMapping.assignedReviewer = reviewers[random];
