@@ -330,7 +330,6 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 				Global.googleSearchAction.setEnabled(false);
 			}
 		});
-		targetConceptTable.hideColumn("Mapping Type"); // Hide mapping types
 		targetConceptTable.hideColumn("Valid start date");
 		targetConceptTable.hideColumn("Valid end date");
 		targetConceptTable.hideColumn("Invalid reason");
