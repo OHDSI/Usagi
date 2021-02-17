@@ -97,9 +97,6 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		table.hideColumn("Valid start date");
 		table.hideColumn("Valid end date");
 		table.hideColumn("Invalid reason");
-		table.hideColumn("Value");
-		table.hideColumn("Value term");
-		table.hideColumn("Unit term");
 
 		JScrollPane scrollPane = new JScrollPane(table);
 		add(scrollPane);
@@ -110,7 +107,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 	class CodeMapTableModel extends AbstractTableModel {
 		private static final long	serialVersionUID	= 169286268154988911L;
 
-		private String[]			defaultColumnNames	= { "Status", "Source code", "Source term", "Frequency", "Value", "Value term", "Unit term",
+		private String[]			defaultColumnNames	= { "Status", "Source code", "Source term", "Frequency",
 				"Match score", "Concept ID", "Concept name", "Domain", "Concept class", "Vocabulary", "Concept code",
 				"Valid start date", "Valid end date", "Invalid reason", "Standard concept", "Parents", "Children", "Assigned To", "Equivalence", "Comment", "Status Provenance" };
 		private String[]			columnNames			= defaultColumnNames;
@@ -175,48 +172,42 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 					case 3:
 						return codeMapping.sourceCode.sourceFrequency == -1 ? "" : codeMapping.sourceCode.sourceFrequency;
 					case 4:
-						return codeMapping.sourceCode.sourceValueCode;
-					case 5:
-						return codeMapping.sourceCode.sourceValueName;
-					case 6:
-						return codeMapping.sourceCode.sourceUnitName;
-					case 7:
 						return codeMapping.matchScore;
-					case 8:
+					case 5:
 						return targetConcept.conceptId;
-					case 9:
+					case 6:
 						return targetConcept.conceptName;
-					case 10:
+					case 7:
 						return targetConcept.domainId;
-					case 11:
+					case 8:
 						return targetConcept.conceptClassId;
-					case 12:
+					case 9:
 						return targetConcept.vocabularyId;
-					case 13:
+					case 10:
 						return targetConcept.conceptCode;
-					case 14:
+					case 11:
 						return targetConcept.validStartDate;
-					case 15:
+					case 12:
 						return targetConcept.validEndDate;
-					case 16:
+					case 13:
 						return targetConcept.invalidReason;
-					case 17:
+					case 14:
 						return targetConcept.standardConcept;
-					case 18:
+					case 15:
 						return targetConcept.parentCount;
-					case 19:
+					case 16:
 						return targetConcept.childCount;
-					case 20:
+					case 17:
 						return codeMapping.assignedReviewer;
-					case 21:
+					case 18:
 						if (codeMapping.equivalence != CodeMapping.Equivalence.UNREVIEWED) {
 							return codeMapping.equivalence;
 						} else {
 							return null;
 						}
-					case 22:
+					case 19:
 						return codeMapping.comment;
-					case 23:
+					case 20:
 						if (codeMapping.statusSetOn != 0L) {
 							return String.format("%s (%tF)", codeMapping.statusSetBy, codeMapping.statusSetOn);
 						}
@@ -262,7 +253,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 
 		public void setValueAt(Object value, int row, int col) {
 			col = resolveColumnIndex(col);
-			if (col == 20) {
+			if (col == 17) {
 				CodeMapping codeMapping = Global.mapping.get(row);
 				codeMapping.assignedReviewer = (String) value;
 			}

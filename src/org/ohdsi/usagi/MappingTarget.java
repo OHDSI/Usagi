@@ -19,36 +19,23 @@ package org.ohdsi.usagi;
  * Class for holding information about a single (target) concept in the Vocabulary
  */
 public class MappingTarget{
-	public enum Type {
-		EVENT, VALUE, UNIT // Maybe also OPERATOR, TYPE, etc.
-	};
 
 	public Concept concept;
-	public Type mappingType;
 	public String createdBy;
 	public long createdOn;
 
 	public MappingTarget() {
 		this.concept = Concept.createEmptyConcept();
-		this.mappingType = Type.EVENT;
 		this.createdBy = "";
 		this.createdOn = 0;
 	}
 
 	public MappingTarget(Concept concept, String createdBy) {
-		this(concept, Type.EVENT, createdBy);
+		this(concept, createdBy, System.currentTimeMillis());
 	}
 
-	public MappingTarget(Concept concept, Type mappingType, String createdBy) {
+	public MappingTarget(Concept concept, String createdBy, long createdOn) {
 		this.concept = concept;
-		this.mappingType = mappingType;
-		this.createdBy = createdBy;
-		this.createdOn = System.currentTimeMillis();
-	}
-
-	public MappingTarget(Concept concept, Type mappingType, String createdBy, long createdOn) {
-		this.concept = concept;
-		this.mappingType = mappingType;
 		this.createdBy = createdBy;
 		this.createdOn = createdOn;
 	}
@@ -59,13 +46,5 @@ public class MappingTarget{
 
 	public void setConcept(Concept concept) {
 		this.concept = concept;
-	}
-
-	public Type getMappingType() {
-		return mappingType;
-	}
-
-	public void setMappingType(Type mappingType) {
-		this.mappingType = mappingType;
 	}
 }

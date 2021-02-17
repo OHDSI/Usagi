@@ -76,8 +76,6 @@ class TargetConceptTableModel extends AbstractTableModel {
             case 11:
                 return targetConcept.concept.childCount;
             case 12:
-                return targetConcept.mappingType;
-            case 13:
                 if (targetConcept.createdOn != 0L) {
                     return String.format("%s (%tF)", targetConcept.createdBy, targetConcept.createdOn);
                 }

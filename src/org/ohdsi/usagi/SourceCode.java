@@ -32,9 +32,6 @@ public class SourceCode {
 
 	public String						sourceCode;
 	public String						sourceName;
-	public String						sourceValueCode;
-	public String						sourceValueName;
-	public String						sourceUnitName;
 	public int							sourceFrequency;
 	public Set<Integer>					sourceAutoAssignedConceptIds	= new HashSet<Integer>();
 	public List<Pair<String, String>>	sourceAdditionalInfo			= new ArrayList<Pair<String, String>>();
@@ -45,9 +42,6 @@ public class SourceCode {
 		Row row = new Row();
 		row.add("sourceCode", sourceCode);
 		row.add("sourceName", sourceName);
-//		row.add("sourceValueCode", sourceValueCode);
-//		row.add("sourceValueName", sourceValueName);
-//		row.add("sourceUnitName", sourceUnitName);
 		row.add("sourceFrequency", sourceFrequency);
 		row.add("sourceAutoAssignedConceptIds", StringUtilities.join(sourceAutoAssignedConceptIds, ";"));
 		for (Pair<String, String> pair : sourceAdditionalInfo) {
@@ -62,12 +56,6 @@ public class SourceCode {
 	public SourceCode(Row row) {
 		sourceCode = row.get("sourceCode");
 		sourceName = row.get("sourceName");
-		if (row.getFieldNames().contains("sourceValueCode")) {
-			// Assume that if source value code exists, then other new fields as well
-			sourceValueCode = row.get("sourceValueCode");
-			sourceValueName = row.get("sourceValueName");
-			sourceUnitName = row.get("sourceUnitName");
-		}
 		sourceFrequency = row.getInt("sourceFrequency");
 		sourceAutoAssignedConceptIds = parse(row.get("sourceAutoAssignedConceptIds"));
 		for (String field : row.getFieldNames())

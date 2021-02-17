@@ -73,9 +73,7 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 				}
 				while (row != null
 						&& new SourceCode(row).sourceCode.equals(buffer.sourceCode.sourceCode)
-						&& new SourceCode(row).sourceName.equals(buffer.sourceCode.sourceName) // MM: is this needed?
-						&& (new SourceCode(row).sourceValueCode == null
-						    || new SourceCode(row).sourceValueCode.equals(buffer.sourceCode.sourceValueCode))) {
+						&& new SourceCode(row).sourceName.equals(buffer.sourceCode.sourceName)) {
 					if (row.getInt("conceptId") != 0) {
 						Concept concept = Global.dbEngine.getConcept(row.getInt("conceptId"));
 
@@ -83,10 +81,9 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 							buffer.mappingStatus = MappingStatus.INVALID_TARGET;
 							buffer.comment = "Invalid existing target: " + row.get("conceptId");
 						} else {
-							// Type and provenance might not be available in older Usagi files
+							// Provenance might not be available in older Usagi files
 							MappingTarget mappingTarget = new MappingTarget(
 									concept,
-									MappingTarget.Type.valueOf(row.get("mappingType", "EVENT")),
 									row.get("createdBy", ""),
 									row.getLong("createdOn", "0")
 							);
