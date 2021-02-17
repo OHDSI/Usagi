@@ -119,7 +119,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 				"Valid start date", "Valid end date", "Invalid reason", "Standard concept", "Parents", "Children", "Assigned To", "Equivalence", "Comment", "Status Provenance" };
 		private String[]			columnNames			= defaultColumnNames;
 		private int					addInfoColCount		= 0;
-		private int					ADD_INFO_START_COL	= 7;
+		private final int			ADD_INFO_START_COL	= 7;
 
 		public int getColumnCount() {
 			return columnNames.length;
@@ -163,9 +163,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 			if (col >= ADD_INFO_START_COL && col < ADD_INFO_START_COL + addInfoColCount) {
 				return codeMapping.sourceCode.sourceAdditionalInfo.get(col - ADD_INFO_START_COL).getItem2();
 			} else {
-				if (col >= ADD_INFO_START_COL) {
-					col = col - addInfoColCount;
-				}
+				col = resolveColumnIndex(col);
 				Concept targetConcept;
 				if (codeMapping.targetConcepts.size() > 0)
 					targetConcept = codeMapping.targetConcepts.get(0).concept;
@@ -236,9 +234,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 			if (col >= ADD_INFO_START_COL && col < ADD_INFO_START_COL + addInfoColCount) {
 				return String.class;
 			} else {
-				if (col >= ADD_INFO_START_COL) {
-					col = col - addInfoColCount;
-				}
+				col = resolveColumnIndex(col);
 				switch (col) {
 					case 0:
 						return MappingStatus.class;
@@ -261,11 +257,26 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		}
 
 		public boolean isCellEditable(int row, int col) {
+			col = resolveColumnIndex(col);
+			if (col == 20) {
+				return true;
+			}
 			return false;
 		}
 
 		public void setValueAt(Object value, int row, int col) {
+			col = resolveColumnIndex(col);
+			if (col == 20) {
+				CodeMapping codeMapping = Global.mapping.get(row);
+				codeMapping.assignedReviewer = (String) value;
+			}
+		}
 
+		private int resolveColumnIndex(int col) {
+			if (col >= ADD_INFO_START_COL) {
+				return col - addInfoColCount;
+			}
+			return col;
 		}
 	}
 
