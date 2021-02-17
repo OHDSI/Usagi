@@ -79,7 +79,6 @@ public class UsagiMain implements ActionListener {
 		Global.saveAction = new SaveAction();
 		Global.saveAsAction = new SaveAsAction();
 		Global.approveAction = new ApproveAction();
-		Global.ignoreAction = new IgnoreAction();
 		Global.flagAction = new FlagAction();
 		Global.reviewerAssignmentAction = new ReviewerAssignmentAction();
 		Global.conceptInfoAction = new ConceptInformationAction();
@@ -88,7 +87,6 @@ public class UsagiMain implements ActionListener {
 		Global.showStatsAction = new ShowStatsAction();
 		Global.aboutAction = new AboutAction();
 		Global.approveSelectedAction = new ApproveSelectedAction();
-		Global.ignoreSelectedAction = new IgnoreSelectedAction();
 		Global.rebuildIndexAction = new RebuildIndexAction();
 		Global.exitAction = new ExitAction();
 
@@ -99,9 +97,7 @@ public class UsagiMain implements ActionListener {
 		Global.exportForReviewAction.setEnabled(false);
 		Global.approveAction.setEnabled(false);
 		Global.approveSelectedAction.setEnabled(false);
-		Global.ignoreAction.setEnabled(false);
 		Global.flagAction.setEnabled(false);
-		Global.ignoreSelectedAction.setEnabled(false);
 		Global.clearSelectedAction = new ClearSelectedAction();
 		Global.clearSelectedAction.setEnabled(false);
 		Global.conceptInfoAction.setEnabled(false);

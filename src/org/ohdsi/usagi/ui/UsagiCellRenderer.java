@@ -73,8 +73,6 @@ public class UsagiCellRenderer extends DefaultTableCellRenderer {
 				value = "Unchecked";
 			else if (value == MappingStatus.INVALID_TARGET)
 				value = "Invalid target";
-			else if (value == MappingStatus.IGNORED)
-				value = "Ignored";
 		}
 		Component component = super.getTableCellRendererComponent(aTable, value, isSelected, hasFocus, row, column);
 
@@ -97,9 +95,6 @@ public class UsagiCellRenderer extends DefaultTableCellRenderer {
 				} else {
 					component.setBackground(evenColor);
 				}
-			}
-			if (aTable.getModel().getValueAt(modelRow, 0) == MappingStatus.IGNORED) {
-				component.setForeground(Color.gray);
 			}
 			if (aTable.getModel().getValueAt(modelRow, 0) == MappingStatus.FLAGGED) {
 				component.setForeground(Color.red);

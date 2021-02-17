@@ -25,7 +25,8 @@ import java.util.List;
  */
 public class CodeMapping {
     public enum MappingStatus {
-        APPROVED, UNCHECKED, AUTO_MAPPED, AUTO_MAPPED_TO_1, INVALID_TARGET, IGNORED, FLAGGED
+        // Includes IGNORED for backwards compatibility
+        APPROVED, UNCHECKED, AUTO_MAPPED, AUTO_MAPPED_TO_1, INVALID_TARGET, FLAGGED, IGNORED
     };
 
     public enum Equivalence {
@@ -65,9 +66,5 @@ public class CodeMapping {
 
     public void approve(String approvedBy) {
         approve(approvedBy, Equivalence.EQUAL);
-    }
-
-    public void ignore(String ignoredBy) {
-        setStatus(MappingStatus.IGNORED, ignoredBy);
     }
 }

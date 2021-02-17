@@ -67,8 +67,6 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 
 					Global.approveAction.setEnabled(true);
 					Global.approveSelectedAction.setEnabled(true);
-					Global.ignoreAction.setEnabled(true);
-					Global.ignoreSelectedAction.setEnabled(true);
 					Global.clearSelectedAction.setEnabled(true);
 					if (tableModel.getCodeMapping(primaryModelRow).targetConcepts.size() > 0) {
 						Concept firstConcept = tableModel.getCodeMapping(primaryModelRow).targetConcepts.get(0).concept;
@@ -90,8 +88,6 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 				} else {
 					Global.approveSelectedAction.setEnabled(false);
 					Global.approveAction.setEnabled(false);
-					Global.ignoreAction.setEnabled(false);
-					Global.ignoreSelectedAction.setEnabled(false);
 					Global.clearSelectedAction.setEnabled(false);
 				}
 			}
@@ -324,23 +320,11 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 	public void approveSelected() {
 		for (int viewRow : table.getSelectedRows()) {
 			int modelRow = table.convertRowIndexToModel(viewRow);
-			if (tableModel.getCodeMapping(modelRow).mappingStatus != MappingStatus.IGNORED) {
-				tableModel.getCodeMapping(modelRow).mappingStatus = MappingStatus.APPROVED;
-			}
+			tableModel.getCodeMapping(modelRow).mappingStatus = MappingStatus.APPROVED;
 		}
 		fireUpdateEventAll(APPROVE_EVENT);
 	}
 
-	public void ignoreSelected() {
-		for (int viewRow : table.getSelectedRows()) {
-			int modelRow = table.convertRowIndexToModel(viewRow);
-			if (tableModel.getCodeMapping(modelRow).mappingStatus != MappingStatus.APPROVED) {
-				tableModel.getCodeMapping(modelRow).mappingStatus = MappingStatus.IGNORED;
-				Global.mappingTablePanel.clearSelected();
-			}
-		}
-		fireUpdateEventAll(APPROVE_EVENT);
-	}
 	public void clearSelected() {
 		for (int viewRow : table.getSelectedRows()) {
 			int modelRow = table.convertRowIndexToModel(viewRow);

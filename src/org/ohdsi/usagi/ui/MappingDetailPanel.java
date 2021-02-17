@@ -56,7 +56,6 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private TableRowSorter<ConceptTableModel>	sorter;
 	private ConceptTableModel					searchTableModel;
 	private JButton								approveButton;
-	private JButton								ignoreButton;
 	private JButton								flagButton;
 	private JComboBox 							equivalenceOptionChooser;
 	private JTextField							commentField;
@@ -199,8 +198,8 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		searchTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		searchTable.getSelectionModel().addListSelectionListener(event -> {
 			int viewRow = searchTable.getSelectedRow();
-			// Don't enable the buttons if no row selected or status is either approved or ignored
-			if (viewRow == -1 || codeMapping.mappingStatus == MappingStatus.APPROVED || codeMapping.mappingStatus == MappingStatus.IGNORED) {
+			// Don't enable the buttons if no row selected or status is approved
+			if (viewRow == -1 || codeMapping.mappingStatus == MappingStatus.APPROVED) {
 				addButtons.forEach(x -> x.setEnabled(false));
 				replaceButton.setEnabled(false);
 			} else {
@@ -297,10 +296,6 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		panel.add(commentField);
 
 		panel.add(Box.createHorizontalStrut(5));
-
-		ignoreButton = new JButton(Global.ignoreAction);
-		ignoreButton.setBackground(new Color(151, 220, 141));
-//		panel.add(ignoreButton);
 
 		flagButton = new JButton(Global.flagAction);
 		flagButton.setBackground(new Color(151, 220, 141));
@@ -435,18 +430,6 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		}
 	}
 
-	public void ignore() {
-		if (codeMapping.mappingStatus != CodeMapping.MappingStatus.IGNORED) {
-			codeMapping.ignore(Global.author);
-			Global.mappingTablePanel.clearSelected();
-			Global.mapping.fireDataChanged(APPROVE_EVENT);
-		} else {
-			codeMapping.setUnchecked();
-			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
-			toggleStatusButtons();
-		}
-	}
-
 	public void flag() {
 		if (codeMapping.mappingStatus != CodeMapping.MappingStatus.FLAGGED) {
 			codeMapping.mappingStatus = MappingStatus.FLAGGED;
@@ -460,21 +443,15 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 
 	private void toggleStatusButtons() {
 		Global.approveAction.setToApprove();
-		Global.ignoreAction.setToIgnore();
 		Global.flagAction.setToFlag();
 		flagButton.setEnabled(false);
 		approveButton.setEnabled(false);
-		ignoreButton.setEnabled(false);
 		equivalenceOptionChooser.setEnabled(false);
 
 		switch(codeMapping.mappingStatus) {
 			case APPROVED:
 				Global.approveAction.setToUnapprove();
 				approveButton.setEnabled(true);
-				break;
-			case IGNORED:
-				Global.ignoreAction.setToUnignore();
-				ignoreButton.setEnabled(true);
 				break;
 			case FLAGGED:
 				Global.flagAction.setToUnflag();
@@ -483,7 +460,6 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			default:  // unchecked, invalid or auto-mapped
 				flagButton.setEnabled(true);
 				approveButton.setEnabled(true);
-				ignoreButton.setEnabled(true);
 				equivalenceOptionChooser.setEnabled(true);
 		}
 	}
