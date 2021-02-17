@@ -113,6 +113,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		private String[]			columnNames			= defaultColumnNames;
 		private int					addInfoColCount		= 0;
 		private final int			ADD_INFO_START_COL	= 7;
+		private static final int ASSIGNED_REVIEWER_COL = 17;  // special meaning, as
 
 		public int getColumnCount() {
 			return columnNames.length;
@@ -197,7 +198,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 						return targetConcept.parentCount;
 					case 16:
 						return targetConcept.childCount;
-					case 17:
+					case ASSIGNED_REVIEWER_COL:
 						return codeMapping.assignedReviewer;
 					case 18:
 						if (codeMapping.equivalence != CodeMapping.Equivalence.UNREVIEWED) {
@@ -245,7 +246,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 
 		public boolean isCellEditable(int row, int col) {
 			col = resolveColumnIndex(col);
-			if (col == 20) {
+			if (col == ASSIGNED_REVIEWER_COL) {
 				return true;
 			}
 			return false;
@@ -253,7 +254,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 
 		public void setValueAt(Object value, int row, int col) {
 			col = resolveColumnIndex(col);
-			if (col == 17) {
+			if (col == ASSIGNED_REVIEWER_COL) {
 				CodeMapping codeMapping = Global.mapping.get(row);
 				codeMapping.assignedReviewer = (String) value;
 			}
