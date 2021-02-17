@@ -20,7 +20,9 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
@@ -327,7 +329,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 
 	public void assignReviewersRandomly(String[] reviewers) {
 		// Randomly assign code mappings to given reviewers
-		Random randomGenerator = ThreadLocalRandom.current();
+		ThreadLocalRandom randomGenerator = ThreadLocalRandom.current();
 		for (CodeMapping codeMapping : Global.mapping) {
 			int random = randomGenerator.nextInt(reviewers.length);
 			codeMapping.assignedReviewer = reviewers[random];
@@ -341,10 +343,12 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		// If the number of code mappings is not a multiple of the number of reviewers,
 		// then the first, second, etc. reviewer get one mapping more assigned.
 		int nReviewers = reviewers.length;
-		Mapping shuffledCodeMapping = (Mapping) Global.mapping.clone();
-		Collections.shuffle(shuffledCodeMapping);
-		for (int i = 0; i < shuffledCodeMapping.size(); i++) {
-			CodeMapping codeMapping = shuffledCodeMapping.get(i);
+		List<Integer> codeMappingIndex = IntStream.range(0, Global.mapping.size())
+				.boxed().collect(Collectors.toList());
+
+		Collections.shuffle(codeMappingIndex);
+		for (int i = 0; i < codeMappingIndex.size(); i++) {
+			CodeMapping codeMapping = Global.mapping.get(codeMappingIndex.get(i));
 			codeMapping.assignedReviewer = reviewers[i % nReviewers];
 		}
 		fireUpdateEventAll(APPROVE_EVENT);

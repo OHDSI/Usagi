@@ -52,7 +52,9 @@ public class ReviewerAssignmentDialog extends JDialog {
 		JButton saveButton = new JButton("Assign");
 		saveButton.setToolTipText("Assign reviewers");
 		saveButton.addActionListener(event -> {
-			String[] reviewers = Arrays.stream(reviewersField.getText().split(",")).map(String::trim).toArray(String[]::new);
+			String[] reviewers = Arrays.stream(reviewersField.getText().split(","))
+					.map(String::trim)
+					.toArray(String[]::new);
 			Global.mappingTablePanel.assignReviewersEqually(
 					reviewers
 			);
