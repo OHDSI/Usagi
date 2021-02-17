@@ -22,22 +22,22 @@ public class MappingTarget{
 
 	public Concept concept;
 	public String createdBy;
-	public long createdOn;
+	public long createdTime;
 
 	public MappingTarget() {
 		this.concept = Concept.createEmptyConcept();
 		this.createdBy = "";
-		this.createdOn = 0;
+		this.createdTime = 0;
 	}
 
 	public MappingTarget(Concept concept, String createdBy) {
 		this(concept, createdBy, System.currentTimeMillis());
 	}
 
-	public MappingTarget(Concept concept, String createdBy, long createdOn) {
+	public MappingTarget(Concept concept, String createdBy, long createdTime) {
 		this.concept = concept;
 		this.createdBy = createdBy;
-		this.createdOn = createdOn;
+		this.createdTime = createdTime;
 	}
 
 	public Concept getConcept() {
@@ -47,4 +47,6 @@ public class MappingTarget{
 	public void setConcept(Concept concept) {
 		this.concept = concept;
 	}
+
+
 }

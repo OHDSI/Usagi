@@ -85,7 +85,9 @@ public class ExportForReviewAction extends AbstractAction {
 						targetConcepts = new ArrayList<Concept>(1);
 						targetConcepts.add(Concept.EMPTY_CONCEPT);
 					} else
-						targetConcepts = mapping.targetConcepts.stream().map(MappingTarget::getConcept).collect(Collectors.toList());
+						targetConcepts = mapping.targetConcepts.stream()
+								.map(MappingTarget::getConcept)
+								.collect(Collectors.toList());
 
 					for (Concept targetConcept : targetConcepts) {
 						Row row = mapping.sourceCode.toRow();

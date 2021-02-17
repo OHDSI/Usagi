@@ -48,10 +48,10 @@ public class Row {
 	public String get(String fieldName, String defaultValue) {
 		int index;
 		if (!fieldName2ColumnIndex.containsKey(fieldName)) {
-			if (defaultValue == null) {
-				throw new RuntimeException("Field \"" + fieldName + "\" not found");
-			} else {
+			if (defaultValue != null) {
 				return defaultValue;
+			} else {
+				throw new RuntimeException("Field \"" + fieldName + "\" not found");
 			}
 		}
 

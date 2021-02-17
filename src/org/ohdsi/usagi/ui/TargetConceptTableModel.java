@@ -2,7 +2,6 @@ package org.ohdsi.usagi.ui;
 
 import org.ohdsi.usagi.Concept;
 import org.ohdsi.usagi.MappingTarget;
-import org.ohdsi.usagi.UsagiSearchEngine.ScoredConcept;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
@@ -76,8 +75,8 @@ class TargetConceptTableModel extends AbstractTableModel {
             case 11:
                 return targetConcept.concept.childCount;
             case 12:
-                if (targetConcept.createdOn != 0L) {
-                    return String.format("%s (%tF)", targetConcept.createdBy, targetConcept.createdOn);
+                if (targetConcept.createdTime != 0L) {
+                    return String.format("%s (%tF)", targetConcept.createdBy, targetConcept.createdTime);
                 }
             default:
                 return "";

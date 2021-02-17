@@ -15,7 +15,6 @@
  ******************************************************************************/
 package org.ohdsi.usagi;
 
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -55,7 +54,7 @@ public class WriteCodeMappingsToFile {
 			row.add("conceptName", targetConcept.concept.conceptName); // Never read in.
 			row.add("comment", codeMapping.comment);
 			row.add("createdBy", targetConcept.createdBy);
-			row.add("createdOn", targetConcept.createdOn);
+			row.add("createdOn", targetConcept.createdTime);
 			row.add("assignedReviewer", codeMapping.assignedReviewer);
 			out.write(row);
 		}
