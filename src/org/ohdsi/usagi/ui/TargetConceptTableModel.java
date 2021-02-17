@@ -10,7 +10,6 @@ import java.util.List;
 class TargetConceptTableModel extends AbstractTableModel {
     private static final long serialVersionUID = -4978479688021056281L;
 
-    private final String termColumnName = "Term";
     private final String[] columnNames = {"Concept ID", "Concept name", "Domain", "Concept class", "Vocabulary", "Concept code",
             "Valid start date", "Valid end date", "Invalid reason", "Standard concept", "Parents", "Children", "Mapping Type",
             "Creation Provenance"};
@@ -24,7 +23,7 @@ class TargetConceptTableModel extends AbstractTableModel {
     }
 
     public Concept getConcept(int row) {
-        return getMappingTarget(row).concept;
+        return getMappingTarget(row).getConcept();
     }
 
     public int getColumnCount() {
@@ -48,35 +47,36 @@ class TargetConceptTableModel extends AbstractTableModel {
         if (row > targetConcepts.size()) {
             return "";
         }
-        MappingTarget targetConcept = targetConcepts.get(row);
+        MappingTarget mappingTarget = targetConcepts.get(row);
+        Concept targetConcept = mappingTarget.getConcept();
         switch (col) {
             case 0:
-                return targetConcept.concept.conceptId;
+                return targetConcept.conceptId;
             case 1:
-                return targetConcept.concept.conceptName;
+                return targetConcept.conceptName;
             case 2:
-                return targetConcept.concept.domainId;
+                return targetConcept.domainId;
             case 3:
-                return targetConcept.concept.conceptClassId;
+                return targetConcept.conceptClassId;
             case 4:
-                return targetConcept.concept.vocabularyId;
+                return targetConcept.vocabularyId;
             case 5:
-                return targetConcept.concept.conceptCode;
+                return targetConcept.conceptCode;
             case 6:
-                return targetConcept.concept.validStartDate;
+                return targetConcept.validStartDate;
             case 7:
-                return targetConcept.concept.validEndDate;
+                return targetConcept.validEndDate;
             case 8:
-                return targetConcept.concept.invalidReason;
+                return targetConcept.invalidReason;
             case 9:
-                return targetConcept.concept.standardConcept;
+                return targetConcept.standardConcept;
             case 10:
-                return targetConcept.concept.parentCount;
+                return targetConcept.parentCount;
             case 11:
-                return targetConcept.concept.childCount;
+                return targetConcept.childCount;
             case 12:
-                if (targetConcept.createdTime != 0L) {
-                    return String.format("%s (%tF)", targetConcept.createdBy, targetConcept.createdTime);
+                if (mappingTarget.getCreatedTime() != 0L) {
+                    return String.format("%s (%tF)", mappingTarget.getCreatedBy(), mappingTarget.getCreatedTime());
                 }
             default:
                 return "";

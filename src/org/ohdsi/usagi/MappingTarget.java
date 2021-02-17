@@ -20,9 +20,9 @@ package org.ohdsi.usagi;
  */
 public class MappingTarget{
 
-	public Concept concept;
-	public String createdBy;
-	public long createdTime;
+	private final Concept concept;
+	private final String createdBy;
+	private final long createdTime;
 
 	public MappingTarget() {
 		this.concept = Concept.createEmptyConcept();
@@ -44,9 +44,11 @@ public class MappingTarget{
 		return concept;
 	}
 
-	public void setConcept(Concept concept) {
-		this.concept = concept;
+	public String getCreatedBy() {
+		return createdBy;
 	}
 
-
+	public long getCreatedTime() {
+		return createdTime;
+	}
 }

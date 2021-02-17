@@ -50,11 +50,11 @@ public class WriteCodeMappingsToFile {
 			row.add("equivalence", codeMapping.equivalence.toString());
 			row.add("statusSetBy", codeMapping.statusSetBy);
 			row.add("statusSetOn", codeMapping.statusSetOn);
-			row.add("conceptId", targetConcept.concept.conceptId);
-			row.add("conceptName", targetConcept.concept.conceptName); // Never read in.
+			row.add("conceptId", targetConcept.getConcept().conceptId);
+			row.add("conceptName", targetConcept.getConcept().conceptName); // Never read in.
 			row.add("comment", codeMapping.comment);
-			row.add("createdBy", targetConcept.createdBy);
-			row.add("createdOn", targetConcept.createdTime);
+			row.add("createdBy", targetConcept.getCreatedBy());
+			row.add("createdOn", targetConcept.getCreatedTime());
 			row.add("assignedReviewer", codeMapping.assignedReviewer);
 			out.write(row);
 		}
