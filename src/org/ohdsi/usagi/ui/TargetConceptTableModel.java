@@ -11,7 +11,7 @@ class TargetConceptTableModel extends AbstractTableModel {
     private static final long serialVersionUID = -4978479688021056281L;
 
     private final String[] columnNames = {"Concept ID", "Concept name", "Domain", "Concept class", "Vocabulary", "Concept code",
-            "Valid start date", "Valid end date", "Invalid reason", "Standard concept", "Parents", "Children", "Mapping Type",
+            "Valid start date", "Valid end date", "Invalid reason", "Standard concept", "Parents", "Children",
             "Creation Provenance"};
     private List<MappingTarget> targetConcepts = new ArrayList<>();
 
