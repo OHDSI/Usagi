@@ -67,6 +67,7 @@ public class CodeMapping {
 
     public void setUnchecked() {
         this.setMappingStatus(MappingStatus.UNCHECKED);
+        this.setEquivalence(Equivalence.UNREVIEWED);
         this.setStatusSetOn(0);
         this.setStatusSetBy("");
     }
