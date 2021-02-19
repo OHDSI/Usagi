@@ -221,7 +221,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			if (mappingType.equals(MappingTarget.Type.MAPS_TO)) {
 				button = new JButton("Add concept");
 			} else {
-				button = new JButton(String.format("Add %s concept", mappingType));
+				button = new JButton(String.format("Add %s", mappingType));
 			}
 			button.setToolTipText(String.format("Add selected concept as %s", mappingType));
 			button.addActionListener(e -> {
