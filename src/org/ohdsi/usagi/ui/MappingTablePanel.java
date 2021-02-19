@@ -31,6 +31,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableRowSorter;
 
+import org.apache.xmlbeans.impl.xb.ltgfmt.Code;
 import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
 import org.ohdsi.usagi.Concept;
@@ -343,12 +344,25 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		// If the number of code mappings is not a multiple of the number of reviewers,
 		// then the first, second, etc. reviewer get one mapping more assigned.
 		int nReviewers = reviewers.length;
-		List<Integer> codeMappingIndex = IntStream.range(0, Global.mapping.size())
+
+		List<CodeMapping> codesToAssign = new ArrayList<>();
+		if (table.getSelectedRows().length == 1) {
+			// If only one row selected, assign all rows to the given reviewers
+			codesToAssign = Global.mapping;
+		} else {
+			// If a multi selection is made, only assign the select rows.
+			for (int viewRow : table.getSelectedRows()) {
+				int modelRow = table.convertRowIndexToModel(viewRow);
+				codesToAssign.add(tableModel.getCodeMapping(modelRow));
+			}
+		}
+
+		List<Integer> codeMappingIndex = IntStream.range(0, codesToAssign.size())
 				.boxed().collect(Collectors.toList());
 
 		Collections.shuffle(codeMappingIndex);
 		for (int i = 0; i < codeMappingIndex.size(); i++) {
-			CodeMapping codeMapping = Global.mapping.get(codeMappingIndex.get(i));
+			CodeMapping codeMapping = codesToAssign.get(codeMappingIndex.get(i));
 			codeMapping.setAssignedReviewer(reviewers[i % nReviewers]);
 		}
 		fireUpdateEventAll(APPROVE_EVENT);
