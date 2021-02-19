@@ -21,7 +21,7 @@ package org.ohdsi.usagi;
 public class MappingTarget{
 	public enum Type {
 		MAPS_TO, MAPS_TO_VALUE, MAPS_TO_UNIT
-	};
+	}
 
 	private final Concept concept;
 	private final String createdBy;

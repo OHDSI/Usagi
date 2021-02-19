@@ -15,6 +15,8 @@
  ******************************************************************************/
 package org.ohdsi.usagi;
 
+import org.ohdsi.usagi.ui.Global;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,11 +29,11 @@ public class CodeMapping {
     public enum MappingStatus {
         // Includes IGNORED for backwards compatibility
         APPROVED, UNCHECKED, AUTO_MAPPED, AUTO_MAPPED_TO_1, INVALID_TARGET, FLAGGED, IGNORED
-    };
+    }
 
     public enum Equivalence {
         EQUAL, EQUIVALENT, WIDER, NARROWER, INEXACT, UNMATCHED, UNREVIEWED
-    };
+    }
 
     private SourceCode sourceCode;
     private double matchScore;
@@ -47,25 +49,26 @@ public class CodeMapping {
         this.setSourceCode(sourceCode);
     }
 
-    public void setStatus(MappingStatus mappingStatus, String author) {
+    public void approve(Equivalence equivalence) {
+        setStatus(MappingStatus.APPROVED);
+        this.setEquivalence(equivalence);
+    }
+
+    public void flag(Equivalence equivalence) {
+        setStatus(MappingStatus.FLAGGED);
+        this.setEquivalence(equivalence);
+    }
+
+    public void setStatus(MappingStatus mappingStatus) {
         this.setMappingStatus(mappingStatus);
         this.setStatusSetOn(System.currentTimeMillis());
-        this.setStatusSetBy(author);
+        this.setStatusSetBy(Global.author);
     }
 
     public void setUnchecked() {
         this.setMappingStatus(MappingStatus.UNCHECKED);
         this.setStatusSetOn(0);
         this.setStatusSetBy("");
-    }
-
-    public void approve(String approvedBy, Equivalence equivalence) {
-        setStatus(MappingStatus.APPROVED, approvedBy);
-        this.setEquivalence(equivalence);
-    }
-
-    public void approve(String approvedBy) {
-        approve(approvedBy, Equivalence.EQUAL);
     }
 
     public SourceCode getSourceCode() {

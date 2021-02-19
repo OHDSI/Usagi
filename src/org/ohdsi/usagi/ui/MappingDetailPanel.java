@@ -392,7 +392,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	public void approve() {
 		if (codeMapping.getMappingStatus() != CodeMapping.MappingStatus.APPROVED) {
 			CodeMapping.Equivalence equivalenceToApply = (CodeMapping.Equivalence) equivalenceOptionChooser.getSelectedItem();
-			codeMapping.approve(Global.author, equivalenceToApply);
+			codeMapping.approve(equivalenceToApply);
 			Global.mapping.fireDataChanged(APPROVE_EVENT);
 		} else {
 			codeMapping.setUnchecked();
@@ -403,10 +403,11 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 
 	public void flag() {
 		if (codeMapping.getMappingStatus() != CodeMapping.MappingStatus.FLAGGED) {
-			codeMapping.setMappingStatus(MappingStatus.FLAGGED);
+			CodeMapping.Equivalence equivalenceToApply = (CodeMapping.Equivalence) equivalenceOptionChooser.getSelectedItem();
+			codeMapping.flag(equivalenceToApply);
 			Global.mapping.fireDataChanged(APPROVE_EVENT);
 		} else {
-			codeMapping.setMappingStatus(MappingStatus.UNCHECKED);
+			codeMapping.setUnchecked();
 			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
 			toggleStatusButtons();
 		}
