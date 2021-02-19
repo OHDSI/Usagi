@@ -52,6 +52,7 @@ public class WriteCodeMappingsToFile {
 			row.add("statusSetOn", codeMapping.getStatusSetOn());
 			row.add("conceptId", targetConcept.getConcept().conceptId);
 			row.add("conceptName", targetConcept.getConcept().conceptName); // Never read in.
+			row.add("mappingType", targetConcept.getMappingType().toString());
 			row.add("comment", codeMapping.getComment());
 			row.add("createdBy", targetConcept.getCreatedBy());
 			row.add("createdOn", targetConcept.getCreatedTime());

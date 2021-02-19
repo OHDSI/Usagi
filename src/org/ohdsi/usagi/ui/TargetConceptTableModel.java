@@ -11,7 +11,7 @@ class TargetConceptTableModel extends AbstractTableModel {
     private static final long serialVersionUID = -4978479688021056281L;
 
     private final String[] columnNames = {"Concept ID", "Concept name", "Domain", "Concept class", "Vocabulary", "Concept code",
-            "Valid start date", "Valid end date", "Invalid reason", "Standard concept", "Parents", "Children",
+            "Valid start date", "Valid end date", "Invalid reason", "Standard concept", "Parents", "Children", "Mapping Type",
             "Creation Provenance"};
     private List<MappingTarget> targetConcepts = new ArrayList<>();
 
@@ -75,6 +75,8 @@ class TargetConceptTableModel extends AbstractTableModel {
             case 11:
                 return targetConcept.childCount;
             case 12:
+                return mappingTarget.getMappingType();
+            case 13:
                 if (mappingTarget.getCreatedTime() != 0L) {
                     return String.format("%s (%tF)", mappingTarget.getCreatedBy(), mappingTarget.getCreatedTime());
                 }
@@ -85,7 +87,7 @@ class TargetConceptTableModel extends AbstractTableModel {
 
     public Class<?> getColumnClass(int col) {
         switch (col) {
-            case 1:
+            case 0:
             case 10:
             case 11:
                 return Integer.class;

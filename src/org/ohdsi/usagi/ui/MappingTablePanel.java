@@ -114,7 +114,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 				"Children", "Assigned To", "Equivalence", "Comment", "Status Provenance" };
 		private String[]			columnNames			= defaultColumnNames;
 		private int					addInfoColCount		= 0;
-		private final int			ADD_INFO_START_COL	= 7;
+		private final int			ADD_INFO_START_COL	= 4;
 		private static final int ASSIGNED_REVIEWER_COL = 17;  // special meaning, as
 
 		public int getColumnCount() {
