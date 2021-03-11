@@ -11,6 +11,8 @@ DomainIds.txt
 VocabularyIds.txt
 vocabularyVersion.txt
 
+local_files/
+
 ### Intellij ###
 # Created by https://www.gitignore.io/api/intellij
 # Edit at https://www.gitignore.io/?templates=intellij

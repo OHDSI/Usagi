@@ -26,14 +26,15 @@ import org.ohdsi.usagi.CodeMapping.MappingStatus;
 
 public class UsagiCellRenderer extends DefaultTableCellRenderer {
 
-	public static int				MAX_TOOLTIP_WIDTH_IN_CHARS	= 150;
-	private static final long		serialVersionUID			= -4732586716304918837L;
-	private static Color			oddColor					= new Color(0.95f, 0.95f, 1f);
-	private static Color			checkedColor				= new Color(0.75f, 1f, 0.75f);
-	private static Color			checkedOddColor				= new Color(0.85f, 1f, 0.85f);
-	private static Color			errorColor					= new Color(1f, 0.75f, 0.75f);
-	private static Color			errorOddColor				= new Color(1f, 0.85f, 0.85f);
-	private static DecimalFormat	doubleFormatter				= new DecimalFormat("###,###,###,##0.00");
+	public static int					MAX_TOOLTIP_WIDTH_IN_CHARS	= 150;
+	private static final long			serialVersionUID			= -4732586716304918837L;
+	private static final Color			evenColor					= Color.white;
+	private static final Color			oddColor					= new Color(0.95f, 0.95f, 1.00f);
+	private static final Color			checkedColor				= new Color(0.75f, 1.00f, 0.75f);
+	private static final Color			checkedOddColor				= new Color(0.85f, 1.00f, 0.85f);
+	private static final Color			errorColor					= new Color(1.00f, 0.75f, 0.75f);
+	private static final Color			errorOddColor				= new Color(1.00f, 0.85f, 0.85f);
+	private static final DecimalFormat	doubleFormatter				= new DecimalFormat("###,###,###,##0.00");
 
 	@Override
 	public void setValue(Object aValue) {
@@ -77,6 +78,7 @@ public class UsagiCellRenderer extends DefaultTableCellRenderer {
 
 		if (!isSelected) {
 			int modelRow = aTable.convertRowIndexToModel(row);
+			component.setForeground(Color.black);
 			if (aTable.getModel().getValueAt(modelRow, 0) == MappingStatus.APPROVED) {
 				if (row % 2 == 1)
 					component.setBackground(checkedColor);
@@ -90,8 +92,12 @@ public class UsagiCellRenderer extends DefaultTableCellRenderer {
 			} else {
 				if (row % 2 == 1) {
 					component.setBackground(oddColor);
-				} else
-					component.setBackground(Color.white);
+				} else {
+					component.setBackground(evenColor);
+				}
+			}
+			if (aTable.getModel().getValueAt(modelRow, 0) == MappingStatus.FLAGGED) {
+				component.setForeground(Color.red);
 			}
 		}
 		return component;

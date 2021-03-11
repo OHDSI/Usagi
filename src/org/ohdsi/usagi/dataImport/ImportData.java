@@ -19,13 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import org.ohdsi.usagi.CodeMapping;
+import org.ohdsi.usagi.*;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
-import org.ohdsi.usagi.SourceCode;
-import org.ohdsi.usagi.Concept;
-import org.ohdsi.usagi.UsagiSearchEngine;
 import org.ohdsi.usagi.UsagiSearchEngine.ScoredConcept;
-import org.ohdsi.usagi.WriteCodeMappingsToFile;
 import org.ohdsi.utilities.collections.Pair;
 import org.ohdsi.utilities.files.ReadCSVFileWithHeader;
 import org.ohdsi.utilities.files.Row;
@@ -78,18 +74,19 @@ public class ImportData {
 			List<ScoredConcept> concepts = usagiSearchEngine.search(sourceCode.sourceName, true, sourceCode.sourceAutoAssignedConceptIds,
 					settings.filterDomains, settings.filterConceptClasses, settings.filterVocabularies, settings.filterStandard, settings.includeSourceTerms);
 			if (concepts.size() > 0) {
-				codeMapping.targetConcepts.add(concepts.get(0).concept);
-				codeMapping.matchScore = concepts.get(0).matchScore;
+				codeMapping.getTargetConcepts().add(new MappingTarget(concepts.get(0).concept, "<auto>"));
+				codeMapping.setMatchScore(concepts.get(0).matchScore);
 			} else {
-				codeMapping.targetConcepts.add(Concept.EMPTY_CONCEPT);
-				codeMapping.matchScore = 0;
+				codeMapping.getTargetConcepts().add(new MappingTarget(Concept.EMPTY_CONCEPT, "<auto>"));
+				codeMapping.setMatchScore(0);
 			}
-			codeMapping.mappingStatus = MappingStatus.UNCHECKED;
+			codeMapping.setMappingStatus(MappingStatus.UNCHECKED);
 			if (sourceCode.sourceAutoAssignedConceptIds.size() == 1 && concepts.size() > 0) {
-				codeMapping.mappingStatus = MappingStatus.AUTO_MAPPED_TO_1;
+				codeMapping.setMappingStatus(MappingStatus.AUTO_MAPPED_TO_1);
 			} else if (sourceCode.sourceAutoAssignedConceptIds.size() > 1 && concepts.size() > 0) {
-				codeMapping.mappingStatus = MappingStatus.AUTO_MAPPED;
+				codeMapping.setMappingStatus(MappingStatus.AUTO_MAPPED);
 			}
+			codeMapping.setEquivalence(CodeMapping.Equivalence.UNREVIEWED);
 			out.write(codeMapping);
 		}
 		out.close();

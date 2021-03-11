@@ -54,7 +54,7 @@ public class ApplyPreviousMappingAction extends AbstractAction {
 			// Existing code lookup
 			Map<String, CodeMapping> codeToMapping = new HashMap<>();
 			for (CodeMapping codeMapping: Global.mapping) {
-				codeToMapping.put(codeMapping.sourceCode.sourceCode, codeMapping);
+				codeToMapping.put(codeMapping.getSourceCode().sourceCode, codeMapping);
 			}
 
 			// Open mapping file to be applied
@@ -64,12 +64,12 @@ public class ApplyPreviousMappingAction extends AbstractAction {
 
 			// Apply mapping. Add mappings not currently present
 			for (CodeMapping codeMappingToBeApplied : mappingToBeApplied) {
-				CodeMapping existingMapping = codeToMapping.get(codeMappingToBeApplied.sourceCode.sourceCode);
+				CodeMapping existingMapping = codeToMapping.get(codeMappingToBeApplied.getSourceCode().sourceCode);
 				if (existingMapping != null) {
-					existingMapping.sourceCode.sourceName = codeMappingToBeApplied.sourceCode.sourceName;
-					existingMapping.targetConcepts = codeMappingToBeApplied.targetConcepts;
-					existingMapping.mappingStatus = codeMappingToBeApplied.mappingStatus;
-					existingMapping.comment = codeMappingToBeApplied.comment;
+					existingMapping.getSourceCode().sourceName = codeMappingToBeApplied.getSourceCode().sourceName;
+					existingMapping.setTargetConcepts(codeMappingToBeApplied.getTargetConcepts());
+					existingMapping.setMappingStatus(codeMappingToBeApplied.getMappingStatus());
+					existingMapping.setComment(codeMappingToBeApplied.getComment());
 					mappingsApplied++;
 				} else {
 					Global.mapping.add(codeMappingToBeApplied);

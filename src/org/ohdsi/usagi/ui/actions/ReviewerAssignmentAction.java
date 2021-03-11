@@ -15,27 +15,29 @@
  ******************************************************************************/
 package org.ohdsi.usagi.ui.actions;
 
+import org.ohdsi.usagi.ui.Global;
+import org.ohdsi.usagi.ui.ReviewerAssignmentDialog;
+import org.ohdsi.usagi.ui.ShowStatsDialog;
+
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
-import javax.swing.*;
+public class ReviewerAssignmentAction extends AbstractAction {
 
-import org.ohdsi.usagi.ui.Global;
+	private static final long	serialVersionUID	= -6399524936473823131L;
 
-public class ApproveAllAction extends AbstractAction {
-
-	private static final long	serialVersionUID	= 3420357922150237898L;
-
-	public ApproveAllAction() {
-		putValue(Action.NAME, "Approve selected");
-		putValue(Action.SHORT_DESCRIPTION, "Approve all selected mappings");
-		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.ALT_MASK | InputEvent.SHIFT_DOWN_MASK));
+	public ReviewerAssignmentAction() {
+		putValue(Action.NAME, "Assign Reviewers");
+		putValue(Action.SHORT_DESCRIPTION, "Assign reviewer to the mappings");
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		Global.mappingTablePanel.approveAll();
+		ReviewerAssignmentDialog dialog = new ReviewerAssignmentDialog();
+		dialog.setLocationRelativeTo(Global.frame);
+		dialog.setVisible(true);
 	}
 
 }

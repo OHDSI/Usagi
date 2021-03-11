@@ -32,6 +32,7 @@ public class UsagiStatusBar extends JPanel implements DataChangeListener {
 	private static final long	serialVersionUID	= 4406343348570974587L;
 	private JLabel				countLabel;
 	private JLabel				percentLabel;
+	private JLabel				reviewPercentLabel;
 	private JLabel				searchLabel;
 	private DecimalFormat		percentFormatter	= new DecimalFormat("##0.0");
 
@@ -39,25 +40,33 @@ public class UsagiStatusBar extends JPanel implements DataChangeListener {
 		super();
 		setBorder(BorderFactory.createEmptyBorder());
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+
 		JLabel description = new JLabel("Approved / total:");
 		description.setForeground(Color.gray);
 		add(description);
 		add(Box.createHorizontalStrut(5));
+
 		countLabel = new JLabel("0/0");
 		countLabel.setForeground(Color.black);
 		add(countLabel);
+
 		add(Box.createHorizontalStrut(15));
+
 		percentLabel = new JLabel("0%");
 		percentLabel.setForeground(Color.black);
 		add(percentLabel);
 		description = new JLabel(" of total frequency");
 		description.setForeground(Color.gray);
 		add(description);
+
 		add(Box.createHorizontalGlue());
+
 		searchLabel = new JLabel("Searching...");
 		searchLabel.setVisible(false);
 		add(searchLabel);
+
 		add(Box.createHorizontalGlue());
+
 		JLabel versionLabel = new JLabel("Vocabulary version: " + Global.vocabularyVersion);
 		add(versionLabel);
 		Global.mapping.addListener(this);
@@ -72,24 +81,24 @@ public class UsagiStatusBar extends JPanel implements DataChangeListener {
 		long totalFreq = 0;
 		long approvedFreq = 0;
 		for (CodeMapping codeMapping : Global.mapping) {
-			if (codeMapping.mappingStatus == MappingStatus.APPROVED) {
+			if (codeMapping.getMappingStatus() == MappingStatus.APPROVED) {
 				approved++;
-				if (codeMapping.sourceCode.sourceFrequency == -1)
+				if (codeMapping.getSourceCode().sourceFrequency == -1)
 					approvedFreq++;
 				else
-					approvedFreq += codeMapping.sourceCode.sourceFrequency;
+					approvedFreq += codeMapping.getSourceCode().sourceFrequency;
 			}
-			if (codeMapping.sourceCode.sourceFrequency == -1)
+			if (codeMapping.getSourceCode().sourceFrequency == -1) {
 				totalFreq++;
-			else
-				totalFreq += codeMapping.sourceCode.sourceFrequency;
+			} else {
+				totalFreq += codeMapping.getSourceCode().sourceFrequency;
+			}
 		}
 		countLabel.setText(approved + " / " + Global.mapping.size());
 		countLabel.setToolTipText(approved + " of the " + Global.mapping.size() + " source codes now has an approved mapping");
 		String percent = percentFormatter.format(100 * approvedFreq / (double) totalFreq) + "%";
 		percentLabel.setText(percent);
 		percentLabel.setToolTipText(percent + " of all entries in the source data now has an approved mapping");
-
 	}
 
 	@Override
