@@ -36,7 +36,7 @@ public class SourceCode {
 	public Set<Integer>					sourceAutoAssignedConceptIds	= new HashSet<Integer>();
 	public List<Pair<String, String>>	sourceAdditionalInfo			= new ArrayList<Pair<String, String>>();
 
-	private static String				ADDITIONAL_INFO_PREFIX			= "ADD_INFO:";
+	private final static String			ADDITIONAL_INFO_PREFIX			= "ADD_INFO:";
 
 	public Row toRow() {
 		Row row = new Row();

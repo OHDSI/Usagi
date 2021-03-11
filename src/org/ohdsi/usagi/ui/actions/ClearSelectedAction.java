@@ -22,18 +22,18 @@ import javax.swing.Action;
 
 import org.ohdsi.usagi.ui.Global;
 
-public class ClearAllAction extends AbstractAction {
+public class ClearSelectedAction extends AbstractAction {
 
 	private static final long	serialVersionUID	= 3420357922150237898L;
 
-	public ClearAllAction() {
+	public ClearSelectedAction() {
 		putValue(Action.NAME, "Clear selected");
 		putValue(Action.SHORT_DESCRIPTION, "Clear all selected mappings (set target to 0)");
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		Global.mappingTablePanel.clearAll();
+		Global.mappingTablePanel.clearSelected();
 	}
 
 }

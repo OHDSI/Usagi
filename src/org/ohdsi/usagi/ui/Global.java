@@ -42,8 +42,9 @@ public class Global {
 	public static SaveAction						saveAction;
 	public static SaveAsAction						saveAsAction;
 	public static ApproveAction						approveAction;
-	public static ApproveAllAction					approveAllAction;
-	public static ClearAllAction					clearAllAction;
+	public static FlagAction		 				flagAction;
+	public static ReviewerAssignmentAction 			reviewerAssignmentAction;
+	public static ClearSelectedAction 				clearSelectedAction;
 	public static ConceptInformationAction			conceptInfoAction;
 	public static AthenaAction						athenaAction;
 	public static GoogleSearchAction				googleSearchAction;
@@ -57,4 +58,6 @@ public class Global {
 	public static Vector<String> 					vocabularyIds;
 	public static Vector<String>	 				domainIds;
 	public static ShowStatsAction					showStatsAction;
+
+	public static String							author;
 }

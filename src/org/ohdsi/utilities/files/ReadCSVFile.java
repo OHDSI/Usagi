@@ -146,6 +146,7 @@ public class ReadCSVFile implements Iterable<List<String>> {
 			String column = columns.get(i);
 			if (column.startsWith("\"") && column.endsWith("\"") && column.length() > 1)
 				column = column.substring(1, column.length() - 1);
+			column = column.replace("\"\"", "\"");
 			column = column.replace("\\\"", "\"");
 			column = column.replaceAll("\\\\\\\\", "\\\\");
 			columns.set(i, column);

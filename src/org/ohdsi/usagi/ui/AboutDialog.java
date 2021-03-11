@@ -63,7 +63,17 @@ public class AboutDialog extends JDialog {
 				"text/html",
 				"Usagi is maintained by The Hyve (www.thehyve.nl), and originally developed by Martijn Schuemie" +
 						"<br/>in <a href=\"http://ohdsi.org\">Observational Health Data Sciences and Informatics</a> (OHDSI)." +
-						"<br/><br/>For help, please review the <a href =\"http://www.ohdsi.org/web/wiki/doku.php?id=documentation:software:usagi\">Usagi Wiki</a>.");
+						"<br/><br/>For help, please review the <a href =\"http://www.ohdsi.org/web/wiki/doku.php?id=documentation:software:usagi\">Usagi Wiki</a>." +
+						"<br/><br/>Equivalence definitions based on <a href=\"https://www.hl7.org/fhir/valueset-concept-map-equivalence.html\">HL7 concept-map-quivalence</a>:" +
+						"<ul>" +
+						"<li>Equal = The concepts are exactly the same (i.e. intentionally identical).</li>" +
+						"<li>Equivalent = The concepts mean the same thing (i.e. extensionally identical).</li>" +
+						"<li>Wider = The target contains more information than to the source.</li>" +
+						"<li>Narrower = The target contains less information than the source.</li>" +
+						"<li>Inexact = The target overlaps with the source, but both source and target cover additional meaning.</li>" +
+						"<li>Unmatched = There is no match for this concept in the target code system.</li>" +
+						"</ul>"
+		);
 
 		text.setEditable(false);
 		text.setOpaque(false);

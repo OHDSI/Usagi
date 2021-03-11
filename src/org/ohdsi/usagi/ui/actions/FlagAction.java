@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2019 Observational Health Data Sciences and Informatics
+ * Copyright 2020 Observational Health Data Sciences and Informatics & The Hyve
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,38 +15,35 @@
  ******************************************************************************/
 package org.ohdsi.usagi.ui.actions;
 
+import org.ohdsi.usagi.ui.Global;
+
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.KeyStroke;
+public class FlagAction extends AbstractAction {
 
-import org.ohdsi.usagi.ui.Global;
+	private static final long	serialVersionUID	= -395107404415936659L;
 
-public class ApproveAction extends AbstractAction {
-
-	private static final long	serialVersionUID	= -6399524936473823131L;
-
-	public ApproveAction() {
-		setToApprove();
-		putValue(Action.MNEMONIC_KEY, KeyEvent.VK_A);
-		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.ALT_MASK));
+	public FlagAction() {
+		setToFlag();
+		putValue(Action.MNEMONIC_KEY, KeyEvent.VK_F);
+		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.ALT_MASK));
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		Global.mappingDetailPanel.approveOrUnapprove();
+		Global.mappingDetailPanel.flagOrUnflag();
 	}
 
-	public void setToApprove() {
-		putValue(Action.NAME, "Approve");
-		putValue(Action.SHORT_DESCRIPTION, "Approve the selected single mapping");
+	public void setToFlag() {
+		putValue(Action.NAME, "Flag");
+		putValue(Action.SHORT_DESCRIPTION, "Flag this source code for further review");
 	}
 
-	public void setToUnapprove() {
-		Global.approveAction.putValue(Action.NAME, "Unapprove");
-		Global.approveAction.putValue(Action.SHORT_DESCRIPTION, "Unapprove this mapping");
+	public void setToUnflag() {
+		putValue(Action.NAME, "Unflag");
+		putValue(Action.SHORT_DESCRIPTION, "Unflag this code");
 	}
 }

@@ -18,11 +18,10 @@ package org.ohdsi.usagi.ui;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -38,6 +37,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
 import org.ohdsi.usagi.Concept;
+import org.ohdsi.usagi.MappingTarget;
 import org.ohdsi.utilities.files.Row;
 import org.ohdsi.utilities.files.WriteCSVFileWithHeader;
 
@@ -110,20 +110,21 @@ public class ExportSourceToConceptMapDialog extends JDialog {
 	private void writeToCsvFile(String filename) {
 		WriteCSVFileWithHeader out = new WriteCSVFileWithHeader(filename);
 		for (CodeMapping mapping : Global.mapping)
-			if (exportUnapproved || mapping.mappingStatus == MappingStatus.APPROVED) {
+			if (exportUnapproved || mapping.getMappingStatus() == MappingStatus.APPROVED) {
 				List<Concept> targetConcepts;
-				if (mapping.targetConcepts.size() == 0) {
+				if (mapping.getTargetConcepts().size() == 0) {
 					targetConcepts = new ArrayList<Concept>(1);
 					targetConcepts.add(Concept.EMPTY_CONCEPT);
-				} else
-					targetConcepts = mapping.targetConcepts;
+				} else {
+					targetConcepts = mapping.getTargetConcepts().stream().map(MappingTarget::getConcept).collect(Collectors.toList());
+				}
 
 				for (Concept targetConcept : targetConcepts) {
 					Row row = new Row();
-					row.add("source_code", mapping.sourceCode.sourceCode);
+					row.add("source_code", mapping.getSourceCode().sourceCode);
 					row.add("source_concept_id", "0");
 					row.add("source_vocabulary_id", sourceVocabularyIdField.getText());
-					row.add("source_code_description", mapping.sourceCode.sourceName);
+					row.add("source_code_description", mapping.getSourceCode().sourceName);
 					row.add("target_concept_id", targetConcept.conceptId);
 					row.add("target_vocabulary_id", targetConcept.conceptId == 0 ? "None" : targetConcept.vocabularyId );
 					row.add("valid_start_date", "1970-01-01");

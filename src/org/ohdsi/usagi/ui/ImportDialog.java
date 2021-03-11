@@ -15,12 +15,7 @@
  ******************************************************************************/
 package org.ohdsi.usagi.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -50,6 +45,7 @@ import javax.swing.table.TableModel;
 
 import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
+import org.ohdsi.usagi.MappingTarget;
 import org.ohdsi.usagi.SourceCode;
 import org.ohdsi.usagi.UsagiSearchEngine.ScoredConcept;
 import org.ohdsi.utilities.ReadXlsxFile;
@@ -190,64 +186,49 @@ public class ImportDialog extends JDialog {
 
 		columnMappingPanel = new JPanel();
 		columnMappingPanel.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.BOTH;
 
-		c.gridx = 0;
-		c.gridy = 0;
-		c.anchor = GridBagConstraints.WEST;
-		c.weightx = 1;
-		columnMappingPanel.add(new JLabel("Source code column"), c);
+		GridBagConstraints cLabel = new GridBagConstraints();
+		cLabel.fill = GridBagConstraints.BOTH;
+		cLabel.gridx = 0;
+		cLabel.gridy = 1;
+		cLabel.anchor = GridBagConstraints.WEST;
+		cLabel.weightx = 1;
 
-		c.gridx = 1;
-		c.gridy = 0;
-		c.anchor = GridBagConstraints.EAST;
-		c.weightx = 0.1;
+		GridBagConstraints cBox = new GridBagConstraints();
+		cBox.fill = GridBagConstraints.BOTH;
+		cBox.gridx = 1;
+		cBox.gridy = 1;
+		cBox.anchor = GridBagConstraints.EAST;
+		cBox.weightx = 0.1;
+
+		columnMappingPanel.add(new JLabel("Source code column"), cLabel);
 		sourceCodeColumn = new JComboBox<String>(comboBoxOptions);
 		sourceCodeColumn.setToolTipText("The column containing the source code");
-		columnMappingPanel.add(sourceCodeColumn, c);
+		columnMappingPanel.add(sourceCodeColumn, cBox);
 
-		c.gridx = 0;
-		c.gridy = 1;
-		c.anchor = GridBagConstraints.WEST;
-		c.weightx = 1;
-		columnMappingPanel.add(new JLabel("Source name column"), c);
-		c.gridx = 1;
-		c.gridy = 1;
-		c.anchor = GridBagConstraints.EAST;
-		c.weightx = 0.1;
-		sourceNameColumn = new JComboBox<String>(comboBoxOptions);
+		cLabel.gridy++;
+		cBox.gridy++;
+		columnMappingPanel.add(new JLabel("Source name column"), cLabel);
+		sourceNameColumn = new JComboBox<>(comboBoxOptions);
 		sourceNameColumn.setToolTipText("The column containing the name or description of the source code, which will be used for matching");
-		columnMappingPanel.add(sourceNameColumn, c);
+		columnMappingPanel.add(sourceNameColumn, cBox);
 
-		c.gridx = 0;
-		c.gridy = 2;
-		c.anchor = GridBagConstraints.WEST;
-		c.weightx = 1;
-		columnMappingPanel.add(new JLabel("Source frequency column"), c);
-		c.gridx = 1;
-		c.gridy = 2;
-		c.anchor = GridBagConstraints.EAST;
-		c.weightx = 0.1;
-		sourceFrequencyColumn = new JComboBox<String>(comboBoxOptions);
+		cLabel.gridy++;
+		cBox.gridy++;
+		columnMappingPanel.add(new JLabel("Source frequency column"), cLabel);
+		sourceFrequencyColumn = new JComboBox<>(comboBoxOptions);
 		sourceFrequencyColumn.setToolTipText("The column containing the frequency of the code in the source database");
-		columnMappingPanel.add(sourceFrequencyColumn, c);
+		columnMappingPanel.add(sourceFrequencyColumn, cBox);
 
-		c.gridx = 0;
-		c.gridy = 3;
-		c.anchor = GridBagConstraints.WEST;
-		c.weightx = 1;
-		conceptIdsOrAtc = new JComboBox<String>(new String[] { CONCEPT_IDS, ATC });
-		columnMappingPanel.add(conceptIdsOrAtc, c);
-		c.gridx = 1;
-		c.gridy = 3;
-		c.anchor = GridBagConstraints.EAST;
-		c.weightx = 0.1;
-		autoConceptIdColumn = new JComboBox<String>(comboBoxOptions);
+		cLabel.gridy++;
+		cBox.gridy++;
+		conceptIdsOrAtc = new JComboBox<>(new String[] { CONCEPT_IDS, ATC });
+		columnMappingPanel.add(conceptIdsOrAtc, cLabel);
+		autoConceptIdColumn = new JComboBox<>(comboBoxOptions);
 		autoConceptIdColumn.setToolTipText("The column containing a (semicolon-delimited) list of concept IDs to which the search will be restricted");
-		columnMappingPanel.add(autoConceptIdColumn, c);
+		columnMappingPanel.add(autoConceptIdColumn, cBox);
 
-		gridY = 4;
+		gridY = cLabel.gridy + 1;
 		addExtraColumnMapping();
 
 		columnMappingScrollPane = new JScrollPane(columnMappingPanel);
@@ -356,7 +337,7 @@ public class ImportDialog extends JDialog {
 		int sourceNameIndex = columnNames.indexOf(sourceNameColumn.getSelectedItem().toString());
 		int sourceFrequencyIndex = columnNames.indexOf(sourceFrequencyColumn.getSelectedItem().toString());
 		int sourceAutoIndex = columnNames.indexOf(autoConceptIdColumn.getSelectedItem().toString());
-		List<Integer> additionalInfoIndexes = new ArrayList<Integer>();
+		List<Integer> additionalInfoIndexes = new ArrayList<>();
 		for (JComboBox<String> additionalInfoColumn : additionalInfoColumns) {
 			int index = columnNames.indexOf(additionalInfoColumn.getSelectedItem().toString());
 			if (index != -1)
@@ -441,18 +422,19 @@ public class ImportDialog extends JDialog {
 						List<ScoredConcept> concepts = Global.usagiSearchEngine.search(sourceCode.sourceName, true, filterConceptIds, filterDomainsFinal,
 								filterConceptClassesFinal, filterVocabulariesFinal, filterStandard, includeSourceConcepts);
 						if (concepts.size() > 0) {
-							codeMapping.targetConcepts.add(concepts.get(0).concept);
-							codeMapping.matchScore = concepts.get(0).matchScore;
+							codeMapping.getTargetConcepts().add(new MappingTarget(concepts.get(0).concept, "<auto>"));
+							codeMapping.setMatchScore(concepts.get(0).matchScore);
 						} else {
-							codeMapping.matchScore = 0;
+							codeMapping.setMatchScore(0);
 						}
-						codeMapping.comment = "";
-						codeMapping.mappingStatus = MappingStatus.UNCHECKED;
+						codeMapping.setComment("");
+						codeMapping.setMappingStatus(MappingStatus.UNCHECKED);
 						if (sourceCode.sourceAutoAssignedConceptIds.size() == 1 && concepts.size() > 0) {
-							codeMapping.mappingStatus = MappingStatus.AUTO_MAPPED_TO_1;
+							codeMapping.setMappingStatus(MappingStatus.AUTO_MAPPED_TO_1);
 						} else if (sourceCode.sourceAutoAssignedConceptIds.size() > 1 && concepts.size() > 0) {
-							codeMapping.mappingStatus = MappingStatus.AUTO_MAPPED;
+							codeMapping.setMappingStatus(MappingStatus.AUTO_MAPPED);
 						}
+						codeMapping.setEquivalence(CodeMapping.Equivalence.UNREVIEWED);
 						synchronized (globalMappingList) {
 							globalMappingList.add(codeMapping);
 							progressBar.setValue(Math.round(100 * globalMappingList.size() / sourceCodes.size()));
