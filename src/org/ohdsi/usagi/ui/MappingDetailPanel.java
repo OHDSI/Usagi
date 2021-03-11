@@ -413,7 +413,11 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
 			codeMappingMulti.approve(equivalenceToApply);
 		}
-		Global.mapping.fireDataChanged(APPROVE_EVENT);
+		if (codeMappingsFromMulti.isEmpty()) {
+			Global.mapping.fireDataChanged(APPROVE_EVENT);
+		} else {
+			Global.mapping.fireDataChanged(MULTI_UPDATE_EVENT);
+		}
 	}
 
 	public void flagSelected() {
@@ -422,7 +426,11 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
 			codeMappingMulti.flag(equivalenceToApply);
 		}
-		Global.mapping.fireDataChanged(APPROVE_EVENT);
+		if (codeMappingsFromMulti.isEmpty()) {
+			Global.mapping.fireDataChanged(APPROVE_EVENT);
+		} else {
+			Global.mapping.fireDataChanged(MULTI_UPDATE_EVENT);
+		}
 	}
 
 	public void uncheckSelected() {
@@ -430,7 +438,11 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
 			codeMappingMulti.setUnchecked();
 		}
-		Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
+		if (codeMappingsFromMulti.isEmpty()) {
+			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
+		} else {
+			Global.mapping.fireDataChanged(MULTI_UPDATE_EVENT);
+		}
 	}
 
 	private void toggleStatusButtons() {
@@ -463,10 +475,10 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		}
 		targetConceptTableModel.fireTableDataChanged();
 
-		if (codeMappingsFromMulti.size() > 0) {
-			Global.mapping.fireDataChanged(MULTI_UPDATE_EVENT);
-		} else {
+		if (codeMappingsFromMulti.isEmpty()) {
 			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
+		} else {
+			Global.mapping.fireDataChanged(MULTI_UPDATE_EVENT);
 		}
 	}
 
@@ -477,10 +489,10 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		}
 		targetConceptTableModel.fireTableDataChanged();
 
-		if (codeMappingsFromMulti.size() > 0) {
-			Global.mapping.fireDataChanged(MULTI_UPDATE_EVENT);
-		} else {
+		if (codeMappingsFromMulti.isEmpty()) {
 			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
+		} else {
+			Global.mapping.fireDataChanged(MULTI_UPDATE_EVENT);
 		}
 	}
 
