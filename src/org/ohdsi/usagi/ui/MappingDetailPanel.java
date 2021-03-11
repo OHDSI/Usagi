@@ -401,6 +401,15 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		}
 	}
 
+	public void approveSelected() {
+        CodeMapping.Equivalence equivalenceToApply = (CodeMapping.Equivalence) equivalenceOptionChooser.getSelectedItem();
+        codeMapping.approve(equivalenceToApply);
+        for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
+			codeMappingMulti.approve(equivalenceToApply);
+		}
+		Global.mapping.fireDataChanged(APPROVE_EVENT);
+	}
+
 	public void flag() {
 		if (codeMapping.getMappingStatus() != CodeMapping.MappingStatus.FLAGGED) {
 			CodeMapping.Equivalence equivalenceToApply = (CodeMapping.Equivalence) equivalenceOptionChooser.getSelectedItem();

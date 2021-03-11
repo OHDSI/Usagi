@@ -312,14 +312,6 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		}
 	}
 
-	public void approveSelected() {
-		for (int viewRow : table.getSelectedRows()) {
-			int modelRow = table.convertRowIndexToModel(viewRow);
-			tableModel.getCodeMapping(modelRow).setMappingStatus(MappingStatus.APPROVED);
-		}
-		fireUpdateEventAll(APPROVE_EVENT);
-	}
-
 	public void clearSelected() {
 		for (int viewRow : table.getSelectedRows()) {
 			int modelRow = table.convertRowIndexToModel(viewRow);

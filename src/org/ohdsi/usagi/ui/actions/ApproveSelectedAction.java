@@ -35,7 +35,7 @@ public class ApproveSelectedAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		Global.mappingTablePanel.approveSelected();
+		Global.mappingDetailPanel.approveSelected();
 	}
 
 }
