@@ -314,8 +314,9 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 		for (int viewRow : table.getSelectedRows()) {
 			int modelRow = table.convertRowIndexToModel(viewRow);
 			tableModel.getCodeMapping(modelRow).getTargetConcepts().clear();
+			tableModel.getCodeMapping(modelRow).setUnchecked();
 		}
-		fireUpdateEventAll(SIMPLE_UPDATE_EVENT);
+		fireUpdateEventAll(MULTI_UPDATE_EVENT);
 	}
 
 	public void assignReviewersRandomly(String[] reviewers) {
