@@ -389,37 +389,48 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		this.codeMappingsFromMulti = new ArrayList<>();
 	}
 
-	public void approve() {
-		if (codeMapping.getMappingStatus() != CodeMapping.MappingStatus.APPROVED) {
-			CodeMapping.Equivalence equivalenceToApply = (CodeMapping.Equivalence) equivalenceOptionChooser.getSelectedItem();
-			codeMapping.approve(equivalenceToApply);
-			Global.mapping.fireDataChanged(APPROVE_EVENT);
-		} else {
-			codeMapping.setUnchecked();
-			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
+	public void approveOrUnapprove() {
+		if (codeMapping.getMappingStatus() == MappingStatus.APPROVED) {
+			uncheckSelected();
 			toggleStatusButtons();
+		} else {
+			approveSelected();
+		}
+	}
+
+	public void flagOrUnflag() {
+		if (codeMapping.getMappingStatus() == MappingStatus.FLAGGED) {
+			uncheckSelected();
+			toggleStatusButtons();
+		} else {
+			flagSelected();
 		}
 	}
 
 	public void approveSelected() {
-        CodeMapping.Equivalence equivalenceToApply = (CodeMapping.Equivalence) equivalenceOptionChooser.getSelectedItem();
-        codeMapping.approve(equivalenceToApply);
-        for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
+		CodeMapping.Equivalence equivalenceToApply = (CodeMapping.Equivalence) equivalenceOptionChooser.getSelectedItem();
+		codeMapping.approve(equivalenceToApply);
+		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
 			codeMappingMulti.approve(equivalenceToApply);
 		}
 		Global.mapping.fireDataChanged(APPROVE_EVENT);
 	}
 
-	public void flag() {
-		if (codeMapping.getMappingStatus() != CodeMapping.MappingStatus.FLAGGED) {
-			CodeMapping.Equivalence equivalenceToApply = (CodeMapping.Equivalence) equivalenceOptionChooser.getSelectedItem();
-			codeMapping.flag(equivalenceToApply);
-			Global.mapping.fireDataChanged(APPROVE_EVENT);
-		} else {
-			codeMapping.setUnchecked();
-			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
-			toggleStatusButtons();
+	public void flagSelected() {
+		CodeMapping.Equivalence equivalenceToApply = (CodeMapping.Equivalence) equivalenceOptionChooser.getSelectedItem();
+		codeMapping.flag(equivalenceToApply);
+		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
+			codeMappingMulti.flag(equivalenceToApply);
 		}
+		Global.mapping.fireDataChanged(APPROVE_EVENT);
+	}
+
+	public void uncheckSelected() {
+		codeMapping.setUnchecked();
+		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
+			codeMappingMulti.setUnchecked();
+		}
+		Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
 	}
 
 	private void toggleStatusButtons() {

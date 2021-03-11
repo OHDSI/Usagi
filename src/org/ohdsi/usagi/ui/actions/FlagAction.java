@@ -34,7 +34,7 @@ public class FlagAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		Global.mappingDetailPanel.flag();
+		Global.mappingDetailPanel.flagOrUnflag();
 	}
 
 	public void setToFlag() {

@@ -42,7 +42,6 @@ public class Global {
 	public static SaveAction						saveAction;
 	public static SaveAsAction						saveAsAction;
 	public static ApproveAction						approveAction;
-	public static ApproveSelectedAction 			approveSelectedAction;
 	public static FlagAction		 				flagAction;
 	public static ReviewerAssignmentAction 			reviewerAssignmentAction;
 	public static ClearSelectedAction 				clearSelectedAction;

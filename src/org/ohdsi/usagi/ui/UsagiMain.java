@@ -86,7 +86,6 @@ public class UsagiMain implements ActionListener {
 		Global.googleSearchAction = new GoogleSearchAction();
 		Global.showStatsAction = new ShowStatsAction();
 		Global.aboutAction = new AboutAction();
-		Global.approveSelectedAction = new ApproveSelectedAction();
 		Global.rebuildIndexAction = new RebuildIndexAction();
 		Global.exitAction = new ExitAction();
 
@@ -96,7 +95,6 @@ public class UsagiMain implements ActionListener {
 		Global.exportAction.setEnabled(false);
 		Global.exportForReviewAction.setEnabled(false);
 		Global.approveAction.setEnabled(false);
-		Global.approveSelectedAction.setEnabled(false);
 		Global.flagAction.setEnabled(false);
 		Global.clearSelectedAction = new ClearSelectedAction();
 		Global.clearSelectedAction.setEnabled(false);

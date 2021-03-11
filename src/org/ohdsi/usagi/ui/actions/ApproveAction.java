@@ -37,7 +37,7 @@ public class ApproveAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		Global.mappingDetailPanel.approve();
+		Global.mappingDetailPanel.approveOrUnapprove();
 	}
 
 	public void setToApprove() {

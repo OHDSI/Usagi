@@ -69,7 +69,6 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 					Global.googleSearchAction.setSourceTerm(tableModel.getCodeMapping(primaryModelRow).getSourceCode().sourceName);
 
 					Global.approveAction.setEnabled(true);
-					Global.approveSelectedAction.setEnabled(true);
 					Global.clearSelectedAction.setEnabled(true);
 					if (tableModel.getCodeMapping(primaryModelRow).getTargetConcepts().size() > 0) {
 						Concept firstConcept = tableModel.getCodeMapping(primaryModelRow).getTargetConcepts().get(0).getConcept();
@@ -89,7 +88,6 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 						}
 					}
 				} else {
-					Global.approveSelectedAction.setEnabled(false);
 					Global.approveAction.setEnabled(false);
 					Global.clearSelectedAction.setEnabled(false);
 				}
