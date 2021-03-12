@@ -31,7 +31,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableRowSorter;
 
-import org.apache.xmlbeans.impl.xb.ltgfmt.Code;
 import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
 import org.ohdsi.usagi.Concept;
@@ -73,7 +72,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 					if (tableModel.getCodeMapping(primaryModelRow).getTargetConcepts().size() > 0) {
 						Concept firstConcept = tableModel.getCodeMapping(primaryModelRow).getTargetConcepts().get(0).getConcept();
 						Global.conceptInfoAction.setEnabled(true);
-						Global.conceptInformationDialog.setConcept(firstConcept);
+						Global.conceptInformationDialog.setActiveConcept(firstConcept);
 						Global.athenaAction.setEnabled(true);
 						Global.athenaAction.setConcept(firstConcept);
 					}

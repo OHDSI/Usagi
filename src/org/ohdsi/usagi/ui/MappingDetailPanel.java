@@ -186,7 +186,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 				replaceButton.setEnabled(true);
 				int modelRow = searchTable.convertRowIndexToModel(viewRow);
 				Global.conceptInfoAction.setEnabled(true);
-				Global.conceptInformationDialog.setConcept(searchTableModel.getConcept(modelRow));
+				Global.conceptInformationDialog.setActiveConcept(searchTableModel.getConcept(modelRow));
 				Global.athenaAction.setEnabled(true);
 				Global.athenaAction.setConcept(searchTableModel.getConcept(modelRow));
 				Global.googleSearchAction.setEnabled(false);
@@ -330,7 +330,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 				MappingTarget mappingTarget = targetConceptTableModel.getMappingTarget(modelRow);
 				typesChooser.setSelectedItem(mappingTarget.getMappingType());
 				Global.conceptInfoAction.setEnabled(true);
-				Global.conceptInformationDialog.setConcept(mappingTarget.getConcept());
+				Global.conceptInformationDialog.setActiveConcept(mappingTarget.getConcept());
 				Global.athenaAction.setEnabled(true);
 				Global.athenaAction.setConcept(mappingTarget.getConcept());
 				Global.googleSearchAction.setEnabled(false);

@@ -44,6 +44,7 @@ import org.ohdsi.usagi.ParentChildRelationShip;
 public class ConceptInformationDialog extends JFrame {
 
 	private static final long	serialVersionUID	= -2112565437136224217L;
+	private Concept				activeConcept;
 	private JLabel				conceptNameLabel;
 	private JButton				backButton;
 	private JButton				forwardButton;
@@ -111,7 +112,7 @@ public class ConceptInformationDialog extends JFrame {
 				int viewRow = parentsConceptTable.getSelectedRow();
 				Global.conceptInfoAction.setEnabled(true);
 				int modelRow = parentsConceptTable.convertRowIndexToModel(viewRow);
-				Global.conceptInformationDialog.setConcept(parentConceptTableModel.getConcept(modelRow));
+				Global.conceptInformationDialog.setActiveConcept(parentConceptTableModel.getConcept(modelRow));
 				updating = false;
 			}
 		});
@@ -142,7 +143,7 @@ public class ConceptInformationDialog extends JFrame {
 				int viewRow = childrenConceptTable.getSelectedRow();
 				Global.conceptInfoAction.setEnabled(true);
 				int modelRow = childrenConceptTable.convertRowIndexToModel(viewRow);
-				Global.conceptInformationDialog.setConcept(childrenConceptTableModel.getConcept(modelRow));
+				Global.conceptInformationDialog.setActiveConcept(childrenConceptTableModel.getConcept(modelRow));
 				updating = false;
 			}
 		});
@@ -236,7 +237,10 @@ public class ConceptInformationDialog extends JFrame {
 		showConcept(concept);
 	}
 
-	public void setConcept(Concept concept) {
+	public void setActiveConcept(Concept concept) {
+		this.activeConcept = concept;
+
+		// Keep track of active concept history
 		if (historyCursor < 0 || history.get(historyCursor).conceptId != concept.conceptId) {
 			if (historyCursor < history.size() - 1)
 				history = history.subList(0, historyCursor + 1);
@@ -244,8 +248,17 @@ public class ConceptInformationDialog extends JFrame {
 			history.add(concept);
 			backButton.setEnabled(historyCursor > 0);
 			forwardButton.setEnabled(false);
-			showConcept(concept);
 		}
+
+		if (this.isVisible()) {
+			showConcept(activeConcept);
+		}
+	}
+
+	@Override
+	public void setVisible(boolean b) {
+		super.setVisible(b);
+		this.showConcept(activeConcept);
 	}
 
 	private void showConcept(Concept concept) {
