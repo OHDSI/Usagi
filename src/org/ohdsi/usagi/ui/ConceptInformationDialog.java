@@ -50,7 +50,6 @@ import org.ohdsi.usagi.ParentChildRelationShip;
 public class ConceptInformationDialog extends JFrame {
 
 	private static final long	serialVersionUID	= -2112565437136224217L;
-	private JTextArea			area;
 	private JLabel				conceptNameLabel;
 	private JButton				backButton;
 	private JButton				forwardButton;
@@ -81,10 +80,8 @@ public class ConceptInformationDialog extends JFrame {
 		JPanel panel = new JPanel();
 		panel.setBorder(BorderFactory.createEmptyBorder());
 		panel.setLayout(new BorderLayout());
-		JScrollPane infoPanel = createInfoPanel();
 		JTabbedPane tabPanel = createTabPanel();
-		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, infoPanel, tabPanel);
-		panel.add(splitPane, BorderLayout.CENTER);
+		panel.add(tabPanel, BorderLayout.CENTER);
 		return panel;
 	}
 
@@ -125,7 +122,7 @@ public class ConceptInformationDialog extends JFrame {
 
 		parentConceptTableModel = new ConceptTableModel(false);
 		parentsConceptTable = hierarchyTableBuilder(parentConceptTableModel);
-		currentConceptTable.setRowSelectionAllowed(true);
+		parentsConceptTable.setRowSelectionAllowed(true);
 		parentsConceptTable.getSelectionModel().addListSelectionListener(event -> {
 			if (!updating) {
 				updating = true;
@@ -192,17 +189,6 @@ public class ConceptInformationDialog extends JFrame {
 		result.hideColumn("Valid end date");
 		result.hideColumn("Invalid reason");
 		return result;
-	}
-
-	private JScrollPane createInfoPanel() {
-		area = new JTextArea();
-		area.setEditable(false);
-		JScrollPane scrollPane = new JScrollPane(area);
-		scrollPane.setBorder(BorderFactory.createTitledBorder("Concept information"));
-		scrollPane.setPreferredSize(new Dimension(600, 150));
-		scrollPane.setMinimumSize(new Dimension(200, 100));
-		scrollPane.setAutoscrolls(true);
-		return scrollPane;
 	}
 
 	private JPanel createButtonPanel() {
@@ -288,19 +274,6 @@ public class ConceptInformationDialog extends JFrame {
 		if (name.length() > 80)
 			name = name.substring(0, 80) + "...";
 		conceptNameLabel.setText(name + " (" + concept.conceptId + ")");
-
-		StringBuilder conceptInfo = new StringBuilder();
-		conceptInfo.append("Concept name: " + concept.conceptName + "\n");
-		conceptInfo.append("Domain ID: " + concept.domainId + "\n");
-		conceptInfo.append("Concept class ID: " + concept.conceptClassId + "\n");
-		conceptInfo.append("Vocabulary ID: " + concept.vocabularyId + "\n");
-		conceptInfo.append("Concept ID: " + concept.conceptId + "\n");
-		conceptInfo.append("Concept code: " + concept.conceptCode + "\n");
-		conceptInfo.append("Invalid reason: " + concept.invalidReason + "\n");
-		conceptInfo.append("Standard concept: " + concept.standardConcept + "\n");
-		if (concept.additionalInformation != null)
-			conceptInfo.append("\n" + concept.additionalInformation.replaceAll("\\\\n", "\n"));
-		area.setText(conceptInfo.toString());
 
 		List<Concept> parents = new ArrayList<>();
 		for (ParentChildRelationShip relationship : Global.dbEngine.getParentChildRelationshipsByChildConceptId(concept.conceptId))
