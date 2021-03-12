@@ -21,8 +21,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.Timer;
 
@@ -204,13 +202,10 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 
 		replaceButton = new JButton("Replace concept");
 		replaceButton.setToolTipText("Replace selected concept");
-		replaceButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				int viewRow = searchTable.getSelectedRow();
-				int modelRow = searchTable.convertRowIndexToModel(viewRow);
-				replaceConcepts(searchTableModel.getConcept(modelRow));
-			}
-
+		replaceButton.addActionListener(e -> {
+			int viewRow = searchTable.getSelectedRow();
+			int modelRow = searchTable.convertRowIndexToModel(viewRow);
+			replaceConcepts(searchTableModel.getConcept(modelRow));
 		});
 		replaceButton.setEnabled(false);
 		buttonPanel.add(replaceButton);
@@ -231,7 +226,12 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			});
 			button.setEnabled(false);
 			addButtons.add(button);
-			buttonPanel.add(button);
+			// Add Maps_to button on the right, the other on the left.
+			if (mappingType.equals(MappingTarget.Type.MAPS_TO)) {
+				buttonPanel.add(button);
+			} else {
+				buttonPanel.add(button, 0);
+			}
 		}
 
 		panel.add(buttonPanel);
