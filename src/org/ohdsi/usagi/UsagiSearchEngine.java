@@ -278,6 +278,27 @@ public class UsagiSearchEngine {
 
 	}
 
+	public List<String> searchTermsByConceptId(int conceptID) {
+		List<String> result = new ArrayList<>();
+		try {
+			QueryParser keywordsQueryParser = new QueryParser(Version.LUCENE_4_9, "CONCEPT_ID", new KeywordAnalyzer());
+			Query conceptIdQuery = keywordsQueryParser.parse("\"" + Integer.toString(conceptID) + "\"");
+			BooleanQuery booleanQuery = new BooleanQuery();
+			booleanQuery.add(conceptIdQuery, Occur.MUST);
+			TopDocs topDocs = searcher.search(booleanQuery, 100);
+			for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+				Document document = reader.document(scoreDoc.doc);
+				String term = document.get("TERM");
+				String termType = document.get("TERM_TYPE");
+				result.add(termType + " - " + term);
+			}
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			e.printStackTrace();
+		}
+		return result;
+	}
+
 	public List<ScoredConcept> search(String searchTerm, boolean useMlt, Collection<Integer> filterConceptIds, Vector<String> filterDomains, Vector<String> filterConceptClasses,
 			Vector<String> filterVocabularies, boolean filterStandard, boolean includeSourceConcepts) {
 		List<ScoredConcept> results = new ArrayList<ScoredConcept>();

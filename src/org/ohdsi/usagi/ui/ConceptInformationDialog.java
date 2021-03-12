@@ -24,17 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.table.TableRowSorter;
 
 import org.ohdsi.usagi.Concept;
@@ -54,6 +44,7 @@ public class ConceptInformationDialog extends JFrame {
 	private ConceptTableModel	childrenConceptTableModel;
 	private UsagiTable			childrenConceptTable;
 	private ConceptTableModel	sourceConceptTableModel;
+	private JTextArea			synonymArea;
 	private List<Concept>		history				= new ArrayList<>();
 	private int					historyCursor		= -1;
 	private boolean				updating			= false;
@@ -82,6 +73,7 @@ public class ConceptInformationDialog extends JFrame {
 		JTabbedPane tabbedPane = new JTabbedPane();
 		tabbedPane.addTab("Hierarchy", createHierarchyPanel());
 		tabbedPane.addTab("Source concepts", createSourceConceptPanel());
+		tabbedPane.addTab("Synonyms", createSynonymsPanel());
 		return tabbedPane;
 	}
 
@@ -175,6 +167,16 @@ public class ConceptInformationDialog extends JFrame {
 		}
 
 		return result;
+	}
+
+	private Component createSynonymsPanel() {
+		synonymArea = new JTextArea();
+		synonymArea.setEditable(false);
+		JScrollPane synonymPane = new JScrollPane(synonymArea);
+		synonymPane.setBorder(BorderFactory.createTitledBorder("Synonyms"));
+		synonymPane.setMinimumSize(new Dimension(500, 50));
+		synonymPane.setPreferredSize(new Dimension(500, 50));
+		return synonymPane;
 	}
 
 	private JPanel createButtonPanel() {
@@ -283,5 +285,12 @@ public class ConceptInformationDialog extends JFrame {
 		for (MapsToRelationship relationship : Global.dbEngine.getMapsToRelationshipsByConceptId2(concept.conceptId))
 			sourceConcepts.add(Global.dbEngine.getConcept(relationship.conceptId1));
 		sourceConceptTableModel.setConcepts(sourceConcepts);
+
+		List<String> synonyms = Global.usagiSearchEngine.searchTermsByConceptId(concept.conceptId);
+		StringBuilder text = new StringBuilder();
+		for (String synonym : synonyms) {
+			text.append(synonym + "\n");
+		}
+		synonymArea.setText(text.toString());
 	}
 }
