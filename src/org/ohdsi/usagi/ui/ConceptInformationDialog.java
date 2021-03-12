@@ -44,7 +44,8 @@ public class ConceptInformationDialog extends JFrame {
 	private ConceptTableModel	childrenConceptTableModel;
 	private UsagiTable			childrenConceptTable;
 	private ConceptTableModel	sourceConceptTableModel;
-	private JTextArea			synonymArea;
+	private JTextArea 			conceptSynonymArea;
+	private JTextArea			sourceSynonymArea;
 	private List<Concept>		history				= new ArrayList<>();
 	private int					historyCursor		= -1;
 	private boolean				updating			= false;
@@ -170,13 +171,36 @@ public class ConceptInformationDialog extends JFrame {
 	}
 
 	private Component createSynonymsPanel() {
-		synonymArea = new JTextArea();
-		synonymArea.setEditable(false);
-		JScrollPane synonymPane = new JScrollPane(synonymArea);
-		synonymPane.setBorder(BorderFactory.createTitledBorder("Synonyms"));
-		synonymPane.setMinimumSize(new Dimension(500, 50));
-		synonymPane.setPreferredSize(new Dimension(500, 50));
-		return synonymPane;
+		JPanel panel = new JPanel();
+		panel.setBorder(BorderFactory.createEmptyBorder());
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.BOTH;
+		c.weightx = 1;
+
+		conceptSynonymArea = new JTextArea();
+		conceptSynonymArea.setEditable(false);
+
+		JScrollPane conceptSynonymPane = new JScrollPane(conceptSynonymArea);
+		conceptSynonymPane.setBorder(BorderFactory.createTitledBorder("Concept Synonyms"));
+		conceptSynonymPane.setMinimumSize(new Dimension(500, 50));
+		conceptSynonymPane.setPreferredSize(new Dimension(500, 50));
+		c.gridy = 0;
+		c.weighty = 0.5;
+		panel.add(conceptSynonymPane, c);
+
+		sourceSynonymArea = new JTextArea();
+		sourceSynonymArea.setEditable(false);
+
+		JScrollPane sourceSynonymPane = new JScrollPane(sourceSynonymArea);
+		sourceSynonymPane.setBorder(BorderFactory.createTitledBorder("Source Synonyms"));
+		sourceSynonymPane.setMinimumSize(new Dimension(500, 50));
+		sourceSynonymPane.setPreferredSize(new Dimension(500, 50));
+		c.gridy = 1;
+		c.weighty = 0.5;
+		panel.add(sourceSynonymPane, c);
+
+		return panel;
 	}
 
 	private JPanel createButtonPanel() {
@@ -286,11 +310,18 @@ public class ConceptInformationDialog extends JFrame {
 			sourceConcepts.add(Global.dbEngine.getConcept(relationship.conceptId1));
 		sourceConceptTableModel.setConcepts(sourceConcepts);
 
-		List<String> synonyms = Global.usagiSearchEngine.searchTermsByConceptId(concept.conceptId);
-		StringBuilder text = new StringBuilder();
-		for (String synonym : synonyms) {
-			text.append(synonym + "\n");
+		List<String> conceptSynonyms = Global.usagiSearchEngine.searchConceptSynonymsByConceptId(concept.conceptId);
+		StringBuilder conceptSynonymsText = new StringBuilder();
+		for (String synonym : conceptSynonyms) {
+			conceptSynonymsText.append(synonym).append("\n");
 		}
-		synonymArea.setText(text.toString());
+		conceptSynonymArea.setText(conceptSynonymsText.toString());
+
+		List<String> sourceSynonyms = Global.usagiSearchEngine.searchSourceSynonymsByConceptId(concept.conceptId);
+		StringBuilder sourceSynonymsText = new StringBuilder();
+		for (String synonym : sourceSynonyms) {
+			sourceSynonymsText.append(synonym).append("\n");
+		}
+		sourceSynonymArea.setText(sourceSynonymsText.toString());
 	}
 }
