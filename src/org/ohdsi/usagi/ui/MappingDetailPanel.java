@@ -348,7 +348,6 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
-		buttonPanel.add(Box.createHorizontalGlue());
 
 		typesChooser = new JComboBox<>(MappingTarget.Type.values());
 		typesChooser.setToolTipText("Set type of the mapping");
@@ -359,6 +358,8 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		typesChooser.setMaximumSize(typesChooser.getPreferredSize());
 		typesChooser.setEnabled(false);
 		buttonPanel.add(typesChooser);
+
+		buttonPanel.add(Box.createHorizontalGlue());
 
 		removeButton = new JButton("Remove concept");
 		removeButton.setToolTipText("Remove selected concept");
