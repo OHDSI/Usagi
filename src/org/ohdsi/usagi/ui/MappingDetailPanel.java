@@ -443,6 +443,11 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		} else {
 			Global.mapping.fireDataChanged(MULTI_UPDATE_EVENT);
 		}
+		// If a row selected, then enable the add buttons
+		if (searchTable.getSelectedRow() != -1) {
+			replaceButton.setEnabled(true);
+			addButtons.forEach(x -> x.setEnabled(true));
+		}
 	}
 
 	private void toggleStatusButtons() {
