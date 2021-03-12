@@ -23,6 +23,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -55,6 +56,8 @@ public class ConceptInformationDialog extends JFrame {
 	private JButton				forwardButton;
 	private ConceptTableModel	parentConceptTableModel;
 	private UsagiTable			parentsConceptTable;
+	private ConceptTableModel	currentConceptTableModel;
+	private UsagiTable			currentConceptTable;
 	private ConceptTableModel	childrenConceptTableModel;
 	private UsagiTable			childrenConceptTable;
 	private ConceptTableModel	sourceConceptTableModel;
@@ -98,7 +101,7 @@ public class ConceptInformationDialog extends JFrame {
 		sourceConceptTable.setPreferredScrollableViewportSize(new Dimension(500, 45));
 		sourceConceptTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		sourceConceptTable.setRowSelectionAllowed(false);
-		sourceConceptTable.setRowSorter(new TableRowSorter<ConceptTableModel>(sourceConceptTableModel));
+		sourceConceptTable.setRowSorter(new TableRowSorter<>(sourceConceptTableModel));
 		sourceConceptTable.hideColumn("Parents");
 		sourceConceptTable.hideColumn("Children");
 		sourceConceptTable.hideColumn("Valid start date");
@@ -121,71 +124,74 @@ public class ConceptInformationDialog extends JFrame {
 		c.weightx = 1;
 
 		parentConceptTableModel = new ConceptTableModel(false);
-		parentsConceptTable = new UsagiTable(parentConceptTableModel);
-		parentsConceptTable.setRowSorter(new TableRowSorter<ConceptTableModel>(parentConceptTableModel));
-		parentsConceptTable.setPreferredScrollableViewportSize(new Dimension(500, 45));
-		parentsConceptTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		parentsConceptTable.setRowSelectionAllowed(true);
-		parentsConceptTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		parentsConceptTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent event) {
-				if (!updating) {
-					updating = true;
-					int viewRow = parentsConceptTable.getSelectedRow();
-					Global.conceptInfoAction.setEnabled(true);
-					int modelRow = parentsConceptTable.convertRowIndexToModel(viewRow);
-					Global.conceptInformationDialog.setConcept(parentConceptTableModel.getConcept(modelRow));
-					updating = false;
-				}
+		parentsConceptTable = hierarchyTableBuilder(parentConceptTableModel);
+		currentConceptTable.setRowSelectionAllowed(true);
+		parentsConceptTable.getSelectionModel().addListSelectionListener(event -> {
+			if (!updating) {
+				updating = true;
+				int viewRow = parentsConceptTable.getSelectedRow();
+				Global.conceptInfoAction.setEnabled(true);
+				int modelRow = parentsConceptTable.convertRowIndexToModel(viewRow);
+				Global.conceptInformationDialog.setConcept(parentConceptTableModel.getConcept(modelRow));
+				updating = false;
 			}
 		});
-		parentsConceptTable.hideColumn("Parents");
-		parentsConceptTable.hideColumn("Children");
-		parentsConceptTable.hideColumn("Valid start date");
-		parentsConceptTable.hideColumn("Valid end date");
-		parentsConceptTable.hideColumn("Invalid reason");
 
 		JScrollPane parentsPane = new JScrollPane(parentsConceptTable);
 		parentsPane.setBorder(BorderFactory.createTitledBorder("Parent concepts"));
 		parentsPane.setMinimumSize(new Dimension(500, 50));
 		parentsPane.setPreferredSize(new Dimension(500, 50));
 		c.gridy = 0;
-		c.weighty = 0.4;
+		c.weighty = 0.3;
 		panel.add(parentsPane, c);
 
+		currentConceptTableModel = new ConceptTableModel(false);
+		currentConceptTable = hierarchyTableBuilder(currentConceptTableModel);
+		currentConceptTable.setRowSelectionAllowed(false);
+		JScrollPane currentConceptPane = new JScrollPane(currentConceptTable);
+		currentConceptPane.setBorder(BorderFactory.createTitledBorder("Current concept"));
+		currentConceptPane.setMinimumSize(new Dimension(500, 20));
+		currentConceptPane.setPreferredSize(new Dimension(500, 20));
+		c.gridy = 1;
+		c.weighty = 0.2;
+		panel.add(currentConceptPane, c);
+
 		childrenConceptTableModel = new ConceptTableModel(false);
-		childrenConceptTable = new UsagiTable(childrenConceptTableModel);
-		childrenConceptTable.setRowSorter(new TableRowSorter<ConceptTableModel>(childrenConceptTableModel));
-		childrenConceptTable.setPreferredScrollableViewportSize(new Dimension(500, 45));
-		childrenConceptTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		childrenConceptTable = hierarchyTableBuilder(childrenConceptTableModel);
 		childrenConceptTable.setRowSelectionAllowed(true);
-		childrenConceptTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		childrenConceptTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent event) {
-				if (!updating) {
-					updating = true;
-					int viewRow = childrenConceptTable.getSelectedRow();
-					Global.conceptInfoAction.setEnabled(true);
-					int modelRow = childrenConceptTable.convertRowIndexToModel(viewRow);
-					Global.conceptInformationDialog.setConcept(childrenConceptTableModel.getConcept(modelRow));
-					updating = false;
-				}
+		childrenConceptTable.getSelectionModel().addListSelectionListener(event -> {
+			if (!updating) {
+				updating = true;
+				int viewRow = childrenConceptTable.getSelectedRow();
+				Global.conceptInfoAction.setEnabled(true);
+				int modelRow = childrenConceptTable.convertRowIndexToModel(viewRow);
+				Global.conceptInformationDialog.setConcept(childrenConceptTableModel.getConcept(modelRow));
+				updating = false;
 			}
 		});
-		childrenConceptTable.hideColumn("Parents");
-		childrenConceptTable.hideColumn("Children");
-		childrenConceptTable.hideColumn("Valid start date");
-		childrenConceptTable.hideColumn("Valid end date");
-		childrenConceptTable.hideColumn("Invalid reason");
 
 		JScrollPane childrenPane = new JScrollPane(childrenConceptTable);
 		childrenPane.setBorder(BorderFactory.createTitledBorder("Children concepts"));
 		childrenPane.setMinimumSize(new Dimension(500, 50));
 		childrenPane.setPreferredSize(new Dimension(500, 50));
-		c.gridy = 1;
-		c.weighty = 0.6;
+		c.gridy = 2;
+		c.weighty = 0.5;
 		panel.add(childrenPane, c);
 		return panel;
+	}
+
+	private static UsagiTable hierarchyTableBuilder(ConceptTableModel tableModel) {
+		UsagiTable result = new UsagiTable(tableModel);
+		result.setRowSorter(new TableRowSorter<>(tableModel));
+		result.setPreferredScrollableViewportSize(new Dimension(500, 45));
+		result.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		result.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		result.hideColumn("Parents");
+		result.hideColumn("Children");
+		result.hideColumn("Valid start date");
+		result.hideColumn("Valid end date");
+		result.hideColumn("Invalid reason");
+		return result;
 	}
 
 	private JScrollPane createInfoPanel() {
@@ -193,7 +199,7 @@ public class ConceptInformationDialog extends JFrame {
 		area.setEditable(false);
 		JScrollPane scrollPane = new JScrollPane(area);
 		scrollPane.setBorder(BorderFactory.createTitledBorder("Concept information"));
-		scrollPane.setPreferredSize(new Dimension(600, 200));
+		scrollPane.setPreferredSize(new Dimension(600, 150));
 		scrollPane.setMinimumSize(new Dimension(200, 100));
 		scrollPane.setAutoscrolls(true);
 		return scrollPane;
@@ -213,7 +219,6 @@ public class ConceptInformationDialog extends JFrame {
 			}
 
 		});
-		// replaceButton.setEnabled(false);
 		buttonPanel.add(replaceButton);
 		JButton addButton = new JButton("Add concept");
 		addButton.setToolTipText("Add selected concept");
@@ -224,7 +229,6 @@ public class ConceptInformationDialog extends JFrame {
 			}
 
 		});
-		// addButton.setEnabled(false);
 		buttonPanel.add(addButton);
 		return buttonPanel;
 	}
@@ -234,28 +238,16 @@ public class ConceptInformationDialog extends JFrame {
 		panel.setBorder(BorderFactory.createEmptyBorder());
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 		conceptNameLabel = new JLabel("No concept selected");
-		panel.add(conceptNameLabel);
 		panel.add(Box.createHorizontalGlue());
+		panel.add(conceptNameLabel);
 		backButton = new JButton("<");
 		backButton.setToolTipText("Back to previous concept");
-		backButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				goBack();
-			}
-		});
+		backButton.addActionListener(arg0 -> goBack());
 		backButton.setEnabled(false);
 		panel.add(backButton);
 		forwardButton = new JButton(">");
 		forwardButton.setToolTipText("Forward to next concept");
-		forwardButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				goForward();
-			}
-		});
+		forwardButton.addActionListener(arg0 -> goForward());
 		forwardButton.setEnabled(false);
 		panel.add(forwardButton);
 		return panel;
@@ -310,17 +302,19 @@ public class ConceptInformationDialog extends JFrame {
 			conceptInfo.append("\n" + concept.additionalInformation.replaceAll("\\\\n", "\n"));
 		area.setText(conceptInfo.toString());
 
-		List<Concept> parents = new ArrayList<Concept>();
+		List<Concept> parents = new ArrayList<>();
 		for (ParentChildRelationShip relationship : Global.dbEngine.getParentChildRelationshipsByChildConceptId(concept.conceptId))
 			parents.add(Global.dbEngine.getConcept(relationship.parentConceptId));
 		parentConceptTableModel.setConcepts(parents);
 
-		List<Concept> children = new ArrayList<Concept>();
+		currentConceptTableModel.setConcepts(Collections.singletonList(concept));
+
+		List<Concept> children = new ArrayList<>();
 		for (ParentChildRelationShip relationship : Global.dbEngine.getParentChildRelationshipsByParentConceptId(concept.conceptId))
 			children.add(Global.dbEngine.getConcept(relationship.childConceptId));
 		childrenConceptTableModel.setConcepts(children);
 
-		List<Concept> sourceConcepts = new ArrayList<Concept>();
+		List<Concept> sourceConcepts = new ArrayList<>();
 		for (MapsToRelationship relationship : Global.dbEngine.getMapsToRelationshipsByConceptId2(concept.conceptId))
 			sourceConcepts.add(Global.dbEngine.getConcept(relationship.conceptId1));
 		sourceConceptTableModel.setConcepts(sourceConcepts);
