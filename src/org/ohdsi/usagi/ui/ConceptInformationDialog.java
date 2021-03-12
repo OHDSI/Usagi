@@ -20,8 +20,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,13 +32,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableRowSorter;
 
 import org.ohdsi.usagi.Concept;
@@ -56,12 +50,10 @@ public class ConceptInformationDialog extends JFrame {
 	private ConceptTableModel	parentConceptTableModel;
 	private UsagiTable			parentsConceptTable;
 	private ConceptTableModel	currentConceptTableModel;
-	private UsagiTable			currentConceptTable;
 	private ConceptTableModel	childrenConceptTableModel;
 	private UsagiTable			childrenConceptTable;
 	private ConceptTableModel	sourceConceptTableModel;
-	private UsagiTable			sourceConceptTable;
-	private List<Concept>		history				= new ArrayList<Concept>();
+	private List<Concept>		history				= new ArrayList<>();
 	private int					historyCursor		= -1;
 	private boolean				updating			= false;
 
@@ -94,16 +86,7 @@ public class ConceptInformationDialog extends JFrame {
 
 	private Component createSourceConceptPanel() {
 		sourceConceptTableModel = new ConceptTableModel(false);
-		sourceConceptTable = new UsagiTable(sourceConceptTableModel);
-		sourceConceptTable.setPreferredScrollableViewportSize(new Dimension(500, 45));
-		sourceConceptTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		sourceConceptTable.setRowSelectionAllowed(false);
-		sourceConceptTable.setRowSorter(new TableRowSorter<>(sourceConceptTableModel));
-		sourceConceptTable.hideColumn("Parents");
-		sourceConceptTable.hideColumn("Children");
-		sourceConceptTable.hideColumn("Valid start date");
-		sourceConceptTable.hideColumn("Valid end date");
-		sourceConceptTable.hideColumn("Invalid reason");
+		UsagiTable sourceConceptTable = buildConceptTable(sourceConceptTableModel, false);
 
 		JScrollPane sourcePane = new JScrollPane(sourceConceptTable);
 		sourcePane.setBorder(BorderFactory.createTitledBorder("Source concepts"));
@@ -121,8 +104,7 @@ public class ConceptInformationDialog extends JFrame {
 		c.weightx = 1;
 
 		parentConceptTableModel = new ConceptTableModel(false);
-		parentsConceptTable = hierarchyTableBuilder(parentConceptTableModel);
-		parentsConceptTable.setRowSelectionAllowed(true);
+		parentsConceptTable = buildConceptTable(parentConceptTableModel, true);
 		parentsConceptTable.getSelectionModel().addListSelectionListener(event -> {
 			if (!updating) {
 				updating = true;
@@ -143,8 +125,7 @@ public class ConceptInformationDialog extends JFrame {
 		panel.add(parentsPane, c);
 
 		currentConceptTableModel = new ConceptTableModel(false);
-		currentConceptTable = hierarchyTableBuilder(currentConceptTableModel);
-		currentConceptTable.setRowSelectionAllowed(false);
+		UsagiTable currentConceptTable = buildConceptTable(currentConceptTableModel, false);
 		JScrollPane currentConceptPane = new JScrollPane(currentConceptTable);
 		currentConceptPane.setBorder(BorderFactory.createTitledBorder("Current concept"));
 		currentConceptPane.setMinimumSize(new Dimension(500, 20));
@@ -154,8 +135,7 @@ public class ConceptInformationDialog extends JFrame {
 		panel.add(currentConceptPane, c);
 
 		childrenConceptTableModel = new ConceptTableModel(false);
-		childrenConceptTable = hierarchyTableBuilder(childrenConceptTableModel);
-		childrenConceptTable.setRowSelectionAllowed(true);
+		childrenConceptTable = buildConceptTable(childrenConceptTableModel, true);
 		childrenConceptTable.getSelectionModel().addListSelectionListener(event -> {
 			if (!updating) {
 				updating = true;
@@ -177,17 +157,22 @@ public class ConceptInformationDialog extends JFrame {
 		return panel;
 	}
 
-	private static UsagiTable hierarchyTableBuilder(ConceptTableModel tableModel) {
+	private static UsagiTable buildConceptTable(ConceptTableModel tableModel, boolean rowSelectionAllowed) {
 		UsagiTable result = new UsagiTable(tableModel);
 		result.setRowSorter(new TableRowSorter<>(tableModel));
 		result.setPreferredScrollableViewportSize(new Dimension(500, 45));
 		result.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		result.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		result.hideColumn("Parents");
 		result.hideColumn("Children");
 		result.hideColumn("Valid start date");
 		result.hideColumn("Valid end date");
 		result.hideColumn("Invalid reason");
+
+		result.setRowSelectionAllowed(rowSelectionAllowed);
+		if (rowSelectionAllowed) {
+			result.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		}
+
 		return result;
 	}
 
@@ -198,22 +183,16 @@ public class ConceptInformationDialog extends JFrame {
 
 		JButton replaceButton = new JButton("Replace concept");
 		replaceButton.setToolTipText("Replace selected concept");
-		replaceButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Global.mappingDetailPanel.replaceConcepts(history.get(historyCursor));
-				Global.frame.requestFocus();
-			}
-
+		replaceButton.addActionListener(e -> {
+			Global.mappingDetailPanel.replaceConcepts(history.get(historyCursor));
+			Global.frame.requestFocus();
 		});
 		buttonPanel.add(replaceButton);
 		JButton addButton = new JButton("Add concept");
 		addButton.setToolTipText("Add selected concept");
-		addButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Global.mappingDetailPanel.addConcept(history.get(historyCursor));
-				Global.frame.requestFocus();
-			}
-
+		addButton.addActionListener(e -> {
+			Global.mappingDetailPanel.addConcept(history.get(historyCursor));
+			Global.frame.requestFocus();
 		});
 		buttonPanel.add(addButton);
 		return buttonPanel;
