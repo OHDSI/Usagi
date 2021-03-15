@@ -21,6 +21,7 @@ import org.ohdsi.utilities.collections.Pair;
 import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ShowReviewStatsDialog extends JDialog {
@@ -29,6 +30,14 @@ public class ShowReviewStatsDialog extends JDialog {
 
 	public ShowReviewStatsDialog() {
 		Font headerFont = new Font("Arial", Font.BOLD,12);
+
+		java.util.List<CodeMapping> selectedCodeMappings = Global.mappingTablePanel.getSelectedCodeMappings();
+		List<CodeMapping> codeMappings;
+		if (selectedCodeMappings.size() > 1) {
+			codeMappings = selectedCodeMappings;
+		} else {
+			codeMappings = Global.mapping;
+		}
 
 		setTitle("Review statistics");
 		setLayout(new GridBagLayout());
@@ -40,7 +49,7 @@ public class ShowReviewStatsDialog extends JDialog {
 
 		g.gridx = 0;
 		g.gridy = 0;
-		add(new JLabel(String.format("Number of source codes: %d", Global.mapping.size())), g);
+		add(new JLabel(String.format("Number of (selected) source codes: %d", codeMappings.size())), g);
 
 		g.gridx = 0;
 		g.gridy++;
@@ -49,7 +58,7 @@ public class ShowReviewStatsDialog extends JDialog {
 		add(l, g);
 
 		Map<CodeMapping.Equivalence, Integer> reviewResults = new HashMap<>();
-		for (CodeMapping codeMapping : Global.mapping) {
+		for (CodeMapping codeMapping : codeMappings) {
 			reviewResults.putIfAbsent(codeMapping.getEquivalence(), 0);
 			Integer c = reviewResults.get(codeMapping.getEquivalence());
 			reviewResults.put(codeMapping.getEquivalence(), ++c);
@@ -68,7 +77,7 @@ public class ShowReviewStatsDialog extends JDialog {
 		add(l, g);
 
 		Map<String, Pair<Integer, Integer>> reviewerResults = new HashMap<>();
-		for (CodeMapping codeMapping : Global.mapping) {
+		for (CodeMapping codeMapping : codeMappings) {
 			reviewerResults.putIfAbsent(codeMapping.getAssignedReviewer(), new Pair<>(0,0));
 			Pair<Integer, Integer> c = reviewerResults.get(codeMapping.getAssignedReviewer());
 			Integer nApproved = c.getItem1();
@@ -92,7 +101,7 @@ public class ShowReviewStatsDialog extends JDialog {
 		add(l, g);
 
 		Map<Integer, Integer> oneToManyResults = new HashMap<>();
-		for (CodeMapping codeMapping : Global.mapping) {
+		for (CodeMapping codeMapping : codeMappings) {
 			Integer nTargets = codeMapping.getTargetConcepts().size();
 			oneToManyResults.putIfAbsent(nTargets, 0);
 			Integer c = oneToManyResults.get(nTargets);
