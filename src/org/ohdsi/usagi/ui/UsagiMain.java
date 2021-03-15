@@ -85,6 +85,7 @@ public class UsagiMain implements ActionListener {
 		Global.athenaAction = new AthenaAction();
 		Global.googleSearchAction = new GoogleSearchAction();
 		Global.showStatsAction = new ShowStatsAction();
+		Global.showReviewStatsAction = new ShowReviewStatsAction();
 		Global.aboutAction = new AboutAction();
 		Global.rebuildIndexAction = new RebuildIndexAction();
 		Global.exitAction = new ExitAction();

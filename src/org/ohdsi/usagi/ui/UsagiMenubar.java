@@ -59,6 +59,7 @@ public class UsagiMenubar extends JMenuBar {
 
 		helpMenu.add(Global.rebuildIndexAction);
 		helpMenu.add(Global.showStatsAction);
+		helpMenu.add(Global.showReviewStatsAction);
 		helpMenu.add(Global.aboutAction);
 
 	}

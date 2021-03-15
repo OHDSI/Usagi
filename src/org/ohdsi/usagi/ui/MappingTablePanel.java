@@ -31,7 +31,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableRowSorter;
 
-import org.apache.xmlbeans.impl.xb.ltgfmt.Code;
 import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
 import org.ohdsi.usagi.Concept;
@@ -317,6 +316,15 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 			tableModel.getCodeMapping(modelRow).setUnchecked();
 		}
 		fireUpdateEventAll(MULTI_UPDATE_EVENT);
+	}
+
+	public List<CodeMapping> getSelectedCodeMappings() {
+		List<CodeMapping> selectedCodeMappings = new ArrayList<>();
+		for (int viewRow : table.getSelectedRows()) {
+			int modelRow = table.convertRowIndexToModel(viewRow);
+			selectedCodeMappings.add(tableModel.getCodeMapping(modelRow));
+		}
+		return selectedCodeMappings;
 	}
 
 	public void assignReviewersRandomly(String[] reviewers) {
