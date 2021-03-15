@@ -21,8 +21,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.Timer;
 
@@ -186,7 +184,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 				replaceButton.setEnabled(true);
 				int modelRow = searchTable.convertRowIndexToModel(viewRow);
 				Global.conceptInfoAction.setEnabled(true);
-				Global.conceptInformationDialog.setConcept(searchTableModel.getConcept(modelRow));
+				Global.conceptInformationDialog.setActiveConcept(searchTableModel.getConcept(modelRow));
 				Global.athenaAction.setEnabled(true);
 				Global.athenaAction.setConcept(searchTableModel.getConcept(modelRow));
 				Global.googleSearchAction.setEnabled(false);
@@ -204,13 +202,10 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 
 		replaceButton = new JButton("Replace concept");
 		replaceButton.setToolTipText("Replace selected concept");
-		replaceButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				int viewRow = searchTable.getSelectedRow();
-				int modelRow = searchTable.convertRowIndexToModel(viewRow);
-				replaceConcepts(searchTableModel.getConcept(modelRow));
-			}
-
+		replaceButton.addActionListener(e -> {
+			int viewRow = searchTable.getSelectedRow();
+			int modelRow = searchTable.convertRowIndexToModel(viewRow);
+			replaceConcepts(searchTableModel.getConcept(modelRow));
 		});
 		replaceButton.setEnabled(false);
 		buttonPanel.add(replaceButton);
@@ -231,7 +226,12 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			});
 			button.setEnabled(false);
 			addButtons.add(button);
-			buttonPanel.add(button);
+			// Add Maps_to button on the right, the other on the left.
+			if (mappingType.equals(MappingTarget.Type.MAPS_TO)) {
+				buttonPanel.add(button);
+			} else {
+				buttonPanel.add(button, 0);
+			}
 		}
 
 		panel.add(buttonPanel);
@@ -330,7 +330,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 				MappingTarget mappingTarget = targetConceptTableModel.getMappingTarget(modelRow);
 				typesChooser.setSelectedItem(mappingTarget.getMappingType());
 				Global.conceptInfoAction.setEnabled(true);
-				Global.conceptInformationDialog.setConcept(mappingTarget.getConcept());
+				Global.conceptInformationDialog.setActiveConcept(mappingTarget.getConcept());
 				Global.athenaAction.setEnabled(true);
 				Global.athenaAction.setConcept(mappingTarget.getConcept());
 				Global.googleSearchAction.setEnabled(false);
@@ -348,7 +348,6 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
-		buttonPanel.add(Box.createHorizontalGlue());
 
 		typesChooser = new JComboBox<>(MappingTarget.Type.values());
 		typesChooser.setToolTipText("Set type of the mapping");
@@ -359,6 +358,8 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		typesChooser.setMaximumSize(typesChooser.getPreferredSize());
 		typesChooser.setEnabled(false);
 		buttonPanel.add(typesChooser);
+
+		buttonPanel.add(Box.createHorizontalGlue());
 
 		removeButton = new JButton("Remove concept");
 		removeButton.setToolTipText("Remove selected concept");
@@ -442,6 +443,11 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			Global.mapping.fireDataChanged(SIMPLE_UPDATE_EVENT);
 		} else {
 			Global.mapping.fireDataChanged(MULTI_UPDATE_EVENT);
+		}
+		// If a row selected, then enable the add buttons
+		if (searchTable.getSelectedRow() != -1) {
+			replaceButton.setEnabled(true);
+			addButtons.forEach(x -> x.setEnabled(true));
 		}
 	}
 

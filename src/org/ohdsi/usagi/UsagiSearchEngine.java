@@ -279,7 +279,7 @@ public class UsagiSearchEngine {
 	}
 
 	public List<ScoredConcept> search(String searchTerm, boolean useMlt, Collection<Integer> filterConceptIds, Vector<String> filterDomains, Vector<String> filterConceptClasses,
-			Vector<String> filterVocabularies, boolean filterStandard, boolean includeSourceConcepts) {
+									  Vector<String> filterVocabularies, boolean filterStandard, boolean includeSourceConcepts) {
 		List<ScoredConcept> results = new ArrayList<ScoredConcept>();
 		try {
 			Query query;
@@ -406,7 +406,7 @@ public class UsagiSearchEngine {
 	/**
 	 * Lucene's matching score does some weird things: it is not normalized (the value can be greater than 1), and not all tokens are included in the
 	 * computation. For that reason, we're recomputing the matching score as plain TF*IDF cosine matching here.
-	 * 
+	 *
 	 * @param scoreDocs
 	 *            The array of documents scored by Lucene
 	 * @param query
@@ -436,6 +436,39 @@ public class UsagiSearchEngine {
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
+	}
+
+	public List<String> searchConceptSynonymsByConceptId(int conceptId) {
+		return searchTermsByConceptId(conceptId, CONCEPT_TERM);
+	}
+
+	public List<String> searchSourceSynonymsByConceptId(int conceptId) {
+		return searchTermsByConceptId(conceptId, SOURCE_TERM);
+	}
+
+	private List<String> searchTermsByConceptId(int conceptId, String termType) {
+		List<String> result = new ArrayList<>();
+		try {
+			QueryParser keywordsQueryParser = new QueryParser(Version.LUCENE_4_9, "CONCEPT_ID", new KeywordAnalyzer());
+			Query conceptIdQuery = keywordsQueryParser.parse(String.valueOf(conceptId));
+			BooleanQuery booleanQuery = new BooleanQuery();
+			booleanQuery.add(conceptIdQuery, Occur.MUST);
+
+			QueryParser termTypeQueryParser = new QueryParser(Version.LUCENE_4_9, "TERM_TYPE", new KeywordAnalyzer());
+			Query termTypeQuery = termTypeQueryParser.parse(termType);
+			booleanQuery.add(termTypeQuery, Occur.MUST);
+
+			TopDocs topDocs = searcher.search(booleanQuery, 100);
+			for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+				Document document = reader.document(scoreDoc.doc);
+				String term = document.get("TERM");
+				result.add(term);
+			}
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 	public static class ScoredConcept {

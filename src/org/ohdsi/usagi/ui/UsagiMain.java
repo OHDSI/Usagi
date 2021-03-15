@@ -41,7 +41,7 @@ import org.ohdsi.utilities.files.ReadTextFile;
  */
 public class UsagiMain implements ActionListener {
 
-	public static String version = "1.4.1";
+	public static String version = "1.4.2";
 
 	public static void main(String[] args) {
 		new UsagiMain(args);
@@ -85,6 +85,7 @@ public class UsagiMain implements ActionListener {
 		Global.athenaAction = new AthenaAction();
 		Global.googleSearchAction = new GoogleSearchAction();
 		Global.showStatsAction = new ShowStatsAction();
+		Global.showReviewStatsAction = new ShowReviewStatsAction();
 		Global.aboutAction = new AboutAction();
 		Global.rebuildIndexAction = new RebuildIndexAction();
 		Global.exitAction = new ExitAction();

@@ -58,6 +58,7 @@ public class Global {
 	public static Vector<String> 					vocabularyIds;
 	public static Vector<String>	 				domainIds;
 	public static ShowStatsAction					showStatsAction;
+	public static ShowReviewStatsAction				showReviewStatsAction;
 
 	public static String							author;
 }
