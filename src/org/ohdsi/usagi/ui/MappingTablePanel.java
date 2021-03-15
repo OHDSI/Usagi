@@ -72,7 +72,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 					if (tableModel.getCodeMapping(primaryModelRow).getTargetConcepts().size() > 0) {
 						Concept firstConcept = tableModel.getCodeMapping(primaryModelRow).getTargetConcepts().get(0).getConcept();
 						Global.conceptInfoAction.setEnabled(true);
-						Global.conceptInformationDialog.setConcept(firstConcept);
+						Global.conceptInformationDialog.setActiveConcept(firstConcept);
 						Global.athenaAction.setEnabled(true);
 						Global.athenaAction.setConcept(firstConcept);
 					}
