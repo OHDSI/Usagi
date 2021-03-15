@@ -16,11 +16,9 @@
 package org.ohdsi.usagi.ui;
 
 import org.ohdsi.usagi.CodeMapping;
-import org.ohdsi.utilities.collections.Pair;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,9 +27,10 @@ public class ShowReviewStatsDialog extends JDialog {
 
 	private static final long	serialVersionUID	= 2028328868610404663L;
 
-	public ShowReviewStatsDialog() {
-		Font headerFont = new Font("Arial", Font.BOLD,12);
+	private static final Font HEADER_FONT = new Font("Arial", Font.BOLD,12);
 
+	public ShowReviewStatsDialog() {
+		// If selection of multiple codes made, then use that to calculate statistics
 		java.util.List<CodeMapping> selectedCodeMappings = Global.mappingTablePanel.getSelectedCodeMappings();
 		List<CodeMapping> codeMappings;
 		if (selectedCodeMappings.size() > 1) {
@@ -45,51 +44,31 @@ public class ShowReviewStatsDialog extends JDialog {
 
 		GridBagConstraints g = new GridBagConstraints();
 		g.fill = GridBagConstraints.BOTH;
-		g.ipadx = 50;
+		g.ipadx = 10;
 		g.ipady = 10;
 
 		g.gridx = 0;
 		g.gridy = 0;
-		add(new JLabel(String.format("Number of (selected) source codes: %d", codeMappings.size())), g);
+		addLabel(g, String.format("Number of (selected) source codes: %d", codeMappings.size()));
 
 		// Mapping status
-		g.gridx = 0;
-		g.gridy++;
-		JLabel l = new JLabel("By mapping status:");
-		l.setFont(headerFont);
-		add(l, g);
+		addHeaderLabel(g, "By mapping status:");
 
 		Map<CodeMapping.MappingStatus, Long> countByMappingStatus = codeMappings.stream()
 				.collect(Collectors.groupingBy(CodeMapping::getMappingStatus, Collectors.counting()));
 
-		countByMappingStatus.forEach((key, value) -> {
-			g.gridx = 0;
-			g.gridy++;
-			add(new JLabel(String.format("%s - %d", key, value)), g);
-		});
+		countByMappingStatus.forEach((key, value) -> addLabel(g, String.format("%s - %d", key, value)));
 
 		// Equivalence status
-		g.gridx = 0;
-		g.gridy++;
-		l = new JLabel("By equivalence status:");
-		l.setFont(headerFont);
-		add(l, g);
+		addHeaderLabel(g,"By equivalence status:");
 
 		Map<CodeMapping.Equivalence, Long> countByEquivalence = codeMappings.stream()
 				.collect(Collectors.groupingBy(CodeMapping::getEquivalence, Collectors.counting()));
 
-		countByEquivalence.forEach((key, value) -> {
-			g.gridx = 0;
-			g.gridy++;
-			add(new JLabel(String.format("%s - %d", key, value)), g);
-		});
+		countByEquivalence.forEach((key, value) -> addLabel(g, String.format("%s - %d", key, value)));
 
 		// Reviewer
-		g.gridx = 0;
-		g.gridy++;
-		l = new JLabel("By assigned reviewer:");
-		l.setFont(headerFont);
-		add(l, g);
+		addHeaderLabel(g,"By assigned reviewer:");
 
 		Map<String, Long> countByAssignedReviewer = codeMappings.stream()
 				.collect(Collectors.groupingBy(CodeMapping::getAssignedReviewer, Collectors.counting()));
@@ -99,27 +78,17 @@ public class ShowReviewStatsDialog extends JDialog {
 				.collect(Collectors.groupingBy(CodeMapping::getAssignedReviewer, Collectors.counting()));
 
 		countByAssignedReviewer.forEach((key, total) -> {
-			g.gridx = 0;
-			g.gridy++;
 			long nApproved = countApprovedByAssignedReviewer.getOrDefault(key, 0L);
-			add(new JLabel(String.format("%s - %d/%d", key, nApproved, total)), g);
+			addLabel(g, String.format("%s - %d/%d", key, nApproved, total));
 		});
 
 		// Number of target mappings
-		g.gridx = 0;
-		g.gridy++;
-		l = new JLabel("By number of target concepts:");
-		l.setFont(headerFont);
-		add(l, g);
+		addHeaderLabel(g,"By number of target concepts:");
 
 		Map<Integer, Long> countByNumberOfTargetConcepts = codeMappings.stream()
 				.collect(Collectors.groupingBy(x -> x.getTargetConcepts().size(), Collectors.counting()));
 
-		countByNumberOfTargetConcepts.forEach((key, value) -> {
-			g.gridx = 0;
-			g.gridy++;
-			add(new JLabel(String.format("%d - %d", key, value)), g);
-		});
+		countByNumberOfTargetConcepts.forEach((key, value) -> addLabel(g, String.format("%d - %d", key, value)));
 
 		g.gridx = 0;
 		g.gridy++;
@@ -141,6 +110,20 @@ public class ShowReviewStatsDialog extends JDialog {
 		setResizable(false);
 		pack();
 
+	}
+
+	private JLabel addLabel(GridBagConstraints g, String message) {
+		g.gridx = 0;
+		g.gridy++;
+		JLabel label = new JLabel(message);
+		add(label, g);
+		return label;
+	}
+
+	private JLabel addHeaderLabel(GridBagConstraints g, String message) {
+		JLabel label = addLabel(g, message);
+		label.setFont(HEADER_FONT);
+		return label;
 	}
 
 	private void close() {
