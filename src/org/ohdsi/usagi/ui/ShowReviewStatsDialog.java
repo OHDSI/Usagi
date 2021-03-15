@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 public class ShowReviewStatsDialog extends JDialog {
 
-	private static final long	serialVersionUID	= 2028328868610404663L;
+	private static final long	serialVersionUID	= -4646761336953654777L;
 
 	private static final Font HEADER_FONT = new Font("Arial", Font.BOLD,12);
 
