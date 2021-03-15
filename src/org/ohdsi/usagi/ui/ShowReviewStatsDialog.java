@@ -44,42 +44,64 @@ public class ShowReviewStatsDialog extends JDialog {
 
 		GridBagConstraints g = new GridBagConstraints();
 		g.fill = GridBagConstraints.BOTH;
-		g.ipadx = 10;
+		g.ipadx = 50;
 		g.ipady = 10;
 
 		g.gridx = 0;
 		g.gridy = 0;
 		add(new JLabel(String.format("Number of (selected) source codes: %d", codeMappings.size())), g);
 
+		// Mapping status
 		g.gridx = 0;
 		g.gridy++;
-		JLabel l = new JLabel("By equivalence status:");
+		JLabel l = new JLabel("By mapping status:");
 		l.setFont(headerFont);
 		add(l, g);
 
-		Map<CodeMapping.Equivalence, Integer> reviewResults = new HashMap<>();
+		Map<CodeMapping.MappingStatus, Integer> mappingStats = new HashMap<>();
 		for (CodeMapping codeMapping : codeMappings) {
-			reviewResults.putIfAbsent(codeMapping.getEquivalence(), 0);
-			Integer c = reviewResults.get(codeMapping.getEquivalence());
-			reviewResults.put(codeMapping.getEquivalence(), ++c);
+			mappingStats.putIfAbsent(codeMapping.getMappingStatus(), 0);
+			Integer c = mappingStats.get(codeMapping.getMappingStatus());
+			mappingStats.put(codeMapping.getMappingStatus(), ++c);
 		}
 
-		reviewResults.forEach((key, value) -> {
+		mappingStats.forEach((key, value) -> {
 			g.gridx = 0;
 			g.gridy++;
 			add(new JLabel(String.format("%s - %d", key, value)), g);
 		});
 
+		// Equivalence status
+		g.gridx = 0;
+		g.gridy++;
+		l = new JLabel("By equivalence status:");
+		l.setFont(headerFont);
+		add(l, g);
+
+		Map<CodeMapping.Equivalence, Integer> equivalenceStats = new HashMap<>();
+		for (CodeMapping codeMapping : codeMappings) {
+			equivalenceStats.putIfAbsent(codeMapping.getEquivalence(), 0);
+			Integer c = equivalenceStats.get(codeMapping.getEquivalence());
+			equivalenceStats.put(codeMapping.getEquivalence(), ++c);
+		}
+
+		equivalenceStats.forEach((key, value) -> {
+			g.gridx = 0;
+			g.gridy++;
+			add(new JLabel(String.format("%s - %d", key, value)), g);
+		});
+
+		// Reviewer
 		g.gridx = 0;
 		g.gridy++;
 		l = new JLabel("By reviewer:");
 		l.setFont(headerFont);
 		add(l, g);
 
-		Map<String, Pair<Integer, Integer>> reviewerResults = new HashMap<>();
+		Map<String, Pair<Integer, Integer>> reviewerStats = new HashMap<>();
 		for (CodeMapping codeMapping : codeMappings) {
-			reviewerResults.putIfAbsent(codeMapping.getAssignedReviewer(), new Pair<>(0,0));
-			Pair<Integer, Integer> c = reviewerResults.get(codeMapping.getAssignedReviewer());
+			reviewerStats.putIfAbsent(codeMapping.getAssignedReviewer(), new Pair<>(0,0));
+			Pair<Integer, Integer> c = reviewerStats.get(codeMapping.getAssignedReviewer());
 			Integer nApproved = c.getItem1();
 			if (codeMapping.getMappingStatus() == CodeMapping.MappingStatus.APPROVED) {
 				c.setItem1(++nApproved);
@@ -88,27 +110,28 @@ public class ShowReviewStatsDialog extends JDialog {
 			c.setItem2(++nTotal);
 		}
 
-		reviewerResults.forEach((key, value) -> {
+		reviewerStats.forEach((key, value) -> {
 			g.gridx = 0;
 			g.gridy++;
 			add(new JLabel(String.format("%s - %d/%d", key, value.getItem1(), value.getItem2())), g);
 		});
 
+		// Number of target mappings
 		g.gridx = 0;
 		g.gridy++;
 		l = new JLabel("By number of targets:");
 		l.setFont(headerFont);
 		add(l, g);
 
-		Map<Integer, Integer> oneToManyResults = new HashMap<>();
+		Map<Integer, Integer> nTargetsStats = new HashMap<>();
 		for (CodeMapping codeMapping : codeMappings) {
 			Integer nTargets = codeMapping.getTargetConcepts().size();
-			oneToManyResults.putIfAbsent(nTargets, 0);
-			Integer c = oneToManyResults.get(nTargets);
-			oneToManyResults.put(nTargets, ++c);
+			nTargetsStats.putIfAbsent(nTargets, 0);
+			Integer c = nTargetsStats.get(nTargets);
+			nTargetsStats.put(nTargets, ++c);
 		}
 
-		oneToManyResults.forEach((key, value) -> {
+		nTargetsStats.forEach((key, value) -> {
 			g.gridx = 0;
 			g.gridy++;
 			add(new JLabel(String.format("%d - %d", key, value)), g);
