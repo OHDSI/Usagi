@@ -23,6 +23,7 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ShowReviewStatsDialog extends JDialog {
 
@@ -58,14 +59,10 @@ public class ShowReviewStatsDialog extends JDialog {
 		l.setFont(headerFont);
 		add(l, g);
 
-		Map<CodeMapping.MappingStatus, Integer> mappingStats = new HashMap<>();
-		for (CodeMapping codeMapping : codeMappings) {
-			mappingStats.putIfAbsent(codeMapping.getMappingStatus(), 0);
-			Integer c = mappingStats.get(codeMapping.getMappingStatus());
-			mappingStats.put(codeMapping.getMappingStatus(), ++c);
-		}
+		Map<CodeMapping.MappingStatus, Long> countByMappingStatus = codeMappings.stream()
+				.collect(Collectors.groupingBy(CodeMapping::getMappingStatus, Collectors.counting()));
 
-		mappingStats.forEach((key, value) -> {
+		countByMappingStatus.forEach((key, value) -> {
 			g.gridx = 0;
 			g.gridy++;
 			add(new JLabel(String.format("%s - %d", key, value)), g);
@@ -78,14 +75,10 @@ public class ShowReviewStatsDialog extends JDialog {
 		l.setFont(headerFont);
 		add(l, g);
 
-		Map<CodeMapping.Equivalence, Integer> equivalenceStats = new HashMap<>();
-		for (CodeMapping codeMapping : codeMappings) {
-			equivalenceStats.putIfAbsent(codeMapping.getEquivalence(), 0);
-			Integer c = equivalenceStats.get(codeMapping.getEquivalence());
-			equivalenceStats.put(codeMapping.getEquivalence(), ++c);
-		}
+		Map<CodeMapping.Equivalence, Long> countByEquivalence = codeMappings.stream()
+				.collect(Collectors.groupingBy(CodeMapping::getEquivalence, Collectors.counting()));
 
-		equivalenceStats.forEach((key, value) -> {
+		countByEquivalence.forEach((key, value) -> {
 			g.gridx = 0;
 			g.gridy++;
 			add(new JLabel(String.format("%s - %d", key, value)), g);
@@ -94,44 +87,35 @@ public class ShowReviewStatsDialog extends JDialog {
 		// Reviewer
 		g.gridx = 0;
 		g.gridy++;
-		l = new JLabel("By reviewer:");
+		l = new JLabel("By assigned reviewer:");
 		l.setFont(headerFont);
 		add(l, g);
 
-		Map<String, Pair<Integer, Integer>> reviewerStats = new HashMap<>();
-		for (CodeMapping codeMapping : codeMappings) {
-			reviewerStats.putIfAbsent(codeMapping.getAssignedReviewer(), new Pair<>(0,0));
-			Pair<Integer, Integer> c = reviewerStats.get(codeMapping.getAssignedReviewer());
-			Integer nApproved = c.getItem1();
-			if (codeMapping.getMappingStatus() == CodeMapping.MappingStatus.APPROVED) {
-				c.setItem1(++nApproved);
-			}
-			Integer nTotal = c.getItem2();
-			c.setItem2(++nTotal);
-		}
+		Map<String, Long> countByAssignedReviewer = codeMappings.stream()
+				.collect(Collectors.groupingBy(CodeMapping::getAssignedReviewer, Collectors.counting()));
 
-		reviewerStats.forEach((key, value) -> {
+		Map<String, Long> countApprovedByAssignedReviewer = codeMappings.stream()
+				.filter(x -> x.getMappingStatus().equals(CodeMapping.MappingStatus.APPROVED))
+				.collect(Collectors.groupingBy(CodeMapping::getAssignedReviewer, Collectors.counting()));
+
+		countByAssignedReviewer.forEach((key, total) -> {
 			g.gridx = 0;
 			g.gridy++;
-			add(new JLabel(String.format("%s - %d/%d", key, value.getItem1(), value.getItem2())), g);
+			long nApproved = countApprovedByAssignedReviewer.getOrDefault(key, 0L);
+			add(new JLabel(String.format("%s - %d/%d", key, nApproved, total)), g);
 		});
 
 		// Number of target mappings
 		g.gridx = 0;
 		g.gridy++;
-		l = new JLabel("By number of targets:");
+		l = new JLabel("By number of target concepts:");
 		l.setFont(headerFont);
 		add(l, g);
 
-		Map<Integer, Integer> nTargetsStats = new HashMap<>();
-		for (CodeMapping codeMapping : codeMappings) {
-			Integer nTargets = codeMapping.getTargetConcepts().size();
-			nTargetsStats.putIfAbsent(nTargets, 0);
-			Integer c = nTargetsStats.get(nTargets);
-			nTargetsStats.put(nTargets, ++c);
-		}
+		Map<Integer, Long> countByNumberOfTargetConcepts = codeMappings.stream()
+				.collect(Collectors.groupingBy(x -> x.getTargetConcepts().size(), Collectors.counting()));
 
-		nTargetsStats.forEach((key, value) -> {
+		countByNumberOfTargetConcepts.forEach((key, value) -> {
 			g.gridx = 0;
 			g.gridy++;
 			add(new JLabel(String.format("%d - %d", key, value)), g);
