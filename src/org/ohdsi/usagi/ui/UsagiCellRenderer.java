@@ -23,6 +23,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
+import org.ohdsi.usagi.CodeMapping.Equivalence;
 
 public class UsagiCellRenderer extends DefaultTableCellRenderer {
 
@@ -73,7 +74,8 @@ public class UsagiCellRenderer extends DefaultTableCellRenderer {
 				value = "Unchecked";
 			else if (value == MappingStatus.INVALID_TARGET)
 				value = "Invalid target";
-		}
+		}		
+
 		Component component = super.getTableCellRendererComponent(aTable, value, isSelected, hasFocus, row, column);
 
 		if (!isSelected) {

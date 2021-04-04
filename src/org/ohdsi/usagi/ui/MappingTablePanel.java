@@ -32,6 +32,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.ohdsi.usagi.CodeMapping;
+import org.ohdsi.usagi.CodeMapping.Equivalence;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
 import org.ohdsi.usagi.Concept;
 
@@ -238,6 +239,8 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 						return Integer.class;
 					case 16:
 						return Integer.class;
+					case 18:
+						return Equivalence.class;
 					default:
 						return String.class;
 				}
