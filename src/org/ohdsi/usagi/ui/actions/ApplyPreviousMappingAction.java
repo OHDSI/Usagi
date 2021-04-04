@@ -69,7 +69,11 @@ public class ApplyPreviousMappingAction extends AbstractAction {
 					existingMapping.getSourceCode().sourceName = codeMappingToBeApplied.getSourceCode().sourceName;
 					existingMapping.setTargetConcepts(codeMappingToBeApplied.getTargetConcepts());
 					existingMapping.setMappingStatus(codeMappingToBeApplied.getMappingStatus());
+					existingMapping.setAssignedReviewer(codeMappingToBeApplied.getAssignedReviewer());
+					existingMapping.setEquivalence(codeMappingToBeApplied.getEquivalence());
 					existingMapping.setComment(codeMappingToBeApplied.getComment());
+					existingMapping.setStatusSetBy(codeMappingToBeApplied.getStatusSetBy());
+					existingMapping.setStatusSetOn(codeMappingToBeApplied.getStatusSetOn());
 					mappingsApplied++;
 				} else {
 					Global.mapping.add(codeMappingToBeApplied);
