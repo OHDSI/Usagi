@@ -342,8 +342,8 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 
 		JScrollPane pane = new JScrollPane(targetConceptTable);
 		pane.setBorder(BorderFactory.createEmptyBorder());
-		pane.setMinimumSize(new Dimension(500, 50));
-		pane.setPreferredSize(new Dimension(500, 50));
+		pane.setMinimumSize(new Dimension(500, 75));
+		pane.setPreferredSize(new Dimension(500, 75));
 		panel.add(pane);
 
 		JPanel buttonPanel = new JPanel();
