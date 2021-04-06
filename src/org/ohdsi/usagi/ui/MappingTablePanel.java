@@ -223,22 +223,17 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 			if (col >= ADD_INFO_START_COL && col < ADD_INFO_START_COL + addInfoColCount) {
 				return String.class;
 			} else {
-				col = resolveColumnIndex(col);
-				switch (col) {
+				switch (resolveColumnIndex(col)) {
 					case 0:
 						return MappingStatus.class;
 					case 3:
+					case 5:
+					case 7:
+					case 15:
+					case 16:
 						return Integer.class;
 					case 4:
 						return Double.class;
-					case 5:
-						return Integer.class;
-					case 7:
-						return Integer.class;
-					case 15:
-						return Integer.class;
-					case 16:
-						return Integer.class;
 					case 18:
 						return Equivalence.class;
 					default:
