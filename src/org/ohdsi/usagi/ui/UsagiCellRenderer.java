@@ -74,7 +74,6 @@ public class UsagiCellRenderer extends DefaultTableCellRenderer {
 			else if (value == MappingStatus.INVALID_TARGET)
 				value = "Invalid target";
 		}
-
 		Component component = super.getTableCellRendererComponent(aTable, value, isSelected, hasFocus, row, column);
 
 		if (!isSelected) {
