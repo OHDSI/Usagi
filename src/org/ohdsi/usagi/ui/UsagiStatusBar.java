@@ -32,7 +32,7 @@ public class UsagiStatusBar extends JPanel implements DataChangeListener {
 	private static final long	serialVersionUID	= 4406343348570974587L;
 	private JLabel				countLabel;
 	private JLabel				percentLabel;
-	private JLabel				reviewPercentLabel;
+	private JLabel				authorLabel;
 	private JLabel				searchLabel;
 	private DecimalFormat		percentFormatter	= new DecimalFormat("##0.0");
 
@@ -66,6 +66,11 @@ public class UsagiStatusBar extends JPanel implements DataChangeListener {
 		add(searchLabel);
 
 		add(Box.createHorizontalGlue());
+
+		authorLabel = new JLabel("Author: " + (Global.author == null ? "" : Global.author));
+		add(authorLabel);
+
+		add(Box.createHorizontalStrut(15));
 
 		JLabel versionLabel = new JLabel("Vocabulary version: " + Global.vocabularyVersion);
 		add(versionLabel);

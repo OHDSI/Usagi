@@ -64,7 +64,8 @@ public class UsagiMain implements ActionListener {
 			Global.dbEngine.openForReading();
 		}
 
-		Global.vocabularyVersion = loadVocabularyVersion(Global.folder);
+		loadAuthor(Global.folder);
+		loadVocabularyVersion(Global.folder);
 		Global.conceptClassIds = loadVectorFromFile(Global.folder + "/ConceptClassIds.txt");
 		Global.vocabularyIds = loadVectorFromFile(Global.folder + "/VocabularyIds.txt");
 		Global.domainIds = loadVectorFromFile(Global.folder + "/DomainIds.txt");
@@ -142,19 +143,31 @@ public class UsagiMain implements ActionListener {
 		if (args.length > 1 && args[0].equals("--file")) {
 			OpenAction.open(new File(args[1]));
 		}
-
-		AuthorDialog authorDialog = new AuthorDialog();
-		authorDialog.setVisible(true);
 	}
 
-	private String loadVocabularyVersion(String folder) {
+	private void loadVocabularyVersion(String folder) {
 		String versionFileName = folder + "/vocabularyVersion.txt";
-		String version = "Unknown";
+		Global.vocabularyVersion = "Unknown";
 		if (new File(versionFileName).exists()) {
-			for (String line : new ReadTextFile(versionFileName))
-				version = line;
+			for (String line : new ReadTextFile(versionFileName)) {
+				Global.vocabularyVersion = line;
+			}
 		}
-		return version;
+	}
+
+	private void loadAuthor(String folder) {
+		String authorFileName = folder + "/authorName.txt";
+		if (new File(authorFileName).exists()) {
+			// Read from file
+			for (String line : new ReadTextFile(authorFileName)) {
+				Global.author = line;
+			}
+		} else {
+			// Dialog to ask user to input name
+			AuthorDialog authorDialog = new AuthorDialog();
+			authorDialog.setAuthorFileName(authorFileName);
+			authorDialog.setVisible(true);
+		}
 	}
 
 	@Override
