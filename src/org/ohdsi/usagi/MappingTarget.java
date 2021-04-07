@@ -15,6 +15,8 @@
  ******************************************************************************/
 package org.ohdsi.usagi;
 
+import java.util.Objects;
+
 /**
  * Class for holding information about a single (target) concept in the Vocabulary
  */
@@ -72,4 +74,14 @@ public class MappingTarget{
 	public void setMappingType(Type mappingType) {
 		this.mappingType = mappingType;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		// Only compares target concept and mappingType.
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		MappingTarget that = (MappingTarget) o;
+		return Objects.equals(concept, that.concept) && mappingType == that.mappingType;
+	}
+
 }

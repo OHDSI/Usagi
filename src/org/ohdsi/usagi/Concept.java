@@ -77,4 +77,13 @@ public class Concept {
 
 	public Concept() {
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		// Only compare conceptId
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Concept concept = (Concept) o;
+		return conceptId == concept.conceptId;
+	}
 }

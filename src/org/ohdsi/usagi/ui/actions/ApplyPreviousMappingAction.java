@@ -63,9 +63,11 @@ public class ApplyPreviousMappingAction extends AbstractAction {
 			mappingToBeApplied.loadFromFile(file.getAbsolutePath());
 
 			// Apply mapping. Add mappings not currently present
+			ApplyPreviousChangeSummary summary = new ApplyPreviousChangeSummary();
 			for (CodeMapping codeMappingToBeApplied : mappingToBeApplied) {
 				CodeMapping existingMapping = codeToMapping.get(codeMappingToBeApplied.getSourceCode().sourceCode);
 				if (existingMapping != null) {
+					summary.compare(existingMapping, codeMappingToBeApplied);
 					existingMapping.getSourceCode().sourceName = codeMappingToBeApplied.getSourceCode().sourceName;
 					existingMapping.setTargetConcepts(codeMappingToBeApplied.getTargetConcepts());
 					existingMapping.setMappingStatus(codeMappingToBeApplied.getMappingStatus());
@@ -82,7 +84,7 @@ public class ApplyPreviousMappingAction extends AbstractAction {
 			}
 
 			String message = "The applied mapping contained " + mappingToBeApplied.size() + " mappings of which " + mappingsApplied
-					+ " were applied to the current mapping and " + mappingsAdded + " were newly added.";
+					+ " were applied to the current mapping and " + mappingsAdded + " were newly added.\n\n" + summary.createReport();
 			Global.mappingTablePanel.updateUI();
 			Global.mappingDetailPanel.updateUI();
 			Global.mapping.fireDataChanged(APPROVE_EVENT); // To update the footer
@@ -91,7 +93,48 @@ public class ApplyPreviousMappingAction extends AbstractAction {
 				Global.usagiSearchEngine.createDerivedIndex(Global.mapping.getSourceCodes(), Global.frame);
 				Global.mappingDetailPanel.doSearch();
 			}
-			JOptionPane.showMessageDialog(Global.frame, message);
+			JOptionPane.showMessageDialog(Global.frame, message, "Summary", JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
+
+	private static class ApplyPreviousChangeSummary {
+		private int nChanged = 0;
+		private int nSourceNameChanged = 0;
+		private int nTargetConceptsChanged = 0;
+		private int nMappingStatusChanged = 0;
+		private int nEquivalenceChanged = 0;
+
+		private void compare(CodeMapping A, CodeMapping B) {
+			boolean hasChanged = false;
+			if (!A.getSourceCode().sourceName.equals(B.getSourceCode().sourceName)) {
+				nSourceNameChanged++;
+				hasChanged = true;
+			}
+			if (!A.getTargetConcepts().equals(B.getTargetConcepts())) {
+				nTargetConceptsChanged++; // This could be target concept, size OR type
+				hasChanged = true;
+			}
+			if (!A.getMappingStatus().equals(B.getMappingStatus())) {
+				nMappingStatusChanged++;
+				hasChanged = true;
+			}
+			if (!A.getEquivalence().equals(B.getEquivalence())) {
+				nEquivalenceChanged++;
+				hasChanged = true;
+			}
+			if (hasChanged) {
+				nChanged++;
+			}
+		}
+
+		private String createReport() {
+			StringBuilder report = new StringBuilder();
+			report.append("Of the applied mappings, " + nChanged + " mappings changed.");
+			report.append("\n\tSource name: " + nSourceNameChanged);
+			report.append("\n\tTarget concept: " + nTargetConceptsChanged + "\t(changed target concept, target type AND/OR number of targets)");
+			report.append("\n\tMapping status: " + nMappingStatusChanged);
+			report.append("\n\tMapping equivalence: " + nEquivalenceChanged);
+			return report.toString();
 		}
 	}
 }
