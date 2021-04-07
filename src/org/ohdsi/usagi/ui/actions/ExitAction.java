@@ -32,7 +32,7 @@ public class ExitAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		if (UsagiDialogs.askBeforeExit()) {
+		if (UsagiDialogs.askBeforeClose()) {
 			Global.dbEngine.shutdown();
 			System.exit(0);
 		}

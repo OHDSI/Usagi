@@ -101,10 +101,15 @@ public class ImportDialog extends JDialog {
 		if (!iterator.hasNext())
 			throw new RuntimeException("File contains no data");
 		columnNames = iterator.next();
-		Set<String> uniqueNames = new HashSet<String>();
-		for (String columnName : columnNames)
-			if (!uniqueNames.add(columnName))
+		Set<String> uniqueNames = new HashSet<>();
+		for (String columnName : columnNames) {
+			if (columnName.isEmpty()) {
+				continue;
+			}
+			if (!uniqueNames.add(columnName)) {
 				throw new RuntimeException("Found duplicate column name '" + columnName + "', duplicates are not allowed.");
+			}
+		}
 		comboBoxOptions = new String[columnNames.size() + 1];
 		comboBoxOptions[0] = "";
 		for (int i = 0; i < columnNames.size(); i++)

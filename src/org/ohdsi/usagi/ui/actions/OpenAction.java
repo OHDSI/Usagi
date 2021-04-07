@@ -42,6 +42,11 @@ public class OpenAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
+		if (!Global.mapping.isEmpty()) {
+			if (!UsagiDialogs.askBeforeClose()) {
+				return;
+			}
+		}
 		JFileChooser fileChooser = new JFileChooser(Global.folder);
 		FileFilter csvFilter = new FileNameExtensionFilter("CSV files", "csv");
 		fileChooser.setFileFilter(csvFilter);

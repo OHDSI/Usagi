@@ -22,7 +22,7 @@ import java.util.Objects;
  */
 public class MappingTarget{
 	public enum Type {
-		MAPS_TO, MAPS_TO_VALUE, MAPS_TO_UNIT;
+		MAPS_TO, MAPS_TO_VALUE, MAPS_TO_UNIT, MAPS_TO_OPERATOR, MAPS_TO_TYPE, MAPS_TO_NUMBER;
 
 		public static Type valueOfCompat(String value) {
 			// For backwards compatibility with old types
