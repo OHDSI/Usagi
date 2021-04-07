@@ -77,14 +77,18 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 							buffer.setMappingStatus(MappingStatus.INVALID_TARGET);
 							buffer.setComment("Invalid existing target: " + row.get("conceptId"));
 						} else {
-							// Type and provenance might not be available in older Usagi files
+							String mappingTypeString = row.get("mappingType", "MAPS_TO");
+							if (!mappingTypeString.startsWith("MAPS_TO")) {
+								// For backwards compatibility with files using event/value/unit
+								mappingTypeString = mappingTypeString
+										.replace("EVENT", "MAPS_TO")
+										.replace("VALUE", "MAPS_TO_VALUE")
+										.replace("UNIT", "MAPS_TO_UNIT");
+							}
+
 							MappingTarget mappingTarget = new MappingTarget(
 									concept,
-									MappingTarget.Type.valueOf(row.get("mappingType", "MAPS_TO")
-											.replace("EVENT", "MAPS_TO")
-											.replace("VALUE", "MAPS_TO_VALUE")
-											.replace("UNIT", "MAPS_TO_UNIT")
-									),
+									MappingTarget.Type.valueOf(mappingTypeString),
 									row.get("createdBy", ""),
 									row.getLong("createdOn", "0")
 							);
