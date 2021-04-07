@@ -17,8 +17,11 @@ package org.ohdsi.usagi.ui.actions;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -30,6 +33,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.ui.Global;
 import org.ohdsi.usagi.ui.Mapping;
+import org.ohdsi.utilities.collections.Pair;
 
 import static org.ohdsi.usagi.ui.DataChangeEvent.*;
 
@@ -62,6 +66,9 @@ public class ApplyPreviousMappingAction extends AbstractAction {
 			Mapping mappingToBeApplied = new Mapping();
 			mappingToBeApplied.loadFromFile(file.getAbsolutePath());
 
+			// Additional columns
+			List<String> existingAdditionalColumnNames = Global.mapping.getAdditionalColumnNames();
+
 			// Apply mapping. Add mappings not currently present
 			ApplyPreviousChangeSummary summary = new ApplyPreviousChangeSummary();
 			for (CodeMapping codeMappingToBeApplied : mappingToBeApplied) {
@@ -78,6 +85,10 @@ public class ApplyPreviousMappingAction extends AbstractAction {
 					existingMapping.setStatusSetOn(codeMappingToBeApplied.getStatusSetOn());
 					mappingsApplied++;
 				} else {
+					// Add empty additional columns if these existed in existing mapping
+					codeMappingToBeApplied.getSourceCode().sourceAdditionalInfo = existingAdditionalColumnNames.stream()
+							.map(x -> new Pair<>(x, ""))
+							.collect(Collectors.toList());
 					Global.mapping.add(codeMappingToBeApplied);
 					mappingsAdded++;
 				}
