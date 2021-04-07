@@ -128,14 +128,14 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 			columnNames = defaultColumnNames;
 			addInfoColCount = 0;
 			if (Global.mapping.size() != 0) {
-				CodeMapping codeMapping = Global.mapping.get(0);
-				addInfoColCount = codeMapping.getSourceCode().sourceAdditionalInfo.size();
+				List<String> additionalColumns = Global.mapping.getAdditionalColumnNames();
+				addInfoColCount = additionalColumns.size();
 				columnNames = new String[defaultColumnNames.length + addInfoColCount];
 				for (int i = 0; i < ADD_INFO_START_COL; i++)
 					columnNames[i] = defaultColumnNames[i];
 
 				for (int i = 0; i < addInfoColCount; i++)
-					columnNames[i + ADD_INFO_START_COL] = codeMapping.getSourceCode().sourceAdditionalInfo.get(i).getItem1();
+					columnNames[i + ADD_INFO_START_COL] = additionalColumns.get(i);
 
 				for (int i = ADD_INFO_START_COL; i < defaultColumnNames.length; i++)
 					columnNames[i + addInfoColCount] = defaultColumnNames[i];

@@ -15,12 +15,24 @@
  ******************************************************************************/
 package org.ohdsi.usagi;
 
+import java.util.Objects;
+
 /**
  * Class for holding information about a single (target) concept in the Vocabulary
  */
 public class MappingTarget{
 	public enum Type {
-		MAPS_TO, MAPS_TO_VALUE, MAPS_TO_UNIT, MAPS_TO_OPERATOR, MAPS_TO_TYPE, MAPS_TO_NUMBER
+		MAPS_TO, MAPS_TO_VALUE, MAPS_TO_UNIT, MAPS_TO_OPERATOR, MAPS_TO_TYPE, MAPS_TO_NUMBER;
+
+		public static Type valueOfCompat(String value) {
+			// For backwards compatibility with old types
+			switch (value) {
+				case "EVENT": return MAPS_TO;
+				case "VALUE": return MAPS_TO_VALUE;
+				case "UNIT": return MAPS_TO_UNIT;
+				default: return valueOf(value);
+			}
+		}
 	}
 
 	private final Concept concept;
@@ -71,5 +83,19 @@ public class MappingTarget{
 
 	public void setMappingType(Type mappingType) {
 		this.mappingType = mappingType;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		// Only compares target concept and mappingType.
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		MappingTarget that = (MappingTarget) o;
+		return Objects.equals(concept, that.concept) && mappingType == that.mappingType;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(concept, mappingType);
 	}
 }
