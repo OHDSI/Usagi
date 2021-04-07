@@ -107,7 +107,7 @@ public class UsagiMain implements ActionListener {
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				if (UsagiDialogs.askBeforeExit()) {
+				if (UsagiDialogs.askBeforeClose()) {
 					Global.dbEngine.shutdown();
 					System.exit(0);
 				}

@@ -38,11 +38,11 @@ public class UsagiDialogs {
         );
     }
 
-    public static boolean askBeforeExit() {
+    public static boolean askBeforeClose() {
         String[] objButtons = {"Yes","No"};
         int PromptResult = JOptionPane.showOptionDialog(
                 Global.frame,
-                "Do you want to exit?\nPlease make sure that any work is saved",
+                "Do you want to close the current file?\nPlease make sure that any work is saved",
                 "Usagi",
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.WARNING_MESSAGE,
