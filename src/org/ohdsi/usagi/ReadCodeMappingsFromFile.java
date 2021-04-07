@@ -57,7 +57,7 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 				buffer = null;
 			} else {
 				buffer = new CodeMapping(new SourceCode(row));
-				buffer.setMatchScore(row.getDouble("matchScore"));
+				buffer.setMatchScore(row.getDouble("matchScore", "0"));
 				buffer.setMappingStatus(MappingStatus.valueOf(row.get("mappingStatus")));
 
 				// Status provenance and review need a default as these fields might not be available in older Usagi files
