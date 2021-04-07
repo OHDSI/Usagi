@@ -20,6 +20,8 @@ import org.ohdsi.utilities.files.Row;
 import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.PrimaryKey;
 
+import java.util.Objects;
+
 /**
  * Class for holding information about a single (target) concept in the Vocabulary
  */
@@ -85,5 +87,10 @@ public class Concept {
 		if (o == null || getClass() != o.getClass()) return false;
 		Concept concept = (Concept) o;
 		return conceptId == concept.conceptId;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(conceptId);
 	}
 }

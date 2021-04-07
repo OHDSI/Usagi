@@ -94,4 +94,8 @@ public class MappingTarget{
 		return Objects.equals(concept, that.concept) && mappingType == that.mappingType;
 	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(concept, mappingType);
+	}
 }
