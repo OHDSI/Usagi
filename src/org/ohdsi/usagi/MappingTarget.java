@@ -20,7 +20,7 @@ package org.ohdsi.usagi;
  */
 public class MappingTarget{
 	public enum Type {
-		MAPS_TO, MAPS_TO_VALUE, MAPS_TO_UNIT
+		MAPS_TO, MAPS_TO_VALUE, MAPS_TO_UNIT, MAPS_TO_OPERATOR, MAPS_TO_TYPE, MAPS_TO_NUMBER
 	}
 
 	private final Concept concept;
