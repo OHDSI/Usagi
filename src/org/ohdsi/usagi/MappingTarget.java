@@ -22,7 +22,17 @@ import java.util.Objects;
  */
 public class MappingTarget{
 	public enum Type {
-		MAPS_TO, MAPS_TO_VALUE, MAPS_TO_UNIT
+		MAPS_TO, MAPS_TO_VALUE, MAPS_TO_UNIT;
+
+		public static Type valueOfCompat(String value) {
+			// For backwards compatibility with old types
+			switch (value) {
+				case "EVENT": return MAPS_TO;
+				case "VALUE": return MAPS_TO_VALUE;
+				case "UNIT": return MAPS_TO_UNIT;
+				default: return valueOf(value);
+			}
+		}
 	}
 
 	private final Concept concept;
