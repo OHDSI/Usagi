@@ -41,7 +41,7 @@ import org.ohdsi.utilities.files.ReadTextFile;
  */
 public class UsagiMain implements ActionListener {
 
-	public static String version = "1.4.3-SNAPSHOT";
+	public static String version = "1.4.3";
 
 	public static void main(String[] args) {
 		new UsagiMain(args);
