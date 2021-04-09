@@ -1,17 +1,20 @@
 ---
-pagetitle: Usage
+pagetitle: Usagi - Usage
 title: Using the Application Functions
 ---
 
-![](images/usagi_logo.png)
-
 # Importing Source Codes into Usagi
 
-Export source codes from source system into a CSV or Excel (.xlsx) file.  This should at least have columns containing the **source code** and an English **source code description**, however additional information about codes can be brought over as well (e.g. dose unit, or the description in the original language if translated). In addition to information about the source codes, the **frequency of the code** should preferably also be brought over, since this can help prioritize which codes should receive the most effort in mapping (e.g. you can have 1,000 source codes but only 100 are truly used within the system).  If any source code information needs translating to English, use Google Translate to do that.
+Export source codes from source system into a CSV or Excel (.xlsx) file.
+This should at least have columns containing the **source code** and an English **source code description**, 
+however additional information about codes can be brought over as well (e.g. dose unit, or the description in the original language if translated). 
+In addition to information about the source codes, the **frequency of the code** should preferably also be brought over, 
+since this can help prioritize which codes should receive the most effort in mapping (e.g. you can have 1,000 source codes but only 100 are truly used within the system).
+If any source code information needs translating to English, use Google Translate to do that.
 
 Note: source code extracts should be broken out by domain (i.e. drugs, procedures, conditions, observations) and not lumped into one large file.
 
-Source codes are loaded into Usagi from the File --> Import codes menu.  From here an “Import codes ...” will display as seen in Figure 1.
+Source codes are loaded into Usagi from the _File --> Import codes_ menu.  From here an “Import codes ...” will display as seen in Figure 1.
 
 ![](images/usagiimport.png)
 **Figure 1:  Usagi Source Code Input Screen**
@@ -50,12 +53,37 @@ Note that in any of the tables, you can right-click to select the columns that a
 
 # Approving a Suggested Mapping
 
-The Overview Table shows the current mapping of source codes to concepts. Right after importing source codes, this mapping contains the automatically generated suggested mappings based on term similarity and any search options. In the example in Figure 4, the English names of Dutch condition codes were mapped to standard concepts in the Condition domain, because the user restricted the search to that domain. Usagi compared the source code descriptions to concept names and synonyms to find the best match. Because the user had selected 'Include source terms' Usagi also considered the names and synonyms of all source concepts in the vocabulary that map to a particular concept.If Usagi is unable to make a mapping, it will map to the CONCEPT_ID = 0.
+The Overview Table shows the current mapping of source codes to concepts.
+Right after importing source codes, this mapping contains the automatically generated suggested mappings based on term similarity and any search options.
+In the example in Figure 4, the English names of Dutch condition codes were mapped to standard concepts in the Condition domain, because the user restricted the search to that domain.
+Usagi compared the source code descriptions to concept names and synonyms to find the best match.
+Because the user had selected 'Include source terms' Usagi also considered the names and synonyms of all source concepts in the vocabulary that map to a particular concept.If Usagi is unable to make a mapping, it will map to the CONCEPT_ID = 0.
 
 ![](images/usagiscreen2.png)
 **Figure 5:  Reviewing an Usagi Match**
 
-It is suggested that someone with experience with coding systems help map source codes to their associated standard vocabulary.  That individual will work through code by code in the Overview Table to either accept the mapping Usagi has suggested or choose a new mapping.  For example in Figure 5 we see that the Dutch term “Hoesten” which was translated to the English term “Cough”.  Usagi used “Cough” and mapped it to the OMOP Vocabulary concept of “4158493-C/O - cough”.  There was a matching score of 0.58 associated to this matched pair (matching scores are typically 0 to 1 with 1 being a confident match), a score of 0.58 signifies that Usagi is not very sure of how well it has mapped this Dutch code to SNOMED.  Let us say in this case, we are okay with this mapping, we can approve it by hitting the green “Approve” button in the bottom right hand portion of the screen.
+It is suggested that someone with experience with coding systems help map source codes to their associated standard vocabulary.
+That individual will work through code by code in the Overview Table to either accept the mapping Usagi has suggested or choose a new mapping.
+For example in Figure 5 we see that the Dutch term “Hoesten” which was translated to the English term “Cough”.
+Usagi used “Cough” and mapped it to the OMOP Vocabulary concept of “4158493-C/O - cough”.
+There was a matching score of 0.58 associated to this matched pair (matching scores are typically 0 to 1 with 1 being a confident match), 
+a score of 0.58 signifies that Usagi is not very sure of how well it has mapped this Dutch code to SNOMED.
+Let us say in this case, we are okay with this mapping, we can approve it by hitting the green “Approve” button in the bottom right-hand portion of the screen.
+
+## Equivalence
+In Usagi 1.4+, we can assign an equivalence status when approving.
+This allows the reviewer to capture how well the target concept(s) capture the meaning of the source term.
+
+![](images/equivalences.png)
+
+The equivalence definitions are based on the [the HL7 concept map equivalence](https://www.hl7.org/fhir/codesystem-concept-map-equivalence.html):
+
+- **Equal** = The concepts are exactly the same (i.e. intentionally identical).
+- **Equivalent** = The concepts mean the same thing (i.e. extensionally identical).
+- **Wider** = The target contains more information than to the source.
+- **Narrower** = The target contains less information than the source.
+- **Inexact** = The target overlaps with the source, but both source and target cover additional meaning.
+- **Unmatched** = There is no match for this concept in the target code system.
 
 # Searching for a New Mapping
 
@@ -72,12 +100,19 @@ When we apply these search criteria we find “254761-Cough” and feel this may
 
 # Concept information
 
-When looking for appropriate concepts to map to, it is important to consider the 'social life' of a concept. The meaning of a concept might depend partially on its place in the hierarchy, and sometimes there are 'orphan concepts' in the vocabulary with few or no hierarchical relationships, which would be ill-suited as target concepts. Usagi will often report the number of parents and children a concept has, and it also possible to show more information by pressing ALT + C, or selecting _view_ --> _Concept information_ in the top menu bar.
+When looking for appropriate concepts to map to, it is important to consider the 'social life' of a concept. 
+The meaning of a concept might depend partially on its place in the hierarchy, and sometimes there are 'orphan concepts' in the vocabulary with few or no hierarchical relationships, which would be ill-suited as target concepts. 
+Usagi will often report the number of parents and children a concept has, and it also possible to show more information by pressing _ALT + C_, or selecting _VIEW_ --> _Concept information_ in the top menu bar.
 
 ![](images/conceptinformation.png)
 **Figure 7:  Concept information panel**
 
-Figure 7 shows the concept information panel. It shows general information about a concept, as well as its parents, children, and other source codes that map to the concept. Users can use this panel to navigate the hierarchy and potentially choose a different target concept.
+It shows general information about a concept, as well as its parents, children, synonyms and other source codes that map to the concept. 
+Users can use this panel to navigate the hierarchy and potentially choose a different target concept.
+
+In addition, Usagi allows to directly open [Athena](https://athena.ohdsi.org/) in your default browser for the selected concept.
+When a concept is selected, press _ALT + W_ or click on _View-> Athena (web)_.
+Similarly, we can search google for a source code description with _ALT + G_ or _View --> Google (web)_.
 
 # Auto Mapped
 
@@ -104,13 +139,18 @@ After selecting the SOURCE_VOCABULARY_ID, you give your export CSV a name and sa
 
 # Updating an Usagi mapping
 
-Often a mapping is not a one-time effort. As data is updated perhaps new source codes are added, and also the vocabulary is updated regularly, perhaps requiring an update of the mapping.
+Often a mapping is not a one-time effort. 
+As data is updated perhaps new source codes are added, and also the vocabulary is updated regularly, perhaps requiring an update of the mapping.
 
 When the set of source codes is updated the following steps can be followed to support the update:
 
 1. Import the new source code file
-1. Choose _File_ --> _Apply previous mapping_, and select the old Usagi mapping file. Note that the format of the previous mapping should be as created by _Save_ or _Save As_. Other formats do not work.
+1. Choose _File_ --> _Apply previous mapping_, and select the old Usagi mapping file.
+   Note that the format of the previous mapping should be as created by _Save_ or _Save As_. Other formats do not work.
 1. Identify codes that haven't inherited approved mappings from the old mapping, and map them as usual.
+
+Note: the additional info columns of the applied mapping are ignored.
+These are **not merged** with the additional information in the already opened mapping.
 
 When the vocabulary is updated, follow these steps:
 

@@ -16,7 +16,7 @@ navbar:
     - text: "Installation & Setup"
       icon: glyphicon-save
       href: installation.html
-    - text: "Using Usagi"
+    - text: "Using the Application Functions"
       icon: glyphicon-list
       href: usage.html
   # chevron-last-down

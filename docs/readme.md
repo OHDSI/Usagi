@@ -10,11 +10,11 @@ output:
 Contributions to this documentation are very welcome and even a must when new features are implemented.
 To update the documentation, edit one of the following markdown files or create a new markdown file:
 
- - [index.md](https://github.com/ohdsi/usagi/blob/master/docs/index.md)
- - [usage.md](https://github.com/ohdsi/usagi/blob/master/docs/usage.md)
- - [installation.md](https://github.com/ohdsi/usagi/blob/master/docs/installation.md)
+ - <a href="https://github.com/ohdsi/usagi/blob/master/docs/index.md" target="_blank">index.md</a>
+ - <a href="https://github.com/ohdsi/usagi/blob/master/docs/usage.md" target="_blank">usage.md</a>
+ - <a href="https://github.com/ohdsi/usagi/blob/master/docs/installation.md" target="_blank">installation.md</a>
  
-The configuration of the page can be found in [_site.yml](https://github.com/ohdsi/usagi/blob/master/docs/_site.yml). 
+The configuration of the page can be found in <a href="https://github.com/ohdsi/usagi/blob/master/docs/_site.yml" target="_blank">_site.yml</a>. 
 
 ## Render html
 To generate the site from markdown files, run the following R script with the `./docs` folder as working directory.
