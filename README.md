@@ -18,7 +18,7 @@ Features
 
 Screenshot
 ===========
-<img src="https://github.com/OHDSI/Usagi/blob/master/man/Screenshot.png" alt="Usagi" title="Usagi" />
+<img src="https://github.com/OHDSI/Usagi/blob/master/docs/images/Screenshot.png" alt="Usagi" title="Usagi" />
 
 Technology
 ============
