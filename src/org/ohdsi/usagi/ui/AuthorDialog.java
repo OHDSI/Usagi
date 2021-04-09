@@ -26,7 +26,7 @@ public class AuthorDialog extends JDialog {
 	private String authorFileName;
 
 	public AuthorDialog() {
-		setTitle("Author");
+		setTitle("Usagi v" + UsagiMain.version);
 		setLayout(new GridBagLayout());
 		GridBagConstraints g = new GridBagConstraints();
 		g.fill = GridBagConstraints.BOTH;
@@ -35,7 +35,7 @@ public class AuthorDialog extends JDialog {
 
 		g.gridx = 0;
 		g.gridy = 0;
-		add(new JLabel("Author:"), g);
+		add(new JLabel(" Author:"), g);
 
 		g.gridx = 1;
 		g.gridy = 0;
@@ -51,7 +51,7 @@ public class AuthorDialog extends JDialog {
 		add(saveBox, g);
 
 		g.gridx = 0;
-		g.gridy = 3;
+		g.gridy = 2;
 		g.gridwidth = 2;
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
