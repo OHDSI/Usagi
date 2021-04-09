@@ -57,7 +57,7 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 				buffer = null;
 			} else {
 				buffer = new CodeMapping(new SourceCode(row));
-				buffer.setMatchScore(row.getDouble("matchScore"));
+				buffer.setMatchScore(row.getDouble("matchScore", "0"));
 				buffer.setMappingStatus(MappingStatus.valueOf(row.get("mappingStatus")));
 
 				// Status provenance and review need a default as these fields might not be available in older Usagi files
@@ -77,14 +77,9 @@ public class ReadCodeMappingsFromFile implements Iterable<CodeMapping> {
 							buffer.setMappingStatus(MappingStatus.INVALID_TARGET);
 							buffer.setComment("Invalid existing target: " + row.get("conceptId"));
 						} else {
-							// Type and provenance might not be available in older Usagi files
 							MappingTarget mappingTarget = new MappingTarget(
 									concept,
-									MappingTarget.Type.valueOf(row.get("mappingType", "MAPS_TO")
-											.replace("EVENT", "MAPS_TO")
-											.replace("VALUE", "MAPS_TO_VALUE")
-											.replace("UNIT", "MAPS_TO_UNIT")
-									),
+									MappingTarget.Type.valueOfCompat(row.get("mappingType", "MAPS_TO")),
 									row.get("createdBy", ""),
 									row.getLong("createdOn", "0")
 							);

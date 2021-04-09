@@ -15,15 +15,18 @@
  ******************************************************************************/
 package org.ohdsi.usagi.ui;
 
+import org.ohdsi.utilities.files.WriteTextFile;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class AuthorDialog extends JDialog {
 
-	private static final long	serialVersionUID	= 8239922540117895957L;
+	private static final long serialVersionUID = 8239922540117895957L;
+	private String authorFileName;
 
 	public AuthorDialog() {
-		setTitle("Author");
+		setTitle("Usagi v" + UsagiMain.version);
 		setLayout(new GridBagLayout());
 		GridBagConstraints g = new GridBagConstraints();
 		g.fill = GridBagConstraints.BOTH;
@@ -32,7 +35,7 @@ public class AuthorDialog extends JDialog {
 
 		g.gridx = 0;
 		g.gridy = 0;
-		add(new JLabel("Author:"), g);
+		add(new JLabel(" Author:"), g);
 
 		g.gridx = 1;
 		g.gridy = 0;
@@ -40,6 +43,12 @@ public class AuthorDialog extends JDialog {
 		authorField.setToolTipText("Please enter your name");
 		authorField.setPreferredSize(new Dimension(100, 10));
 		add(authorField, g);
+
+		g.gridx = 0;
+		g.gridy = 1;
+		g.gridwidth = 2;
+		JCheckBox saveBox = new JCheckBox("Remember me?");
+		add(saveBox, g);
 
 		g.gridx = 0;
 		g.gridy = 2;
@@ -52,6 +61,11 @@ public class AuthorDialog extends JDialog {
 		saveButton.addActionListener(event -> {
 			Global.author = authorField.getText();
 			setVisible(false);
+			if (saveBox.isSelected() && authorFileName != null) {
+				WriteTextFile out = new WriteTextFile(authorFileName);
+				out.writeln(authorField.getText());
+				out.close();
+			}
 		});
 		buttonPanel.add(saveButton);
 		add(buttonPanel, g);
@@ -60,4 +74,9 @@ public class AuthorDialog extends JDialog {
 		setModal(true);
 		setLocationRelativeTo(Global.frame);
 	}
+
+	public void setAuthorFileName(String authorFileName) {
+		this.authorFileName = authorFileName;
+	}
+
 }

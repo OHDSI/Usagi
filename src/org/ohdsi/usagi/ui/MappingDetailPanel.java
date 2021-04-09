@@ -53,7 +53,8 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private JComboBox 							equivalenceOptionChooser;
 	private JTextField							commentField;
 	private JButton								removeButton;
-	private JComboBox 							typesChooser;
+	private JComboBox 							targetMappingTypesChooser;
+	private JComboBox 							addMappingsTypesChooser;
 	private JButton								replaceButton;
 	private List<JButton> 						addButtons;
 	private JRadioButton 						autoQueryCodeButton;
@@ -179,9 +180,11 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			if (viewRow == -1 || codeMapping.getMappingStatus() == MappingStatus.APPROVED) {
 				addButtons.forEach(x -> x.setEnabled(false));
 				replaceButton.setEnabled(false);
+				addMappingsTypesChooser.setEnabled(false);
 			} else {
 				addButtons.forEach(x -> x.setEnabled(true));
 				replaceButton.setEnabled(true);
+				addMappingsTypesChooser.setEnabled(true);
 				int modelRow = searchTable.convertRowIndexToModel(viewRow);
 				Global.conceptInfoAction.setEnabled(true);
 				Global.conceptInformationDialog.setActiveConcept(searchTableModel.getConcept(modelRow));
@@ -211,28 +214,23 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		buttonPanel.add(replaceButton);
 
 		JButton button;
-		addButtons = new ArrayList<>();
-		for (MappingTarget.Type mappingType : MappingTarget.Type.values()) {
-			if (mappingType.equals(MappingTarget.Type.MAPS_TO)) {
-				button = new JButton("Add concept");
-			} else {
-				button = new JButton(String.format("Add %s", mappingType));
-			}
-			button.setToolTipText(String.format("Add selected concept as %s", mappingType));
-			button.addActionListener(e -> {
-				int viewRow = searchTable.getSelectedRow();
-				int modelRow = searchTable.convertRowIndexToModel(viewRow);
-				addConcept(searchTableModel.getConcept(modelRow), mappingType);
-			});
-			button.setEnabled(false);
-			addButtons.add(button);
-			// Add Maps_to button on the right, the other on the left.
-			if (mappingType.equals(MappingTarget.Type.MAPS_TO)) {
-				buttonPanel.add(button);
-			} else {
-				buttonPanel.add(button, 0);
-			}
-		}
+		button = new JButton("Add concept");
+		button.setToolTipText(String.format("Add selected concept"));
+		button.addActionListener(e -> {
+			int viewRow = searchTable.getSelectedRow();
+			int modelRow = searchTable.convertRowIndexToModel(viewRow);
+			addConcept(searchTableModel.getConcept(modelRow), (MappingTarget.Type) addMappingsTypesChooser.getSelectedItem());
+		});
+		button.setEnabled(false);
+		buttonPanel.add(button);
+		addButtons = new ArrayList<>(); // There used to be an add button for each mapping type
+		addButtons.add(button);
+
+		addMappingsTypesChooser = new JComboBox<>(MappingTarget.Type.values());
+		addMappingsTypesChooser.setToolTipText("Set type of the mapping to be added");
+		addMappingsTypesChooser.setMaximumSize(addMappingsTypesChooser.getPreferredSize());
+		addMappingsTypesChooser.setEnabled(false);
+		buttonPanel.add(addMappingsTypesChooser, 0);
 
 		panel.add(buttonPanel);
 
@@ -322,13 +320,13 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 			int viewRow = targetConceptTable.getSelectedRow();
 			if (viewRow == -1 || codeMapping.getMappingStatus() == MappingStatus.APPROVED) {
 				removeButton.setEnabled(false);
-				typesChooser.setEnabled(false);
+				targetMappingTypesChooser.setEnabled(false);
 			} else {
 				removeButton.setEnabled(true);
-				typesChooser.setEnabled(true);
+				targetMappingTypesChooser.setEnabled(true);
 				int modelRow = targetConceptTable.convertRowIndexToModel(viewRow);
 				MappingTarget mappingTarget = targetConceptTableModel.getMappingTarget(modelRow);
-				typesChooser.setSelectedItem(mappingTarget.getMappingType());
+				targetMappingTypesChooser.setSelectedItem(mappingTarget.getMappingType());
 				Global.conceptInfoAction.setEnabled(true);
 				Global.conceptInformationDialog.setActiveConcept(mappingTarget.getConcept());
 				Global.athenaAction.setEnabled(true);
@@ -342,22 +340,22 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 
 		JScrollPane pane = new JScrollPane(targetConceptTable);
 		pane.setBorder(BorderFactory.createEmptyBorder());
-		pane.setMinimumSize(new Dimension(500, 50));
-		pane.setPreferredSize(new Dimension(500, 50));
+		pane.setMinimumSize(new Dimension(500, 75));
+		pane.setPreferredSize(new Dimension(500, 75));
 		panel.add(pane);
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 
-		typesChooser = new JComboBox<>(MappingTarget.Type.values());
-		typesChooser.setToolTipText("Set type of the mapping");
-		typesChooser.addActionListener(e -> {
+		targetMappingTypesChooser = new JComboBox<>(MappingTarget.Type.values());
+		targetMappingTypesChooser.setToolTipText("Set type of the mapping");
+		targetMappingTypesChooser.addActionListener(e -> {
 			if (((JComboBox)e.getSource()).hasFocus())
 				changeTargetType();
 		});
-		typesChooser.setMaximumSize(typesChooser.getPreferredSize());
-		typesChooser.setEnabled(false);
-		buttonPanel.add(typesChooser);
+		targetMappingTypesChooser.setMaximumSize(targetMappingTypesChooser.getPreferredSize());
+		targetMappingTypesChooser.setEnabled(false);
+		buttonPanel.add(targetMappingTypesChooser);
 
 		buttonPanel.add(Box.createHorizontalGlue());
 
@@ -448,6 +446,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		if (searchTable.getSelectedRow() != -1) {
 			replaceButton.setEnabled(true);
 			addButtons.forEach(x -> x.setEnabled(true));
+			addMappingsTypesChooser.setEnabled(true);
 		}
 	}
 
@@ -523,7 +522,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	private void changeTargetType() {
 		for (int row : targetConceptTable.getSelectedRows()) {
 			MappingTarget mappingTarget = codeMapping.getTargetConcepts().get(row);
-			mappingTarget.setMappingType((MappingTarget.Type) typesChooser.getSelectedItem());
+			mappingTarget.setMappingType((MappingTarget.Type) targetMappingTypesChooser.getSelectedItem());
 		}
 
 		targetConceptTableModel.fireTableDataChanged();

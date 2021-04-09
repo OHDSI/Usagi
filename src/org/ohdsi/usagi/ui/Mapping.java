@@ -17,6 +17,7 @@ package org.ohdsi.usagi.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -24,6 +25,7 @@ import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.ReadCodeMappingsFromFile;
 import org.ohdsi.usagi.SourceCode;
 import org.ohdsi.usagi.WriteCodeMappingsToFile;
+import org.ohdsi.utilities.collections.Pair;
 
 import static org.ohdsi.usagi.ui.DataChangeEvent.*;
 
@@ -83,9 +85,15 @@ public class Mapping extends ArrayList<CodeMapping> {
 	}
 
 	public List<SourceCode> getSourceCodes() {
-		List<SourceCode> sourceCodes = new ArrayList<SourceCode>(size());
-		for (CodeMapping codeMapping : this)
-			sourceCodes.add(codeMapping.getSourceCode());
-		return sourceCodes;
+		return this.stream()
+				.map(CodeMapping::getSourceCode)
+				.collect(Collectors.toList());
+	}
+
+	public List<String> getAdditionalColumnNames() {
+		CodeMapping codeMapping = Global.mapping.get(0);
+		return codeMapping.getSourceCode().sourceAdditionalInfo.stream()
+				.map(Pair::getItem1)
+				.collect(Collectors.toList());
 	}
 }

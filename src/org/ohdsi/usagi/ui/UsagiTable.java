@@ -31,6 +31,8 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
+import org.ohdsi.usagi.CodeMapping.Equivalence;
+
 
 public class UsagiTable extends JTable {
 
@@ -46,6 +48,7 @@ public class UsagiTable extends JTable {
 		setDefaultRenderer(Double.class, new UsagiCellRenderer());
 		setDefaultRenderer(Integer.class, new UsagiCellRenderer());
 		setDefaultRenderer(MappingStatus.class, new UsagiCellRenderer());
+		setDefaultRenderer(Equivalence.class, new UsagiCellRenderer());
 		setFillsViewportHeight(true);
 
 		addMouseListener(new java.awt.event.MouseAdapter() {
