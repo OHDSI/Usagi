@@ -13,8 +13,15 @@ navbar:
   left:
     - icon: glyphicon-home
       href: index.html
+    - text: "Installation & Setup"
+      icon: glyphicon-save
+      href: installation.html
+    - text: "Using Usagi"
+      icon: glyphicon-list
+      href: usage.html
+  # chevron-last-down
+  right:
     - icon: glyphicon-book
       href: readme.html
-  right:
     - icon: glyphicon-link
       href: https://github.com/ohdsi/usagi

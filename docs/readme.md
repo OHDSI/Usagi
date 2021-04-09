@@ -1,15 +1,20 @@
 ---
 pagetitle: "ReadMe"
+title: "Documentation readme"
+output:
+  html_document:
+    toc: false
 ---
-# Usagi Documentation Readme
-This folder contains the raw and rendered documentation of WhiteRabbit.
 
 ## Contribute
-Contributions to the documentation are very welcome and even a must when new features are implemented.
+Contributions to this documentation are very welcome and even a must when new features are implemented.
 To update the documentation, edit one of the following markdown files or create a new markdown file:
- - [index.md](/docs/index.md)
 
-[_site.yml](/docs/_site.yml) contains the configuration of the page.
+ - [index.md](https://github.com/ohdsi/usagi/blob/master/docs/index.md)
+ - [usage.md](https://github.com/ohdsi/usagi/blob/master/docs/usage.md)
+ - [installation.md](https://github.com/ohdsi/usagi/blob/master/docs/installation.md)
+ 
+The configuration of the page can be found in [_site.yml](https://github.com/ohdsi/usagi/blob/master/docs/_site.yml). 
 
 ## Render html
 To generate the site from markdown files, run the following R script with the `./docs` folder as working directory.

@@ -11,7 +11,7 @@
 
 
 
-<title>ReadMe</title>
+<title>Installation &amp; Setup</title>
 
 <script src="site_libs/header-attrs-2.5/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -20,6 +20,9 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -262,6 +265,69 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -269,6 +335,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -328,32 +404,27 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Documentation readme</h1>
+<h1 class="title toc-ignore">Installation &amp; Setup</h1>
 
 </div>
 
 
-<div id="contribute" class="section level2">
-<h2>Contribute</h2>
-<p>Contributions to this documentation are very welcome and even a must when new features are implemented. To update the documentation, edit one of the following markdown files or create a new markdown file:</p>
-<ul>
-<li><a href="https://github.com/ohdsi/usagi/blob/master/docs/index.md">index.md</a></li>
-<li><a href="https://github.com/ohdsi/usagi/blob/master/docs/usage.md">usage.md</a></li>
-<li><a href="https://github.com/ohdsi/usagi/blob/master/docs/installation.md">installation.md</a></li>
-</ul>
-<p>The configuration of the page can be found in <a href="https://github.com/ohdsi/usagi/blob/master/docs/_site.yml">_site.yml</a>.</p>
+<p><img src="images/usagi_logo.png" /></p>
+<div id="installation-and-support" class="section level1">
+<h1>Installation and support</h1>
+<p>All source code and installation instructions are available on Usagi’s GitHub site: <a href="https://github.com/OHDSI/Usagi" class="uri">https://github.com/OHDSI/Usagi</a></p>
+<p>Any bugs/issues/enhancements should be posted to the GitHub repository: <a href="https://github.com/OHDSI/Usagi/issues" class="uri">https://github.com/OHDSI/Usagi/issues</a></p>
+<p>Any questions/comments/feedback/discussion can be posted on the OHDSI Developer Forum: <a href="http://forums.ohdsi.org/c/developers" class="uri">http://forums.ohdsi.org/c/developers</a></p>
 </div>
-<div id="render-html" class="section level2">
-<h2>Render html</h2>
-<p>To generate the site from markdown files, run the following R script with the <code>./docs</code> folder as working directory. Run this in a standalone R session, this is orders of magnitude faster compared to running in RStudio.</p>
-<pre class="r"><code>#devtools::install_github(&quot;ropenscilabs/icon&quot;)
-library(rmarkdown)
-rmarkdown::render_site()</code></pre>
-<p>The rendered html can be opened in any browser to inspect. When pushed to master, the html will be deployed as a github.io page and publically available.</p>
+<div id="one-time-setup" class="section level1">
+<h1>One-time setup</h1>
+<p><em>TBD</em></p>
 </div>
 
 
 
+</div>
+</div>
 
 </div>
 
@@ -386,6 +457,32 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
