@@ -1,0 +1,27 @@
+name: "OHDSI White Rabbit"
+output_dir: "."
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: cosmo
+    css: style.css
+    includes:
+      in_header: "images/favicon.html"
+navbar:
+  title: '<div><img src="images/ohdsi16x16.png"></img> OHDSI Usagi</div>'
+  left:
+    - icon: glyphicon-home
+      href: index.html
+    - text: "Installation & Setup"
+      icon: glyphicon-save
+      href: installation.html
+    - text: "Using the Application Functions"
+      icon: glyphicon-list
+      href: usage.html
+  # chevron-last-down
+  right:
+    - icon: glyphicon-book
+      href: readme.html
+    - icon: glyphicon-link
+      href: https://github.com/ohdsi/usagi
