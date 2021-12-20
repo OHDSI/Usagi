@@ -232,6 +232,11 @@ public class ImportDialog extends JDialog {
 		autoConceptIdColumn = new JComboBox<>(comboBoxOptions);
 		autoConceptIdColumn.setToolTipText("The column containing a (semicolon-delimited) list of concept IDs to which the search will be restricted");
 		columnMappingPanel.add(autoConceptIdColumn, cBox);
+		autoConceptIdColumn.addActionListener(e -> {
+			if (!autoConceptIdColumn.getSelectedItem().toString().equals("")) {
+				filterPanel.setFilterByAuto();
+			}
+		});
 
 		gridY = cLabel.gridy + 1;
 		addExtraColumnMapping();
