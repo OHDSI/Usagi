@@ -233,7 +233,7 @@ public class ImportDialog extends JDialog {
 		autoConceptIdColumn.setToolTipText("The column containing a (semicolon-delimited) list of concept IDs to which the search will be restricted");
 		columnMappingPanel.add(autoConceptIdColumn, cBox);
 		autoConceptIdColumn.addActionListener(e -> {
-			if (!autoConceptIdColumn.getSelectedItem().toString().equals("")) {
+			if (!autoConceptIdColumn.getSelectedItem().toString().isEmpty()) {
 				filterPanel.setFilterByAuto();
 			}
 		});
