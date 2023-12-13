@@ -16,6 +16,7 @@
 package org.ohdsi.usagi;
 
 import org.ohdsi.usagi.ui.Global;
+import org.ohdsi.usagi.Equivalence;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +30,6 @@ public class CodeMapping {
     public enum MappingStatus {
         // Includes IGNORED for backwards compatibility
         APPROVED, UNCHECKED, AUTO_MAPPED, AUTO_MAPPED_TO_1, INVALID_TARGET, FLAGGED, IGNORED
-    }
-
-    public enum Equivalence {
-        EQUAL, EQUIVALENT, WIDER, NARROWER, INEXACT, UNMATCHED, UNREVIEWED
     }
 
     private SourceCode sourceCode;

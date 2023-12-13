@@ -33,6 +33,7 @@ import javax.swing.table.TableRowSorter;
 import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
 import org.ohdsi.usagi.Concept;
+import org.ohdsi.usagi.Equivalence;
 import org.ohdsi.usagi.MappingTarget;
 import org.ohdsi.usagi.UsagiSearchEngine.ScoredConcept;
 
@@ -276,7 +277,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		flagButton.setBackground(new Color(151, 220, 141));
 		panel.add(flagButton);
 
-		equivalenceOptionChooser = new JComboBox<>(CodeMapping.Equivalence.values());
+		equivalenceOptionChooser = new JComboBox<>(Equivalence.getAllDisplayNames().toArray());
 		equivalenceOptionChooser.setToolTipText("Choose mapping equivalence");
 		equivalenceOptionChooser.setMaximumSize(equivalenceOptionChooser.getPreferredSize());
 		panel.add(equivalenceOptionChooser);
@@ -407,7 +408,8 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	}
 
 	public void approveSelected() {
-		CodeMapping.Equivalence equivalenceToApply = (CodeMapping.Equivalence) equivalenceOptionChooser.getSelectedItem();
+		Equivalence equivalenceToApply = Equivalence.fromDisplayName((String) equivalenceOptionChooser.getSelectedItem());
+
 		codeMapping.approve(equivalenceToApply);
 		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
 			codeMappingMulti.approve(equivalenceToApply);
@@ -420,7 +422,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	}
 
 	public void flagSelected() {
-		CodeMapping.Equivalence equivalenceToApply = (CodeMapping.Equivalence) equivalenceOptionChooser.getSelectedItem();
+		Equivalence equivalenceToApply = Equivalence.fromDisplayName((String) equivalenceOptionChooser.getSelectedItem());
 		codeMapping.flag(equivalenceToApply);
 		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
 			codeMappingMulti.flag(equivalenceToApply);
