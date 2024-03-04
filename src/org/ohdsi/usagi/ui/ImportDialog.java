@@ -444,7 +444,7 @@ public class ImportDialog extends JDialog {
 						} else if (sourceCode.sourceAutoAssignedConceptIds.size() > 1 && concepts.size() > 0) {
 							codeMapping.setMappingStatus(MappingStatus.AUTO_MAPPED);
 						}
-						codeMapping.setEquivalence(CodeMapping.Equivalence.UNREVIEWED);
+						codeMapping.setEquivalence(Equivalence.UNREVIEWED);
 						synchronized (globalMappingList) {
 							globalMappingList.add(codeMapping);
 							progressBar.setValue(Math.round(100 * globalMappingList.size() / sourceCodes.size()));
