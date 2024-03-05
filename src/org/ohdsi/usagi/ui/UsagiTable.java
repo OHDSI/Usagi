@@ -31,7 +31,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
-import org.ohdsi.usagi.CodeMapping.Equivalence;
+import org.ohdsi.usagi.Equivalence;
 
 
 public class UsagiTable extends JTable {

@@ -33,6 +33,7 @@ import javax.swing.table.TableRowSorter;
 import org.ohdsi.usagi.CodeMapping;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
 import org.ohdsi.usagi.Concept;
+import org.ohdsi.usagi.Equivalence;
 import org.ohdsi.usagi.MappingTarget;
 import org.ohdsi.usagi.UsagiSearchEngine.ScoredConcept;
 
@@ -177,20 +178,21 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		searchTable.getSelectionModel().addListSelectionListener(event -> {
 			int viewRow = searchTable.getSelectedRow();
 			// Don't enable the buttons if no row selected or status is approved
-			if (viewRow == -1 || codeMapping.getMappingStatus() == MappingStatus.APPROVED) {
+			if (viewRow == -1) {
 				addButtons.forEach(x -> x.setEnabled(false));
 				replaceButton.setEnabled(false);
 				addMappingsTypesChooser.setEnabled(false);
 			} else {
-				addButtons.forEach(x -> x.setEnabled(true));
-				replaceButton.setEnabled(true);
-				addMappingsTypesChooser.setEnabled(true);
+				if (codeMapping != null && codeMapping.getMappingStatus() != MappingStatus.APPROVED) {
+					addButtons.forEach(x -> x.setEnabled(true));
+					replaceButton.setEnabled(true);
+					addMappingsTypesChooser.setEnabled(true);
+				}
 				int modelRow = searchTable.convertRowIndexToModel(viewRow);
 				Global.conceptInfoAction.setEnabled(true);
 				Global.conceptInformationDialog.setActiveConcept(searchTableModel.getConcept(modelRow));
 				Global.athenaAction.setEnabled(true);
 				Global.athenaAction.setConcept(searchTableModel.getConcept(modelRow));
-				Global.googleSearchAction.setEnabled(false);
 			}
 		});
 		// searchTable.hideColumn("Synonym");
@@ -276,7 +278,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 		flagButton.setBackground(new Color(151, 220, 141));
 		panel.add(flagButton);
 
-		equivalenceOptionChooser = new JComboBox<>(CodeMapping.Equivalence.values());
+		equivalenceOptionChooser = new JComboBox<>(Equivalence.getAllDisplayNames().toArray());
 		equivalenceOptionChooser.setToolTipText("Choose mapping equivalence");
 		equivalenceOptionChooser.setMaximumSize(equivalenceOptionChooser.getPreferredSize());
 		panel.add(equivalenceOptionChooser);
@@ -331,7 +333,6 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 				Global.conceptInformationDialog.setActiveConcept(mappingTarget.getConcept());
 				Global.athenaAction.setEnabled(true);
 				Global.athenaAction.setConcept(mappingTarget.getConcept());
-				Global.googleSearchAction.setEnabled(false);
 			}
 		});
 		targetConceptTable.hideColumn("Valid start date");
@@ -407,7 +408,8 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	}
 
 	public void approveSelected() {
-		CodeMapping.Equivalence equivalenceToApply = (CodeMapping.Equivalence) equivalenceOptionChooser.getSelectedItem();
+		Equivalence equivalenceToApply = Equivalence.fromDisplayName((String) equivalenceOptionChooser.getSelectedItem());
+
 		codeMapping.approve(equivalenceToApply);
 		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
 			codeMappingMulti.approve(equivalenceToApply);
@@ -420,7 +422,7 @@ public class MappingDetailPanel extends JPanel implements CodeSelectedListener, 
 	}
 
 	public void flagSelected() {
-		CodeMapping.Equivalence equivalenceToApply = (CodeMapping.Equivalence) equivalenceOptionChooser.getSelectedItem();
+		Equivalence equivalenceToApply = Equivalence.fromDisplayName((String) equivalenceOptionChooser.getSelectedItem());
 		codeMapping.flag(equivalenceToApply);
 		for (CodeMapping codeMappingMulti : codeMappingsFromMulti) {
 			codeMappingMulti.flag(equivalenceToApply);

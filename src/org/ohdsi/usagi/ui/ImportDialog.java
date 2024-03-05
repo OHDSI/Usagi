@@ -232,6 +232,11 @@ public class ImportDialog extends JDialog {
 		autoConceptIdColumn = new JComboBox<>(comboBoxOptions);
 		autoConceptIdColumn.setToolTipText("The column containing a (semicolon-delimited) list of concept IDs to which the search will be restricted");
 		columnMappingPanel.add(autoConceptIdColumn, cBox);
+		autoConceptIdColumn.addActionListener(e -> {
+			if (!autoConceptIdColumn.getSelectedItem().toString().isEmpty()) {
+				filterPanel.setFilterByAuto();
+			}
+		});
 
 		gridY = cLabel.gridy + 1;
 		addExtraColumnMapping();
@@ -439,7 +444,7 @@ public class ImportDialog extends JDialog {
 						} else if (sourceCode.sourceAutoAssignedConceptIds.size() > 1 && concepts.size() > 0) {
 							codeMapping.setMappingStatus(MappingStatus.AUTO_MAPPED);
 						}
-						codeMapping.setEquivalence(CodeMapping.Equivalence.UNREVIEWED);
+						codeMapping.setEquivalence(Equivalence.UNREVIEWED);
 						synchronized (globalMappingList) {
 							globalMappingList.add(codeMapping);
 							progressBar.setValue(Math.round(100 * globalMappingList.size() / sourceCodes.size()));

@@ -148,6 +148,10 @@ public class FilterPanel extends JPanel {
 		return filterByAutoCheckBox.isSelected();
 	}
 
+	public void setFilterByAuto() {
+		filterByAutoCheckBox.setSelected(true);
+	}
+
 	public boolean getFilterStandard() {
 		return filterStandardCheckBox.isSelected();
 	}

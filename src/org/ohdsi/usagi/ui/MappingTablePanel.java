@@ -32,7 +32,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.ohdsi.usagi.CodeMapping;
-import org.ohdsi.usagi.CodeMapping.Equivalence;
+import org.ohdsi.usagi.Equivalence;
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
 import org.ohdsi.usagi.Concept;
 
@@ -202,7 +202,7 @@ public class MappingTablePanel extends JPanel implements DataChangeListener {
 					case ASSIGNED_REVIEWER_COL:
 						return codeMapping.getAssignedReviewer();
 					case 18:
-						if (codeMapping.getEquivalence() != CodeMapping.Equivalence.UNREVIEWED) {
+						if (codeMapping.getEquivalence() != Equivalence.UNREVIEWED) {
 							return codeMapping.getEquivalence();
 						} else {
 							return null;

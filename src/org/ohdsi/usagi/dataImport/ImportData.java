@@ -86,7 +86,7 @@ public class ImportData {
 			} else if (sourceCode.sourceAutoAssignedConceptIds.size() > 1 && concepts.size() > 0) {
 				codeMapping.setMappingStatus(MappingStatus.AUTO_MAPPED);
 			}
-			codeMapping.setEquivalence(CodeMapping.Equivalence.UNREVIEWED);
+			codeMapping.setEquivalence(Equivalence.UNREVIEWED);
 			out.write(codeMapping);
 		}
 		out.close();

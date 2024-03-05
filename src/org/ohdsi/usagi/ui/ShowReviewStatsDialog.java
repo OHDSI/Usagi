@@ -62,7 +62,7 @@ public class ShowReviewStatsDialog extends JDialog {
 		// Equivalence status
 		addHeaderLabel(g,"By equivalence status:");
 
-		Map<CodeMapping.Equivalence, Long> countByEquivalence = codeMappings.stream()
+		Map<Equivalence, Long> countByEquivalence = codeMappings.stream()
 				.collect(Collectors.groupingBy(CodeMapping::getEquivalence, Collectors.counting()));
 
 		countByEquivalence.forEach((key, value) -> addLabel(g, String.format("%s - %d", key, value)));

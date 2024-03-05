@@ -18,7 +18,7 @@ package org.ohdsi.usagi;
 import java.util.Iterator;
 
 import org.ohdsi.usagi.CodeMapping.MappingStatus;
-import org.ohdsi.usagi.CodeMapping.Equivalence;
+import org.ohdsi.usagi.Equivalence;
 import org.ohdsi.usagi.ui.Global;
 import org.ohdsi.utilities.files.ReadCSVFileWithHeader;
 import org.ohdsi.utilities.files.Row;
