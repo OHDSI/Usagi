@@ -24,6 +24,10 @@ Technology
 ============
 Usagi is a pure Java application. It makes use of [Apache's Lucene Java library](http://lucene.apache.org/) for term matching, [Apache's POI Java libraries](http://poi.apache.org/) to read Excel files, and [Oracle's Berkeley DB](http://www.oracle.com/technetwork/database/database-technologies/berkeleydb/overview/index.html) to store concept information.
 
+Intended Use
+============
+Usagi was designed and implemented for use within a secure and trusted environment. No efforts have been made to encrypt or otherwise protect the passwords, parameters and results. This should be kept in mind when deploying this tool.
+
 System Requirements
 ============
 Requires Java 1.8 or higher. Java can be downloaded from <a href="http://www.java.com" target="_blank">http://www.java.com</a>.
