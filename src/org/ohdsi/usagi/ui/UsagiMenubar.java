@@ -33,6 +33,7 @@ public class UsagiMenubar extends JMenuBar {
 		fileMenu.add(Global.applyPreviousMappingAction);
 		fileMenu.add(Global.exportAction);
 		fileMenu.add(Global.exportForReviewAction);
+		fileMenu.add(Global.exportCandidatesAction);
 		fileMenu.add(Global.saveAction);
 		fileMenu.add(Global.saveAsAction);
 		fileMenu.add(Global.exitAction);

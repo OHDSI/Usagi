@@ -69,6 +69,7 @@ public class OpenAction extends AbstractAction {
 		Global.saveAsAction.setEnabled(true);
 		Global.exportAction.setEnabled(true);
 		Global.exportForReviewAction.setEnabled(true);
+		Global.exportCandidatesAction.setEnabled(true);
 	}
 
 }

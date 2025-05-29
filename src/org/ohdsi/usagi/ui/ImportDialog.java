@@ -455,6 +455,7 @@ public class ImportDialog extends JDialog {
 				Global.saveAsAction.setEnabled(true);
 				Global.exportAction.setEnabled(true);
 				Global.exportForReviewAction.setEnabled(true);
+				Global.exportCandidatesAction.setEnabled(true);
 			} catch (Exception e) {
 				JOptionPane.showMessageDialog(Global.frame, StringUtilities.wordWrap(e.getMessage(), 80), "Error", JOptionPane.ERROR_MESSAGE);
 			}

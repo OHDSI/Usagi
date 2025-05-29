@@ -46,6 +46,7 @@ public class Global {
 	public static ReviewerAssignmentAction 			reviewerAssignmentAction;
 	public static ClearSelectedAction 				clearSelectedAction;
 	public static ConceptInformationAction			conceptInfoAction;
+	public static ExportCandidatesAction				    exportCandidatesAction;
 	public static AthenaAction						athenaAction;
 	public static GoogleSearchAction				googleSearchAction;
 	public static AboutAction						aboutAction;
